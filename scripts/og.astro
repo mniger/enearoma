@@ -4,7 +4,7 @@ import '@fontsource/cinzel/400.css';
 import '@fontsource/jost/300.css';
 import '../styles/global.css';
 import { Image } from 'astro:assets';
-import marchioRilievo from '../assets/marchio/marchio-rilievo.png';
+import Marchio from '../components/Marchio.astro';
 import sala from '../assets/foto/sala-panoramica.png';
 ---
 <!doctype html>
@@ -15,8 +15,8 @@ import sala from '../assets/foto/sala-panoramica.png';
       <Image class="sfondo" src={sala} alt="" widths={[1600]} sizes="1200px" />
       <div class="velo"></div>
       <div class="centro">
-        <Image class="marchio" src={marchioRilievo} alt="" widths={[540]} sizes="540px" />
-        <p class="claim">Ristorante mediterraneo — Via Boncompagni, Roma</p>
+        <div class="marchio"><Marchio completo /></div>
+        <p class="claim">Via Boncompagni 83, Roma</p>
       </div>
       <div class="cornice"></div>
     </div>
@@ -25,7 +25,7 @@ import sala from '../assets/foto/sala-panoramica.png';
       .tela img.sfondo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 45%; filter: saturate(.92) contrast(1.05); }
       .velo { position: absolute; inset: 0; background: radial-gradient(110% 80% at 50% 46%, rgba(10,8,6,.82), rgba(10,8,6,.95) 62%, #0A0806 100%); }
       .centro { position: absolute; inset: 0; display: grid; align-content: center; justify-items: center; gap: .4rem; text-align: center; }
-      .tela img.marchio { position: relative; width: 440px; height: auto; mix-blend-mode: lighten; }
+      .marchio { position: relative; --marchio-larghezza: 400px; color: var(--oro-luce); }
       .claim { font-family: var(--font-lapide); font-size: .78rem; letter-spacing: .34em; text-transform: uppercase; color: var(--fumo); margin: 0; }
       .cornice { position: absolute; inset: 30px; border: 1px solid rgba(194,146,78,.32); pointer-events: none; }
     </style>

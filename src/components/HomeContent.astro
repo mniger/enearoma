@@ -93,7 +93,7 @@ const indirizzo = `${contatti.via} ${contatti.civico}, ${contatti.cap} ${citta}`
   <div class="apertura__velo" aria-hidden="true"></div>
 
   <div class="wrap apertura__corpo">
-    <h1 class="apertura__marchio"><Marchio titolo={brand.nomeEsteso} /></h1>
+    <h1 class="apertura__marchio"><Marchio completo titolo={brand.nomeEsteso} /></h1>
     <p class="apertura__claim">{t.claimLancio}</p>
     <p class="apertura__riga">
       <span>{indirizzo}</span><i aria-hidden="true"></i><span>{apertura.periodo[locale]}</span>
@@ -223,7 +223,9 @@ const indirizzo = `${contatti.via} ${contatti.civico}, ${contatti.cap} ${citta}`
     gap: clamp(1.1rem, 2.4vw, 1.9rem);
   }
   .apertura__marchio {
-    margin: 0; --marchio-larghezza: min(78vw, 26rem); color: var(--oro-luce);
+    /* il lockup completo della dima è ~quadrato: più stretto del vecchio
+       per non mangiarsi l'altezza dell'apertura */
+    margin: 0; --marchio-larghezza: min(70vw, 22.5rem); color: var(--oro-luce);
     animation: emerge 1.9s var(--ease-lento) both;
   }
   @keyframes emerge { from { opacity: 0; transform: translateY(14px) scale(1.02); } to { opacity: 1; transform: none; } }
