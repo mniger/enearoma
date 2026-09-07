@@ -1,11 +1,16 @@
 ---
 /** Layout di base: <head> SEO-ready, font self-hosted, header/footer. */
 // Solo i pesi realmente usati: Cormorant 400 (titoli), Cinzel 400 (etichette),
-// Jost 300 (testo) e 400 (evidenza). Ogni peso in più è banda sprecata.
-import '@fontsource/cormorant-garamond/400.css';
-import '@fontsource/cinzel/400.css';
-import '@fontsource/jost/300.css';
-import '@fontsource/jost/400.css';
+// Jost 300 (testo) e 400 (evidenza) — e solo il subset latin: gli altri
+// alfabeti non servono a un sito it/en e gonfiano l'upload.
+import '@fontsource/cormorant-garamond/latin-400.css';
+import '@fontsource/cinzel/latin-400.css';
+import '@fontsource/jost/latin-300.css';
+import '@fontsource/jost/latin-400.css';
+import cormorantUrl from '@fontsource/cormorant-garamond/files/cormorant-garamond-latin-400-normal.woff2?url';
+import cinzelUrl from '@fontsource/cinzel/files/cinzel-latin-400-normal.woff2?url';
+import jost300Url from '@fontsource/jost/files/jost-latin-300-normal.woff2?url';
+import jost400Url from '@fontsource/jost/files/jost-latin-400-normal.woff2?url';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -13,13 +18,16 @@ import Reveal from '../components/Reveal.astro';
 import { ClientRouter } from 'astro:transitions';
 import { brand, contatti, legale, type Locale } from '../data/site';
 
-interface Props { title: string; description: string }
-const { title, description } = Astro.props;
+interface Props { title: string; description: string; noindex?: boolean }
+const { title, description, noindex = false } = Astro.props;
 const locale = (Astro.currentLocale ?? 'it') as Locale;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL('/og-enea.jpg', Astro.site);
 const salta = locale === 'en' ? 'Skip to content' : 'Vai al contenuto';
+const ogImageAlt = locale === 'en'
+  ? 'The ENEA Roma mark: golden stone pine and wordmark on a dark ground'
+  : 'Il marchio ENEA Roma: pino dorato e scritta su fondo scuro';
 
 const datiStrutturati = {
   '@context': 'https://schema.org',
@@ -27,10 +35,9 @@ const datiStrutturati = {
   name: brand.nomeEsteso,
   legalName: legale.ragioneSociale,
   vatID: legale.partitaIva,
-  servesCuisine: ['Mediterranea', 'Italiana'],
-  url: Astro.site?.href,
+  servesCuisine: locale === 'en' ? ['Mediterranean', 'Italian'] : ['Mediterranea', 'Italiana'],
+  url: canonical.href,
   image: ogImage.href,
-  inLanguage: locale,
   address: {
     '@type': 'PostalAddress',
     streetAddress: `${contatti.via} ${contatti.civico}`,
@@ -49,7 +56,14 @@ const datiStrutturati = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {!noindex && <link rel="canonical" href={canonical} />}
+
+    <!-- i font si scoprono solo dopo il parse del CSS: senza preload il testo
+         appare in fallback e poi scatta -->
+    <link rel="preload" as="font" type="font/woff2" href={cormorantUrl} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={cinzelUrl} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={jost300Url} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={jost400Url} crossorigin />
 
     <meta property="og:site_name" content={brand.nomeEsteso} />
     <meta property="og:title" content={title} />
@@ -60,14 +74,19 @@ const datiStrutturati = {
     <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={brand.nomeEsteso} />
+    <meta property="og:image:alt" content={ogImageAlt} />
     <meta property="og:locale" content={locale === 'en' ? 'en_GB' : 'it_IT'} />
     <meta property="og:locale:alternate" content={locale === 'en' ? 'it_IT' : 'en_GB'} />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <link rel="alternate" hreflang="it" href={new URL('/', Astro.site)} />
-    <link rel="alternate" hreflang="en" href={new URL('/en/', Astro.site)} />
-    <link rel="alternate" hreflang="x-default" href={new URL('/', Astro.site)} />
+    {noindex && <meta name="robots" content="noindex" />}
+    {!noindex && (
+      <>
+        <link rel="alternate" hreflang="it" href={new URL('/', Astro.site)} />
+        <link rel="alternate" hreflang="en" href={new URL('/en/', Astro.site)} />
+        <link rel="alternate" hreflang="x-default" href={new URL('/', Astro.site)} />
+      </>
+    )}
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />

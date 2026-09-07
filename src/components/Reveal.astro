@@ -14,7 +14,6 @@
 
   function avvia() {
     if (ridotto()) return;
-    document.documentElement.classList.add('js-reveal');
     osservatore?.disconnect();
     osservatore = new IntersectionObserver(
       (voci) => voci.forEach((v) => {
@@ -32,9 +31,9 @@
     const elementi = [...document.querySelectorAll('[data-reveal]')];
     elementi.forEach((el) => osservatore!.observe(el));
 
-    // Rete di sicurezza. L'osservatore emette solo ai cambi di intersezione:
+    // Rete di sicurezza. L’osservatore emette solo ai cambi di intersezione:
     // se uno scorrimento veloce porta un elemento da sotto il viewport a sopra
-    // in un solo salto, non c'è alcun cambio e l'elemento resterebbe invisibile
+    // in un solo salto, non c’è alcun cambio e l’elemento resterebbe invisibile
     // per sempre. Qui si recuperano quelli ormai superati.
     staccaRete?.();
     let atteso = false;
@@ -54,7 +53,18 @@
     staccaRete = () => removeEventListener('scroll', alloScroll);
   }
 
+  // Al primo caricamento si parte subito (il modulo è deferred: il DOM c'è già).
+  // astro:page-load arriva solo al `load` — aspettarlo lascerebbe i contenuti
+  // nascosti finché tutte le immagini non sono scaricate.
+  avvia();
   document.addEventListener('astro:page-load', avvia);
+</script>
+
+<!-- La classe che nasconde va messa PRIMA del primo paint: aggiunta più tardi
+     (es. al load) l'utente vedrebbe la pagina intera e poi la vedrebbe sbiadire. -->
+<script is:inline>
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches)
+    document.documentElement.classList.add('js-reveal');
 </script>
 
 <style is:global>

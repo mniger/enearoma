@@ -12,7 +12,7 @@ export const ATTESA = '⟨da confermare⟩' as const;
 
 export const brand = {
   nome: 'ENEA',
-  // CONFERMATO: marchio ufficiale = pino domestico + "ROMA". Sull'insegna fisica
+  // CONFERMATO: marchio ufficiale = pino domestico + "ROMA". Sull’insegna fisica
   // compare una variante "RISTORANTE" con simbolo a ramo: non si usa sul web.
   // Il lockup vero è in Marchio.astro, vettorializzato dal render del manuale.
   sottotitolo: 'ROMA',
@@ -29,9 +29,9 @@ export const brand = {
  * e pubblicarli manderebbe i clienti a un numero che non risponde.
  */
 export const contatti = {
-  via: 'Via Boncompagni',   // [MANUALE] footer e foto della facciata
-  civico: '83',             // dalle schede online preesistenti — da confermare
-  cap: '00187',             // CAP del rione Ludovisi
+  via: 'Via Boncompagni', // [MANUALE] footer e foto della facciata
+  civico: '83', // dalle schede online preesistenti — da confermare
+  cap: '00187', // CAP del rione Ludovisi
   citta: 'Roma',
   telefono: ATTESA,
   whatsapp: ATTESA,
@@ -60,7 +60,7 @@ export const apertura = {
 } as const;
 
 /**
- * Dati legali — CONFERMATI (anagrafica Aruba dell'account aziendale,
+ * Dati legali — CONFERMATI (anagrafica Aruba dell’account aziendale,
  * verificati da Marco col titolare il 06/09/2026).
  */
 export const legale = {
@@ -79,71 +79,70 @@ export const testi = {
     claimLancio: 'La Dolce Vita sta per ricominciare.',
     // [MANUALE] sottotitolo di copertina
     claimApertura:
-      "Un'esperienza di ospitalità romana contemporanea, ispirata all'eleganza, all'energia e al fascino senza tempo della Dolce Vita.",
+      "Un’esperienza di ospitalità romana contemporanea, ispirata all’eleganza, all’energia e al fascino senza tempo della Dolce Vita.",
     // [MANUALE] "Il concept ENEA"
     concept:
-      "ENEA è un ristorante mediterraneo raffinato nel cuore di Roma, a pochi passi da Via Veneto. Il concept unisce identità italiana e visione cosmopolita: abbastanza sofisticato per un'occasione speciale, ma al tempo stesso accogliente ed energico per diventare un punto di riferimento abituale.",
+      "ENEA è un ristorante mediterraneo raffinato nel cuore di Roma, a pochi passi da Via Veneto. Il concept unisce identità italiana e visione cosmopolita: abbastanza sofisticato per un’occasione speciale, ma al tempo stesso accogliente ed energico per diventare un punto di riferimento abituale.",
     // [MANUALE] "Benvenuto in ENEA"
     origine:
-      "ENEA nasce per essere inequivocabilmente romano, senza risultare nostalgico o teatrale. Il concept trae ispirazione dalla sicurezza e dall'eleganza della Roma degli anni '60 e '70, dallo stile di vita mediterraneo e dall'energia sociale senza tempo della zona di Via Veneto.",
+      "ENEA nasce per essere inequivocabilmente romano, senza risultare nostalgico o teatrale. Il concept trae ispirazione dalla sicurezza e dall’eleganza della Roma degli anni '60 e '70, dallo stile di vita mediterraneo e dall’energia sociale senza tempo della zona di Via Veneto.",
     // [MANUALE] "Il nome"
-    nome: "ENEA richiama l'eredità classica, romana e mediterranea mantenendo un'identità pulita, forte e contemporanea. Il nome lega il ristorante a Roma senza ricorrere a cliché.",
+    nome: "ENEA richiama l’eredità classica, romana e mediterranea mantenendo un’identità pulita, forte e contemporanea. Il nome lega il ristorante a Roma senza ricorrere a cliché.",
     // [MANUALE] chiusura
     triade: [
       'Eleganza. Calore. Precisione.',
       'Carattere romano. Spirito mediterraneo.',
       'Connessione umana autentica.',
     ],
-    // [MANUALE] "Benvenuto in ENEA" — l'obiettivo dichiarato
+    // [MANUALE] "Benvenuto in ENEA" — l’obiettivo dichiarato
     obiettivo:
       'Il nostro obiettivo è creare un ristorante in cui cucina raffinata, servizio caloroso, musica, design e connessione umana convivano in modo naturale.',
     // [MANUALE] "03 | Filosofia food & beverage — La cucina"
     cucina:
-      "L'identità gastronomica è mediterranea e italiana nel suo nucleo. Ingredienti, stagionalità e chiarezza dei sapori sono i protagonisti. La presentazione è raffinata, ma la cucina conserva generosità, riconoscibilità e piacere.",
+      "L’identità gastronomica è mediterranea e italiana nel suo nucleo. Ingredienti, stagionalità e chiarezza dei sapori sono i protagonisti. La presentazione è raffinata, ma la cucina conserva generosità, riconoscibilità e piacere.",
     // [MANUALE] "03 | Filosofia food & beverage — Il bar"
-    bar:
-      "Il bar è parte integrante dell'esperienza ENEA: la cultura italiana dell'aperitivo, i grandi classici, cocktail eseguiti con precisione e una selezione di vini intelligente, che accompagnano la cucina e il ritmo della sala.",
+    bar: "Il bar è parte integrante dell’esperienza ENEA: la cultura italiana dell’aperitivo, i grandi classici, cocktail eseguiti con precisione e una selezione di vini intelligente, che accompagnano la cucina e il ritmo della sala.",
     // [MANUALE] "02 | Il nostro ospite"
     ospiti:
-      "ENEA accoglie una clientela italiana e internazionale: romani, ospiti degli hotel, viaggiatori d'affari, turisti, creativi e persone che scelgono il ristorante per celebrare momenti importanti.",
+      "ENEA accoglie una clientela italiana e internazionale: romani, ospiti degli hotel, viaggiatori d’affari, turisti, creativi e persone che scelgono il ristorante per celebrare momenti importanti.",
     // [MANUALE] "02 | Il nostro ospite" — la frase in evidenza
-    ricordo: 'Un ospite deve ricordare più di un piatto. Deve ricordare come ENEA lo ha fatto sentire.',
-    // [MANUALE] "02 | Come vogliamo far sentire l'ospite"
+    ricordo:
+      'Un ospite deve ricordare più di un piatto. Deve ricordare come ENEA lo ha fatto sentire.',
+    // [MANUALE] "02 | Come vogliamo far sentire l’ospite"
     accoglienza: [
       'Riconosciuto e accolto fin dal suo arrivo.',
       'A proprio agio, mai intimidito.',
       'Seguito con attenzione, senza sentirsi osservato.',
-      "Parte dell'energia della sala.",
+      "Parte dell’energia della sala.",
     ],
-    // [MANUALE] "L'atmosfera"
+    // [MANUALE] "L’atmosfera"
     atmosfera: [
       'Elegante, ma mai pretenziosa.',
       'Mediterranea, calda e materica.',
       "Richiami alla Roma degli anni '60 e '70 reinterpretati in chiave contemporanea.",
-      "Sociale ed energica, con un autentico senso dell'occasione.",
+      "Sociale ed energica, con un autentico senso dell’occasione.",
       'Standard internazionali, carattere profondamente romano.',
     ],
   },
   en: {
     // [MOODBOARD] claim di lancio nella versione inglese, dalle tavole ufficiali
     claimLancio: 'La Dolce Vita, reimagined.',
-    // Traduzione da rivedere con madrelingua prima della pubblicazione.
     claimApertura:
       'A contemporary Roman hospitality experience, inspired by the elegance, energy and timeless charm of La Dolce Vita.',
     concept:
       'ENEA is a refined Mediterranean restaurant in the heart of Rome, steps from Via Veneto. The concept blends Italian identity with a cosmopolitan vision: sophisticated enough for a special occasion, yet warm and lively enough to become a regular haunt.',
     origine:
-      "ENEA is born to be unmistakably Roman, without nostalgia or theatrics. The concept draws on the confidence and elegance of 1960s and '70s Rome, the Mediterranean way of life and the timeless social energy of the Via Veneto district.",
+      'ENEA was created to be unmistakably Roman, without nostalgia or theatrics. The concept draws on the confidence and elegance of 1960s and 1970s Rome, the Mediterranean way of life and the timeless social energy of the Via Veneto district.',
     nome: 'ENEA evokes a classical, Roman and Mediterranean heritage while keeping a clean, strong and contemporary identity. The name ties the restaurant to Rome without resorting to cliché.',
     obiettivo:
       'Our aim is a restaurant where refined cooking, warm service, music, design and genuine human connection sit together naturally.',
     cucina:
       'The cooking is Mediterranean and Italian at its core. Ingredients, seasonality and clarity of flavour come first. The plating is refined, but the food keeps its generosity, its familiarity and its pleasure.',
-    bar:
-      'The bar is an integral part of ENEA: the Italian aperitivo, the great classics, cocktails made with precision and an intelligent wine list, chosen to follow the kitchen and the rhythm of the room.',
+    bar: 'The bar is an integral part of ENEA: the Italian aperitivo, the great classics, cocktails made with precision and an intelligent wine list, chosen to follow the kitchen and the rhythm of the room.',
     ospiti:
       'ENEA welcomes Italian and international guests alike: Romans, hotel guests, business travellers, tourists, creatives, and people choosing the restaurant to mark an occasion.',
-    ricordo: 'A guest should remember more than a dish. They should remember how ENEA made them feel.',
+    ricordo:
+      'A guest should remember more than a dish. They should remember how ENEA made them feel.',
     accoglienza: [
       'Recognised and welcomed from the moment they arrive.',
       'At ease, never intimidated.',
@@ -158,7 +157,7 @@ export const testi = {
     atmosfera: [
       'Elegant, never pretentious.',
       'Mediterranean, warm and tactile.',
-      "Echoes of 1960s and '70s Rome, reimagined for today.",
+      'Echoes of 1960s and 1970s Rome, reimagined for today.',
       'Sociable and lively, with a true sense of occasion.',
       'International standards, a deeply Roman character.',
     ],

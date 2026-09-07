@@ -13,6 +13,7 @@ export default defineConfig({
     defaultLocale: 'it',
     routing: { prefixDefaultLocale: false },
   },
-  integrations: [sitemap()],
+  // i18n della sitemap: senza, le due lingue restano URL scollegati (niente xhtml:link).
+  integrations: [sitemap({ i18n: { defaultLocale: 'it', locales: { it: 'it-IT', en: 'en-GB' } } })],
   build: { inlineStylesheets: 'auto' },
 });

@@ -1,11 +1,13 @@
 ---
-/** Navigazione mobile a tendina. Il pulsante vive nell'header; la tenda è fixed. */
+/** Navigazione mobile a tendina. Il pulsante vive nell’header; la tenda è fixed. */
 import { nav, type Locale } from '../data/site';
 const locale = (Astro.currentLocale ?? 'it') as Locale;
 const voci = nav[locale];
 const base = locale === 'en' ? '/en' : '';
-const altLang = locale === 'en' ? { code: 'Italiano', href: '/' } : { code: 'English', href: '/en/' };
-const etichetta = locale === 'en' ? 'Menu' : 'Menu';
+const altLang = locale === 'en'
+  ? { code: 'Italiano', href: '/', lang: 'it' }
+  : { code: 'English', href: '/en/', lang: 'en' };
+const etichetta = 'Menu';
 const prenota = locale === 'en' ? 'Book a table' : 'Prenota un tavolo';
 ---
 <button class="apri" id="apri-menu" type="button" aria-expanded="false" aria-controls="tenda" aria-label={etichetta}>
@@ -17,7 +19,7 @@ const prenota = locale === 'en' ? 'Book a table' : 'Prenota un tavolo';
     {voci.map((v) => <a href={base + '/' + v.href}>{v.label}</a>)}
   </div>
   <a class="tenda__prenota" href={base + '/#dove'}>{prenota}</a>
-  <a class="tenda__lingua" href={altLang.href} hreflang={altLang.code === 'English' ? 'en' : 'it'}>{altLang.code}</a>
+  <a class="tenda__lingua" href={altLang.href} hreflang={altLang.lang} lang={altLang.lang}>{altLang.code}</a>
 </nav>
 
 <script>

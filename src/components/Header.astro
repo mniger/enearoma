@@ -16,7 +16,7 @@ const prenota = locale === 'en' ? 'Book' : 'Prenota';
   </nav>
 
   <div class="testata__coda">
-    <a class="lingua" href={altLang.href} hreflang={altLang.code.toLowerCase()}>{altLang.code}</a>
+    <a class="lingua" href={altLang.href} hreflang={altLang.code.toLowerCase()} lang={altLang.code.toLowerCase()}>{altLang.code}</a>
     <a class="btn--mini" href={base + '/#dove'}>{prenota}</a>
     <MenuMobile />
   </div>
@@ -42,7 +42,7 @@ const prenota = locale === 'en' ? 'Book' : 'Prenota';
     staccaScroll = () => removeEventListener('scroll', alloScroll);
     aggiorna();
 
-    // La voce di menu segue la sezione in lettura. Si tiene l'ultima sezione
+    // La voce di menu segue la sezione in lettura. Si tiene l’ultima sezione
     // entrata nella fascia alta del viewport, non la più visibile: con sezioni
     // di altezza molto diversa quella regola sfarfalla.
     const link = new Map<string, Element>();
@@ -78,7 +78,7 @@ const prenota = locale === 'en' ? 'Book' : 'Prenota';
     transition: background .5s var(--ease), padding .5s var(--ease), border-color .5s var(--ease);
     border-bottom: 1px solid transparent;
   }
-  /* dopo lo scroll la testata si posa: fondo pieno, filo d'oro, meno respiro */
+  /* dopo lo scroll la testata si posa: fondo pieno, filo d’oro, meno respiro */
   .testata[data-scrollato='si'] {
     background: rgba(10, 8, 6, .9);
     -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
@@ -98,9 +98,9 @@ const prenota = locale === 'en' ? 'Book' : 'Prenota';
     position: relative;
     font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .2em;
     text-transform: uppercase; text-decoration: none; color: var(--travertino); white-space: nowrap;
-    display: inline-flex; align-items: center; min-height: 40px;
+    display: inline-flex; align-items: center; min-height: 44px;
   }
-  /* filo d'oro che si apre da sinistra */
+  /* filo d’oro che si apre da sinistra */
   .testata__nav a::after {
     content: ''; position: absolute; left: 0; bottom: 9px; height: 1px; width: 100%;
     background: var(--oro); transform: scaleX(0); transform-origin: left;
@@ -113,13 +113,14 @@ const prenota = locale === 'en' ? 'Book' : 'Prenota';
   .testata__coda { position: relative; z-index: 2; display: flex; align-items: center; gap: 1rem; }
   .lingua {
     font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .12em;
-    color: var(--fumo); text-decoration: none; padding: .8rem .3rem;
+    color: var(--fumo); text-decoration: none; padding: .9rem .3rem;
+    display: inline-flex; justify-content: center; min-width: 44px;
     transition: color .3s ease;
   }
   .lingua:hover { color: var(--oro-chiaro); }
   .btn--mini {
     font-family: var(--font-lapide); font-size: 0.625rem; letter-spacing: .2em; text-transform: uppercase;
-    text-decoration: none; padding: .8rem 1.15rem; border: 1px solid var(--oro); color: var(--oro-chiaro);
+    text-decoration: none; padding: .9rem 1.15rem; border: 1px solid var(--oro); color: var(--oro-chiaro);
     white-space: nowrap;
     transition: background-color .4s var(--ease), color .4s var(--ease);
   }
@@ -136,7 +137,7 @@ const prenota = locale === 'en' ? 'Book' : 'Prenota';
     .testata { gap: .75rem; }
     .testata__marchio { --wordmark-larghezza: 100px; }
     .testata[data-scrollato="si"] .testata__marchio { --wordmark-larghezza: 92px; }
-    .btn--mini { font-size: .5625rem; padding: .8rem .85rem; letter-spacing: .16em; }
+    .btn--mini { font-size: .5625rem; padding: .9rem .85rem; letter-spacing: .16em; }
   }
   @media (min-width: 62rem) { .testata__nav { display: flex; } }
 </style>

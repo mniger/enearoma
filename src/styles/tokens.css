@@ -8,18 +8,15 @@
    ============================================================ */
 :root {
   /* — Colori — */
-  --pece:        #0A0806;  /* nero-bruno della pietra dell'insegna, non nero puro */
-  --notte:       #100D09;
-  --seppia:      #191410;
-  --alzata:      #1E1811;
-  --bordo:       #241D16;
-  --bordo-vivo:  #3A2E22;
-  --oro:         #C2924E;  /* ottone inciso del wordmark */
-  --oro-chiaro:  #E3BC7E;
-  --oro-luce:    #F0D6A6;
-  --travertino:  #EDE4D6;  /* testo chiaro caldo */
-  --fumo:        #A29584;  /* neutro con bias caldo verso l'oro */
-  --muschio:     #26443A;  /* verde bottiglia delle sedute in velluto */
+  --pece: #0a0806; /* nero-bruno della pietra dell'insegna, non nero puro */
+  --notte: #100d09;
+  --bordo: #241d16;
+  --oro: #c2924e; /* ottone inciso del wordmark */
+  --oro-chiaro: #e3bc7e;
+  --oro-luce: #f0d6a6;
+  --travertino: #ede4d6; /* testo chiaro caldo */
+  --fumo: #a29584; /* neutro con bias caldo verso l'oro */
+  --muschio: #26443a; /* verde bottiglia delle sedute in velluto */
 
   /* — Tipografia —
      Display: Cormorant Garamond (grazie sottili, eco del wordmark inciso)
@@ -28,31 +25,35 @@
      Il marchio non usa webfont: è la fotografia del rilievo, più le versioni
      vettorializzate in Marchio/Wordmark/Pino .astro. */
   --font-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
-  --font-lapide:  'Cinzel', Georgia, serif;
-  --font-ui:      'Jost', 'Helvetica Neue', Arial, sans-serif;
+  --font-lapide: 'Cinzel', Georgia, serif;
+  --font-ui: 'Jost', 'Helvetica Neue', Arial, sans-serif;
 
   /* — Scala tipografica, rapporto costante ~1.28 — */
-  --fs-xs:     0.6875rem;
-  --fs-sm:     0.8125rem;
-  --fs-base:   clamp(1rem, 0.96rem + 0.18vw, 1.0625rem);
-  --fs-lede:   clamp(1.3rem, 1.08rem + 0.95vw, 1.85rem);
-  --fs-claim:  clamp(1.2rem, 1.02rem + 0.8vw, 1.7rem);
+  --fs-xs: 0.6875rem;
+  --fs-sm: 0.8125rem;
+  --fs-base: clamp(1rem, 0.96rem + 0.18vw, 1.0625rem);
+  --fs-lede: clamp(1.3rem, 1.08rem + 0.95vw, 1.85rem);
+  --fs-claim: clamp(1.2rem, 1.02rem + 0.8vw, 1.7rem);
   --fs-triade: clamp(1.45rem, 1.1rem + 1.5vw, 2.4rem);
-  --fs-h3:     clamp(1.35rem, 1.1rem + 1vw, 1.75rem);
-  --fs-h2:     clamp(1.95rem, 1.35rem + 2.6vw, 3.35rem);
+  --fs-h3: clamp(1.35rem, 1.1rem + 1vw, 1.75rem);
+  --fs-h2: clamp(1.95rem, 1.35rem + 2.6vw, 3.35rem);
 
   /* — Ritmo e misure — */
-  --gutter:   clamp(1.35rem, 5vw, 5.5rem);
-  --stack:    clamp(5rem, 11vw, 9.5rem);
-  --misura:   60ch;
-  --testata-h: 5rem;      /* riserva sotto la testata fissa */
+  --gutter: clamp(1.35rem, 5vw, 5.5rem);
+  --stack: clamp(5rem, 11vw, 9.5rem);
+  --misura: 60ch;
+  --testata-h: 5rem; /* riserva sotto la testata fissa */
 
   /* — Movimento —
      Due curve: una per le reazioni al tocco, una per le entrate in scena,
      più lenta e senza rimbalzo, che è ciò che distingue il passo misurato
      dal movimento nervoso. */
-  --ease:       cubic-bezier(0.2, 0.7, 0.3, 1);
+  --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
   --ease-lento: cubic-bezier(0.16, 0.8, 0.24, 1);
 }
 
-@media (max-width: 48rem) { :root { --testata-h: 4.5rem; } }
+@media (max-width: 48rem) {
+  :root {
+    --testata-h: 4.5rem;
+  }
+}

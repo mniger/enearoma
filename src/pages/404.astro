@@ -2,14 +2,20 @@
 import Base from '../layouts/Base.astro';
 import Marchio from '../components/Marchio.astro';
 ---
-<Base title="Pagina non trovata — ENEA Roma" description="La pagina cercata non esiste.">
+<!-- GitHub Pages serve un’unica 404 per tutti i percorsi, /en/ compreso:
+     la pagina è bilingue e resta fuori dagli indici. -->
+<Base title="Pagina non trovata — ENEA Roma" description="La pagina cercata non esiste." noindex>
   <section class="vuoto">
     <div class="wrap vuoto__corpo">
       <span class="vuoto__marchio"><Marchio /></span>
       <p class="eyebrow">404</p>
       <h1>Questa pagina non esiste</h1>
       <p class="corpo">Il collegamento potrebbe essere vecchio o scritto male.</p>
-      <a class="btn" href="/">Torna alla home</a>
+      <p class="corpo corpo--en" lang="en">This page doesn’t exist — the link may be old or mistyped.</p>
+      <div class="vuoto__azioni">
+        <a class="btn" href="/">Torna alla home</a>
+        <a class="btn" href="/en/" lang="en">English home</a>
+      </div>
     </div>
   </section>
 </Base>
@@ -20,6 +26,8 @@ import Marchio from '../components/Marchio.astro';
   .vuoto__marchio { margin-bottom: 1rem; --marchio-larghezza: 132px; color: var(--oro-chiaro); }
   h1 { font-size: var(--fs-h2); }
   .corpo { color: var(--fumo); }
+  .corpo--en { font-size: var(--fs-sm); opacity: .85; }
+  .vuoto__azioni { display: flex; flex-wrap: wrap; gap: .8rem; justify-content: center; }
   .btn {
     margin-top: .75rem;
     font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .22em; text-transform: uppercase;

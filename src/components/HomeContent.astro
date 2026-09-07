@@ -2,14 +2,14 @@
 /**
  * Home di ENEA Roma — contenuto condiviso fra IT ed EN.
  *
- * Chi arriva qui vuole sapere tre cose, in quest'ordine: che posto è, cosa si
- * mangia, dove e quando. Il sito risponde in quest'ordine e con le fotografie,
+ * Chi arriva qui vuole sapere tre cose, in quest’ordine: che posto è, cosa si
+ * mangia, dove e quando. Il sito risponde in quest’ordine e con le fotografie,
  * perché un ristorante si sceglie con gli occhi. Il testo resta il minimo
  * necessario: il manuale del brand è un documento interno per la squadra e non
  * va in vetrina.
  *
  * Le informazioni non ancora confermate dal cliente sono marcate `data-attesa`:
- * si dichiara l'assenza, non la si maschera.
+ * si dichiara l’assenza, non la si maschera.
  */
 import { Image } from 'astro:assets';
 import { brand, testi, contatti, orari, apertura, ATTESA, type Locale } from '../data/site';
@@ -39,11 +39,11 @@ const L = locale === 'en'
       tBar: 'Come in just for a drink',
       pBar: 'The Italian aperitivo, the classic cocktails made properly, and a wine list chosen to follow the kitchen.',
       tDove: 'Via Boncompagni 83, Rome',
-      menuAttesa: 'The full menu will be published here as soon as the kitchen has closed it.',
+      menuAttesa: 'The full menu will be published here as soon as the kitchen has finalised it.',
       barAttesa: 'The cocktail and wine list is on its way.',
       indirizzo: 'Address', telefono: 'Phone', orariL: 'Opening hours', scrivi: 'Email',
       inArrivo: 'coming soon',
-      comePrenotare: 'Bookings open with the restaurant. The telephone number and booking email will appear on this page as soon as they are live.',
+      comePrenotare: 'Bookings will open when the restaurant does. The telephone number and booking email will appear on this page as soon as they are live.',
       altPanoramica: 'The ENEA dining room under its brick vaults',
       altSala: 'Tables laid for the evening at ENEA',
       altIngresso: 'The ENEA entrance on Via Boncompagni at night',
@@ -60,18 +60,18 @@ const L = locale === 'en'
       tLocale: 'Una sala sotto volte di mattoni, a due passi da Via Veneto',
       pLocale: 'Soffitti a volta, velluto verde, luce di candela e una parete di bottiglie. Romano nel carattere, mediterraneo nello spirito, aperto dall’aperitivo fino a cena.',
       tCucina: 'Cucina mediterranea, radici romane',
-      pCucina: 'Ingredienti di stagione e sapori netti, impiattati con cura ma senza sussiego. Piatti che si ha voglia di riordinare.',
+      pCucina: 'Ingredienti di stagione e sapori netti, impiattati con cura ma senza sussiego. Piatti che viene voglia di ordinare di nuovo.',
       tBar: 'Si entra anche solo per bere',
-      pBar: "L'aperitivo italiano, i cocktail classici fatti come si deve e una carta dei vini scelta per seguire la cucina.",
+      pBar: "L’aperitivo italiano, i cocktail classici fatti come si deve e una carta dei vini scelta per seguire la cucina.",
       tDove: 'Via Boncompagni 83, Roma',
       menuAttesa: 'Il menu completo comparirà qui appena la cucina lo avrà chiuso.',
       barAttesa: 'La carta dei cocktail e dei vini è in arrivo.',
       indirizzo: 'Indirizzo', telefono: 'Telefono', orariL: 'Orari', scrivi: 'Email',
       inArrivo: 'in arrivo',
-      comePrenotare: 'Le prenotazioni aprono insieme al ristorante. Numero e indirizzo per prenotare compariranno qui appena saranno attivi.',
+      comePrenotare: 'Le prenotazioni aprono insieme al ristorante. Numero di telefono ed email per prenotare compariranno qui appena saranno attivi.',
       altPanoramica: 'La sala di ENEA sotto le volte in mattoni',
       altSala: 'Tavoli apparecchiati per la sera da ENEA',
-      altIngresso: "L'ingresso di ENEA su Via Boncompagni di sera",
+      altIngresso: "L’ingresso di ENEA su Via Boncompagni di sera",
       altMarciapiede: 'Le vetrine di ENEA viste dal marciapiede',
       altCocktail: 'Una coppa su un banco di marmo',
       altBar: 'La vetrina delle bottiglie e le lampade a sfera di ENEA',
@@ -80,7 +80,9 @@ const L = locale === 'en'
     };
 
 const dato = (v: string) => (v === ATTESA ? L.inArrivo : v);
-const indirizzo = `${contatti.via} ${contatti.civico}, ${contatti.cap} ${contatti.citta}`;
+// La città si localizza: su /en/ il titolo dice "Rome", l’indirizzo non può dire "Roma".
+const citta = locale === 'en' ? 'Rome' : contatti.citta;
+const indirizzo = `${contatti.via} ${contatti.civico}, ${contatti.cap} ${citta}`;
 ---
 
 <!-- ═════════ APERTURA ═════════ -->
@@ -133,7 +135,7 @@ const indirizzo = `${contatti.via} ${contatti.civico}, ${contatti.cap} ${contatt
       <p class="nota" data-reveal data-ritardo="3" data-attesa>{L.menuAttesa}</p>
     </article>
 
-    <article class="portata" id="bar">
+    <article class="portata">
       <figure class="quadro portata__foto" data-reveal>
         <Image src={barDettaglio} alt={L.altBar} widths={[420, 540]} sizes="(min-width: 58rem) 44vw, 92vw" loading="lazy" />
       </figure>
@@ -148,7 +150,7 @@ const indirizzo = `${contatti.via} ${contatti.civico}, ${contatti.cap} ${contatt
 <!-- ═════════ GALLERIA ═════════ -->
 <section id="galleria" class="galleria">
   <div class="wrap">
-    <p class="eyebrow galleria__et" data-reveal>{L.etGalleria}</p>
+    <h2 class="eyebrow galleria__et" data-reveal>{L.etGalleria}</h2>
     <div class="galleria__griglia">
       <figure class="quadro" data-reveal>
         <Image src={facciataMarciapiede} alt={L.altMarciapiede} widths={[520, 800, 1086]} sizes="(min-width: 58rem) 38vw, 92vw" loading="lazy" />
@@ -213,7 +215,7 @@ const indirizzo = `${contatti.via} ${contatti.civico}, ${contatti.cap} ${contatt
   .apertura__velo {
     position: absolute; inset: 0; z-index: -1;
     background:
-      radial-gradient(74% 58% at 50% 44%, rgba(10,8,6,.5), rgba(10,8,6,.85) 74%),
+      radial-gradient(74% 58% at 50% 44%, rgba(10,8,6,.72), rgba(10,8,6,.85) 74%),
       linear-gradient(to bottom, rgba(10,8,6,.9), transparent 26%, transparent 60%, var(--pece));
   }
   .apertura__corpo {
@@ -286,7 +288,7 @@ const indirizzo = `${contatti.via} ${contatti.civico}, ${contatti.cap} ${contatt
   .galleria__griglia figure:first-child { grid-column: 1 / -1; height: clamp(14rem, 52vw, 22rem); }
   @media (min-width: 58rem) {
     .galleria__griglia { grid-template-columns: 38fr 24fr 24fr; }
-    /* un'unica altezza di riga: le tre cornici chiudono sullo stesso filo */
+    /* un’unica altezza di riga: le tre cornici chiudono sullo stesso filo */
     .galleria__griglia figure,
     .galleria__griglia figure:first-child { grid-column: auto; height: clamp(24rem, 34vw, 30rem); }
   }
@@ -326,7 +328,7 @@ const indirizzo = `${contatti.via} ${contatti.civico}, ${contatti.cap} ${contatt
 </style>
 
 <script>
-  /* Parallasse tenue sulla fotografia d'apertura: una sola proprietà animata, in rAF. */
+  /* Parallasse tenue sulla fotografia d’apertura: una sola proprietà animata, in rAF. */
   let stacca: (() => void) | null = null;
 
   function avvia() {

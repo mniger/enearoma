@@ -1,25 +1,28 @@
 ---
 import Marchio from './Marchio.astro';
-import { contatti, legale, nav, type Locale } from '../data/site';
+import { brand, contatti, legale, nav, type Locale } from '../data/site';
 const locale = (Astro.currentLocale ?? 'it') as Locale;
 const base = locale === 'en' ? '/en' : '';
 const voci = nav[locale];
-const altLang = locale === 'en' ? { code: 'Italiano', href: '/' } : { code: 'English', href: '/en/' };
+const altLang = locale === 'en'
+  ? { code: 'Italiano', href: '/', lang: 'it' }
+  : { code: 'English', href: '/en/', lang: 'en' };
 const t = locale === 'en'
-  ? { attesa: 'Site in progress — some details still to come' }
-  : { attesa: 'Sito in lavorazione — alcuni dati sono in arrivo' };
-const indirizzo = `${contatti.via} ${contatti.civico}, ${contatti.cap} ${contatti.citta}`;
+  ? { attesa: 'Site in progress — some details still to come', iva: 'VAT no.' }
+  : { attesa: 'Sito in lavorazione — alcuni dati sono in arrivo', iva: 'P. IVA' };
+const citta = locale === 'en' ? 'Rome' : contatti.citta;
+const indirizzo = `${contatti.via} ${contatti.civico}, ${contatti.cap} ${citta}`;
 const anno = 2026;
 ---
 <footer class="piede">
   <div class="wrap piede__griglia">
-    <a class="piede__marchio" href={locale === 'en' ? '/en/' : '/'}><Marchio /></a>
+    <a class="piede__marchio" href={locale === 'en' ? '/en/' : '/'} aria-label={brand.nomeEsteso}><Marchio /></a>
     <p class="piede__dir">{indirizzo}</p>
     <nav class="piede__nav" aria-label={locale === 'en' ? 'Footer' : 'Piè di pagina'}>
       {voci.map((v) => <a href={base + '/' + v.href}>{v.label}</a>)}
-      <a href={altLang.href} hreflang={altLang.code === 'English' ? 'en' : 'it'}>{altLang.code}</a>
+      <a href={altLang.href} hreflang={altLang.lang} lang={altLang.lang}>{altLang.code}</a>
     </nav>
-    <p class="piede__nota">© {anno} {legale.ragioneSociale} · P. IVA {legale.partitaIva} · {t.attesa}</p>
+    <p class="piede__nota">© {anno} {legale.ragioneSociale} · {t.iva} {legale.partitaIva} · {t.attesa}</p>
   </div>
 </footer>
 
@@ -32,7 +35,7 @@ const anno = 2026;
   .piede__nav a {
     font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .18em;
     text-transform: uppercase; color: var(--fumo); text-decoration: none;
-    padding: .7rem .25rem;                 /* area di tocco: il testo da solo è alto 19 px */
+    padding: .85rem .25rem;                /* area di tocco ≥44px: il testo da solo è alto 19 px */
     transition: color .3s ease;
   }
   .piede__nav a:hover { color: var(--oro-chiaro); }
