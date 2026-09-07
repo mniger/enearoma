@@ -1,0 +1,30 @@
+---
+import Base from '../layouts/Base.astro';
+import Marchio from '../components/Marchio.astro';
+---
+<Base title="Pagina non trovata — ENEA Roma" description="La pagina cercata non esiste.">
+  <section class="vuoto">
+    <div class="wrap vuoto__corpo">
+      <span class="vuoto__marchio"><Marchio /></span>
+      <p class="eyebrow">404</p>
+      <h1>Questa pagina non esiste</h1>
+      <p class="corpo">Il collegamento potrebbe essere vecchio o scritto male.</p>
+      <a class="btn" href="/">Torna alla home</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .vuoto { display: grid; place-items: center; min-height: 78svh; padding-block: var(--stack); }
+  .vuoto__corpo { display: grid; justify-items: center; text-align: center; gap: 1.25rem; }
+  .vuoto__marchio { margin-bottom: 1rem; --marchio-larghezza: 132px; color: var(--oro-chiaro); }
+  h1 { font-size: var(--fs-h2); }
+  .corpo { color: var(--fumo); }
+  .btn {
+    margin-top: .75rem;
+    font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .22em; text-transform: uppercase;
+    text-decoration: none; padding: .95rem 1.6rem; border: 1px solid var(--oro); color: var(--oro-chiaro);
+    transition: background-color .4s var(--ease), color .4s var(--ease);
+  }
+  .btn:hover { background: var(--oro); color: var(--pece); }
+</style>

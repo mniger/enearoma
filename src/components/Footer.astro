@@ -1,0 +1,40 @@
+---
+import Marchio from './Marchio.astro';
+import { contatti, legale, nav, type Locale } from '../data/site';
+const locale = (Astro.currentLocale ?? 'it') as Locale;
+const base = locale === 'en' ? '/en' : '';
+const voci = nav[locale];
+const altLang = locale === 'en' ? { code: 'Italiano', href: '/' } : { code: 'English', href: '/en/' };
+const t = locale === 'en'
+  ? { attesa: 'Site in progress — some details still to come' }
+  : { attesa: 'Sito in lavorazione — alcuni dati sono in arrivo' };
+const indirizzo = `${contatti.via} ${contatti.civico}, ${contatti.cap} ${contatti.citta}`;
+const anno = 2026;
+---
+<footer class="piede">
+  <div class="wrap piede__griglia">
+    <a class="piede__marchio" href={locale === 'en' ? '/en/' : '/'}><Marchio /></a>
+    <p class="piede__dir">{indirizzo}</p>
+    <nav class="piede__nav" aria-label={locale === 'en' ? 'Footer' : 'Piè di pagina'}>
+      {voci.map((v) => <a href={base + '/' + v.href}>{v.label}</a>)}
+      <a href={altLang.href} hreflang={altLang.code === 'English' ? 'en' : 'it'}>{altLang.code}</a>
+    </nav>
+    <p class="piede__nota">© {anno} {legale.ragioneSociale} · P. IVA {legale.partitaIva} · {t.attesa}</p>
+  </div>
+</footer>
+
+<style>
+  .piede { border-top: 1px solid var(--bordo); background: var(--notte); padding-block: clamp(2.5rem, 5vw, 4rem); }
+  .piede__griglia { display: grid; gap: 1rem; justify-items: center; text-align: center; }
+  .piede__marchio { text-decoration: none; --marchio-larghezza: 128px; color: var(--oro-chiaro); }
+  .piede__dir { font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .24em; text-transform: uppercase; color: var(--fumo); }
+  .piede__nav { display: flex; flex-wrap: wrap; justify-content: center; gap: .1rem 1.25rem; margin-top: .25rem; }
+  .piede__nav a {
+    font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .18em;
+    text-transform: uppercase; color: var(--fumo); text-decoration: none;
+    padding: .7rem .25rem;                 /* area di tocco: il testo da solo è alto 19 px */
+    transition: color .3s ease;
+  }
+  .piede__nav a:hover { color: var(--oro-chiaro); }
+  .piede__nota { font-size: var(--fs-sm); color: var(--fumo); opacity: .7; margin-top: .5rem; }
+</style>

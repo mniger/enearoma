@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://enearoma.it/sitemap-index.xml

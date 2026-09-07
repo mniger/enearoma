@@ -1,0 +1,71 @@
+---
+/**
+ * Rivelazione al primo ingresso in viewport.
+ * La classe che nasconde viene aggiunta da JS: senza JS il contenuto resta
+ * visibile (nessun rischio di pagina vuota). Rispetta prefers-reduced-motion.
+ * Si riaggancia a ogni navigazione: con le transizioni di pagina il documento
+ * cambia ma lo script non viene rieseguito.
+ */
+---
+<script>
+  const ridotto = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let osservatore: IntersectionObserver | null = null;
+  let staccaRete: (() => void) | null = null;
+
+  function avvia() {
+    if (ridotto()) return;
+    document.documentElement.classList.add('js-reveal');
+    osservatore?.disconnect();
+    osservatore = new IntersectionObserver(
+      (voci) => voci.forEach((v) => {
+        // già in vista → animazione; già superato (arrivo con #ancora o
+        // ripristino dello scroll) → si mostra subito, senza animare a vuoto
+        const superato = !v.isIntersecting && v.boundingClientRect.top < 0;
+        if (v.isIntersecting || superato) {
+          if (superato) v.target.setAttribute('data-subito', '');
+          v.target.setAttribute('data-visto', '');
+          osservatore?.unobserve(v.target);
+        }
+      }),
+      { rootMargin: '0px 0px -10% 0px', threshold: 0.06 }
+    );
+    const elementi = [...document.querySelectorAll('[data-reveal]')];
+    elementi.forEach((el) => osservatore!.observe(el));
+
+    // Rete di sicurezza. L'osservatore emette solo ai cambi di intersezione:
+    // se uno scorrimento veloce porta un elemento da sotto il viewport a sopra
+    // in un solo salto, non c'è alcun cambio e l'elemento resterebbe invisibile
+    // per sempre. Qui si recuperano quelli ormai superati.
+    staccaRete?.();
+    let atteso = false;
+    const controlla = () => {
+      atteso = false;
+      for (const el of elementi) {
+        if (el.hasAttribute('data-visto')) continue;
+        if (el.getBoundingClientRect().top < innerHeight * 0.9) {
+          el.setAttribute('data-subito', '');
+          el.setAttribute('data-visto', '');
+          osservatore?.unobserve(el);
+        }
+      }
+    };
+    const alloScroll = () => { if (!atteso) { atteso = true; requestAnimationFrame(controlla); } };
+    addEventListener('scroll', alloScroll, { passive: true });
+    staccaRete = () => removeEventListener('scroll', alloScroll);
+  }
+
+  document.addEventListener('astro:page-load', avvia);
+</script>
+
+<style is:global>
+  .js-reveal [data-reveal] {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1s var(--ease-lento), transform 1s var(--ease-lento);
+  }
+  .js-reveal [data-reveal][data-visto] { opacity: 1; transform: none; }
+  .js-reveal [data-reveal][data-subito] { transition: none; transition-delay: 0s; }
+  .js-reveal [data-reveal][data-ritardo='1'] { transition-delay: .1s; }
+  .js-reveal [data-reveal][data-ritardo='2'] { transition-delay: .2s; }
+  .js-reveal [data-reveal][data-ritardo='3'] { transition-delay: .3s; }
+</style>

@@ -1,0 +1,350 @@
+---
+/**
+ * Home di ENEA Roma — contenuto condiviso fra IT ed EN.
+ *
+ * Chi arriva qui vuole sapere tre cose, in quest'ordine: che posto è, cosa si
+ * mangia, dove e quando. Il sito risponde in quest'ordine e con le fotografie,
+ * perché un ristorante si sceglie con gli occhi. Il testo resta il minimo
+ * necessario: il manuale del brand è un documento interno per la squadra e non
+ * va in vetrina.
+ *
+ * Le informazioni non ancora confermate dal cliente sono marcate `data-attesa`:
+ * si dichiara l'assenza, non la si maschera.
+ */
+import { Image } from 'astro:assets';
+import { brand, testi, contatti, orari, apertura, ATTESA, type Locale } from '../data/site';
+import Marchio from './Marchio.astro';
+import Pino from './Pino.astro';
+import salaPanoramica from '../assets/foto/sala-panoramica.png';
+import salaVerticale from '../assets/foto/sala-verticale.jpeg';
+import facciataIngresso from '../assets/foto/facciata-ingresso.jpeg';
+import facciataMarciapiede from '../assets/foto/facciata-marciapiede.jpeg';
+import tavola from '../assets/foto/tavola-dettaglio.jpeg';
+import barDettaglio from '../assets/foto/bar-dettaglio.jpeg';
+import cocktail from '../assets/dettagli/cocktail.jpg';
+import targa from '../assets/dettagli/targa.jpg';
+
+const locale = (Astro.currentLocale ?? 'it') as Locale;
+const t = testi[locale];
+
+const L = locale === 'en'
+  ? {
+      prenota: 'Book a table', scopri: 'The restaurant', scorri: 'Scroll',
+      etLocale: 'The restaurant', etCucina: 'The kitchen', etBar: 'The bar',
+      etGalleria: 'ENEA in pictures', etDove: 'Visit us',
+      tLocale: 'A dining room under brick vaults, a few steps from Via Veneto',
+      pLocale: 'Vaulted ceilings, green velvet, candlelight and a wall of bottles. Roman in character, Mediterranean in spirit, open from the evening aperitivo through to dinner.',
+      tCucina: 'Mediterranean cooking, Roman roots',
+      pCucina: 'Seasonal ingredients and clear flavours, plated with care but never precious. The dishes are the ones you want to order again.',
+      tBar: 'Come in just for a drink',
+      pBar: 'The Italian aperitivo, the classic cocktails made properly, and a wine list chosen to follow the kitchen.',
+      tDove: 'Via Boncompagni 83, Rome',
+      menuAttesa: 'The full menu will be published here as soon as the kitchen has closed it.',
+      barAttesa: 'The cocktail and wine list is on its way.',
+      indirizzo: 'Address', telefono: 'Phone', orariL: 'Opening hours', scrivi: 'Email',
+      inArrivo: 'coming soon',
+      comePrenotare: 'Bookings open with the restaurant. The telephone number and booking email will appear on this page as soon as they are live.',
+      altPanoramica: 'The ENEA dining room under its brick vaults',
+      altSala: 'Tables laid for the evening at ENEA',
+      altIngresso: 'The ENEA entrance on Via Boncompagni at night',
+      altMarciapiede: 'The ENEA windows seen from the pavement',
+      altCocktail: 'A coupe glass on a marble bar top',
+      altBar: 'The bottle wall and glass-globe lamps at ENEA',
+      altTarga: 'The Via Boncompagni street sign',
+      altTavola: 'A table laid at ENEA: brass charger, glasses, candlelight',
+    }
+  : {
+      prenota: 'Prenota un tavolo', scopri: 'Il ristorante', scorri: 'Scorri',
+      etLocale: 'Il ristorante', etCucina: 'La cucina', etBar: 'Il bar',
+      etGalleria: 'ENEA in immagini', etDove: 'Vieni a trovarci',
+      tLocale: 'Una sala sotto volte di mattoni, a due passi da Via Veneto',
+      pLocale: 'Soffitti a volta, velluto verde, luce di candela e una parete di bottiglie. Romano nel carattere, mediterraneo nello spirito, aperto dall’aperitivo fino a cena.',
+      tCucina: 'Cucina mediterranea, radici romane',
+      pCucina: 'Ingredienti di stagione e sapori netti, impiattati con cura ma senza sussiego. Piatti che si ha voglia di riordinare.',
+      tBar: 'Si entra anche solo per bere',
+      pBar: "L'aperitivo italiano, i cocktail classici fatti come si deve e una carta dei vini scelta per seguire la cucina.",
+      tDove: 'Via Boncompagni 83, Roma',
+      menuAttesa: 'Il menu completo comparirà qui appena la cucina lo avrà chiuso.',
+      barAttesa: 'La carta dei cocktail e dei vini è in arrivo.',
+      indirizzo: 'Indirizzo', telefono: 'Telefono', orariL: 'Orari', scrivi: 'Email',
+      inArrivo: 'in arrivo',
+      comePrenotare: 'Le prenotazioni aprono insieme al ristorante. Numero e indirizzo per prenotare compariranno qui appena saranno attivi.',
+      altPanoramica: 'La sala di ENEA sotto le volte in mattoni',
+      altSala: 'Tavoli apparecchiati per la sera da ENEA',
+      altIngresso: "L'ingresso di ENEA su Via Boncompagni di sera",
+      altMarciapiede: 'Le vetrine di ENEA viste dal marciapiede',
+      altCocktail: 'Una coppa su un banco di marmo',
+      altBar: 'La vetrina delle bottiglie e le lampade a sfera di ENEA',
+      altTarga: 'La targa di Via Boncompagni',
+      altTavola: 'Una tavola apparecchiata da ENEA: sottopiatto in ottone, calici, candela',
+    };
+
+const dato = (v: string) => (v === ATTESA ? L.inArrivo : v);
+const indirizzo = `${contatti.via} ${contatti.civico}, ${contatti.cap} ${contatti.citta}`;
+---
+
+<!-- ═════════ APERTURA ═════════ -->
+<section class="apertura">
+  <div class="apertura__foto" data-parallasse>
+    <Image src={salaPanoramica} alt={L.altPanoramica} widths={[900, 1448]} sizes="100vw" loading="eager" fetchpriority="high" />
+  </div>
+  <div class="apertura__velo" aria-hidden="true"></div>
+
+  <div class="wrap apertura__corpo">
+    <h1 class="apertura__marchio"><Marchio titolo={brand.nomeEsteso} /></h1>
+    <p class="apertura__claim">{t.claimLancio}</p>
+    <p class="apertura__riga">
+      <span>{indirizzo}</span><i aria-hidden="true"></i><span>{apertura.periodo[locale]}</span>
+    </p>
+    <div class="apertura__azioni">
+      <a class="btn btn--pieno" href="#dove">{L.prenota}</a>
+      <a class="btn btn--nudo" href="#locale">{L.scopri}</a>
+    </div>
+  </div>
+  <div class="apertura__scorri" aria-hidden="true"><span>{L.scorri}</span><i></i></div>
+</section>
+
+<!-- ═════════ IL RISTORANTE ═════════ -->
+<section id="locale">
+  <div class="wrap duetto">
+    <figure class="quadro duetto__foto" data-reveal>
+      <Image src={salaVerticale} alt={L.altSala} widths={[560, 800, 1086]} sizes="(min-width: 64rem) 46vw, 92vw" loading="lazy" />
+    </figure>
+    <div class="duetto__testo">
+      <p class="eyebrow" data-reveal>{L.etLocale}</p>
+      <h2 data-reveal data-ritardo="1">{L.tLocale}</h2>
+      <p class="corpo" data-reveal data-ritardo="2">{L.pLocale}</p>
+      <div class="fregio fregio--sinistra" data-reveal data-ritardo="3" aria-hidden="true"><Pino /></div>
+      <p class="corpo corpo--tenue" data-reveal data-ritardo="3">{t.origine}</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ CUCINA E BAR ═════════ -->
+<section id="menu" class="portate">
+  <div class="wrap portate__griglia">
+    <article class="portata">
+      <figure class="quadro portata__foto" data-reveal>
+        <Image src={tavola} alt={L.altTavola} widths={[480, 786]} sizes="(min-width: 58rem) 44vw, 92vw" loading="lazy" />
+      </figure>
+      <p class="eyebrow" data-reveal>{L.etCucina}</p>
+      <h2 data-reveal data-ritardo="1">{L.tCucina}</h2>
+      <p class="corpo" data-reveal data-ritardo="2">{L.pCucina}</p>
+      <p class="nota" data-reveal data-ritardo="3" data-attesa>{L.menuAttesa}</p>
+    </article>
+
+    <article class="portata" id="bar">
+      <figure class="quadro portata__foto" data-reveal>
+        <Image src={barDettaglio} alt={L.altBar} widths={[420, 540]} sizes="(min-width: 58rem) 44vw, 92vw" loading="lazy" />
+      </figure>
+      <p class="eyebrow" data-reveal>{L.etBar}</p>
+      <h2 data-reveal data-ritardo="1">{L.tBar}</h2>
+      <p class="corpo" data-reveal data-ritardo="2">{L.pBar}</p>
+      <p class="nota" data-reveal data-ritardo="3" data-attesa>{L.barAttesa}</p>
+    </article>
+  </div>
+</section>
+
+<!-- ═════════ GALLERIA ═════════ -->
+<section id="galleria" class="galleria">
+  <div class="wrap">
+    <p class="eyebrow galleria__et" data-reveal>{L.etGalleria}</p>
+    <div class="galleria__griglia">
+      <figure class="quadro" data-reveal>
+        <Image src={facciataMarciapiede} alt={L.altMarciapiede} widths={[520, 800, 1086]} sizes="(min-width: 58rem) 38vw, 92vw" loading="lazy" />
+      </figure>
+      <figure class="quadro quadro--fermo" data-reveal data-ritardo="1">
+        <Image src={targa} alt={L.altTarga} widths={[294]} sizes="(min-width: 58rem) 24vw, 46vw" loading="lazy" />
+      </figure>
+      <figure class="quadro quadro--fermo" data-reveal data-ritardo="2">
+        <Image src={cocktail} alt={L.altCocktail} widths={[268]} sizes="(min-width: 58rem) 24vw, 46vw" loading="lazy" />
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ COMMIATO ═════════ -->
+<section class="commiato">
+  <p class="commiato__frase" data-reveal>{t.claimApertura}</p>
+</section>
+
+<!-- ═════════ DOVE SIAMO ═════════ -->
+<section id="dove">
+  <div class="wrap dove">
+    <div class="dove__testo">
+      <p class="eyebrow" data-reveal>{L.etDove}</p>
+      <h2 data-reveal data-ritardo="1">{L.tDove}</h2>
+      <dl class="recapiti" data-reveal data-ritardo="2">
+        <div><dt>{L.indirizzo}</dt><dd>{indirizzo}</dd></div>
+        <div><dt>{L.orariL}</dt><dd data-attesa>{dato(orari.cucina)}</dd></div>
+        <div><dt>{L.telefono}</dt><dd data-attesa>{dato(contatti.telefono)}</dd></div>
+        <div><dt>{L.scrivi}</dt><dd data-attesa>{dato(contatti.email)}</dd></div>
+      </dl>
+      <div class="avviso" data-reveal data-ritardo="3">
+        <p><strong>{apertura.periodo[locale]}.</strong> {apertura.dettaglio[locale]}</p>
+        <p>{L.comePrenotare}</p>
+      </div>
+    </div>
+    <figure class="quadro dove__foto" data-reveal data-ritardo="1">
+      <Image src={facciataIngresso} alt={L.altIngresso} widths={[520, 800, 1086]} sizes="(min-width: 64rem) 38vw, 92vw" loading="lazy" />
+    </figure>
+  </div>
+</section>
+
+<style>
+  section { position: relative; padding-block: var(--stack); }
+  .corpo { color: var(--fumo); max-width: var(--misura); }
+  .corpo--tenue { font-size: var(--fs-sm); opacity: .85; }
+  .nota { font-size: var(--fs-sm); color: var(--fumo); max-width: var(--misura); }
+
+  /* ── apertura ── */
+  .apertura {
+    min-height: 100svh; display: grid; grid-template-rows: 1fr auto;
+    gap: clamp(1.5rem, 4vh, 3rem);
+    padding: calc(var(--testata-h) + clamp(.75rem, 3vh, 1.75rem)) 0 clamp(1.25rem, 2.5vh, 2rem);
+    overflow: clip;   /* il parallasse muove la foto: senza questo invade la sezione dopo */
+  }
+  /* riserva sopra ≥ dello spostamento massimo del parallasse (14svh) */
+  .apertura__foto { position: absolute; inset: -16% 0 -4%; z-index: -2; will-change: transform; }
+  .apertura__foto :global(img) {
+    width: 100%; height: 100%; object-fit: cover; object-position: center 46%;
+    filter: saturate(.95) contrast(1.03);
+  }
+  .apertura__velo {
+    position: absolute; inset: 0; z-index: -1;
+    background:
+      radial-gradient(74% 58% at 50% 44%, rgba(10,8,6,.5), rgba(10,8,6,.85) 74%),
+      linear-gradient(to bottom, rgba(10,8,6,.9), transparent 26%, transparent 60%, var(--pece));
+  }
+  .apertura__corpo {
+    align-self: center; display: grid; justify-items: center; text-align: center;
+    gap: clamp(1.1rem, 2.4vw, 1.9rem);
+  }
+  .apertura__marchio {
+    margin: 0; --marchio-larghezza: min(78vw, 26rem); color: var(--oro-luce);
+    animation: emerge 1.9s var(--ease-lento) both;
+  }
+  @keyframes emerge { from { opacity: 0; transform: translateY(14px) scale(1.02); } to { opacity: 1; transform: none; } }
+  .apertura__claim {
+    font-family: var(--font-display); font-size: var(--fs-claim);
+    line-height: 1.35; max-width: 22ch; color: var(--travertino);
+    animation: sale 1.4s var(--ease) .85s both;
+  }
+  .apertura__riga {
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .5rem 1.15rem;
+    font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .24em;
+    text-transform: uppercase; color: var(--fumo);
+    animation: sale 1.4s var(--ease) 1.05s both;
+  }
+  .apertura__riga i { width: 3px; height: 3px; background: var(--oro); transform: rotate(45deg); }
+  @media (max-width: 40rem) {
+    .apertura__riga { flex-direction: column; gap: .45rem; }
+    .apertura__riga i { display: none; }
+  }
+  .apertura__azioni {
+    display: flex; flex-wrap: wrap; gap: .8rem; justify-content: center;
+    animation: sale 1.4s var(--ease) 1.25s both;
+  }
+  @keyframes sale { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+  .apertura__scorri {
+    justify-self: center; display: grid; justify-items: center; gap: .7rem;
+    font-family: var(--font-lapide); font-size: .5625rem; letter-spacing: .32em;
+    text-transform: uppercase; color: var(--fumo);
+    animation: sale 1.4s var(--ease) 1.7s both;
+  }
+  .apertura__scorri i {
+    display: block; width: 1px; height: 48px; transform-origin: top;
+    background: linear-gradient(to bottom, var(--oro), transparent);
+    animation: filo 3s var(--ease) infinite;
+  }
+  @keyframes filo { 0%, 100% { transform: scaleY(.3); opacity: .35; } 50% { transform: scaleY(1); opacity: .9; } }
+  @media (max-height: 860px), (max-width: 48rem) { .apertura__scorri { display: none; } }
+
+  /* ── il ristorante ── */
+  .duetto { display: grid; gap: clamp(2.25rem, 5vw, 4.5rem); align-items: center; }
+  .duetto__testo { display: grid; gap: 1.4rem; align-content: center; }
+  .duetto__foto :global(img) { max-height: 78vh; object-fit: cover; }
+  .fregio { display: flex; align-items: center; gap: 1.25rem; color: var(--oro); --pino-larghezza: 44px; }
+  .fregio::after { content: ''; flex: 1; height: 1px; background: linear-gradient(to right, currentColor, transparent); }
+  .fregio--sinistra { width: min(280px, 68%); }
+  @media (min-width: 64rem) { .duetto { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); } }
+
+  /* ── cucina e bar ── */
+  .portate__griglia { display: grid; gap: clamp(2.5rem, 5vw, 4rem); }
+  .portata { display: grid; gap: 1.15rem; align-content: start; }
+  .portata__foto { margin-bottom: .6rem; }
+  .portata__foto :global(img) { aspect-ratio: 4 / 3; object-fit: cover; }
+  @media (min-width: 58rem) { .portate__griglia { grid-template-columns: 1fr 1fr; } }
+
+  /* ── galleria ── */
+  .galleria__et { margin-bottom: clamp(1.5rem, 3vw, 2.5rem); }
+  /* la colonna larga va alla fotografia ad alta risoluzione; i due ritagli
+     del moodboard (≈290px nativi) restano alla loro misura, mai upscalati */
+  .galleria__griglia { display: grid; gap: clamp(.75rem, 1.6vw, 1.25rem); grid-template-columns: 1fr 1fr; }
+  .galleria__griglia :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .galleria__griglia figure { margin: 0; height: clamp(16rem, 60vw, 26rem); }
+  .galleria__griglia figure:first-child { grid-column: 1 / -1; height: clamp(14rem, 52vw, 22rem); }
+  @media (min-width: 58rem) {
+    .galleria__griglia { grid-template-columns: 38fr 24fr 24fr; }
+    /* un'unica altezza di riga: le tre cornici chiudono sullo stesso filo */
+    .galleria__griglia figure,
+    .galleria__griglia figure:first-child { grid-column: auto; height: clamp(24rem, 34vw, 30rem); }
+  }
+
+  /* ── commiato ── */
+  .commiato { border-block: 1px solid var(--bordo); text-align: center; }
+  .commiato__frase {
+    font-family: var(--font-display); font-size: var(--fs-triade); line-height: 1.35;
+    color: var(--travertino); text-wrap: balance;
+    max-width: 34ch; margin-inline: auto; padding-inline: var(--gutter);
+  }
+
+  /* ── dove siamo ── */
+  .dove { display: grid; gap: clamp(2.25rem, 5vw, 4rem); align-items: start; }
+  .dove__testo { display: grid; gap: 1.6rem; }
+  .recapiti { display: grid; gap: 1.4rem; grid-template-columns: 1fr; margin: 0; }
+  .recapiti dt {
+    font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .22em;
+    text-transform: uppercase; color: var(--oro); margin-bottom: .45rem;
+  }
+  .recapiti dd { margin: 0; color: var(--travertino); }
+  .avviso {
+    display: grid; gap: .7rem; max-width: 48ch; color: var(--fumo);
+    padding: 1.25rem 1.4rem; border-left: 1px solid var(--oro); background: var(--notte);
+  }
+  .avviso strong { color: var(--travertino); font-weight: 400; }
+  .dove__foto :global(img) { max-height: 64vh; object-fit: cover; }
+  @media (min-width: 40rem) { .recapiti { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 64rem) { .dove { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .apertura__marchio, .apertura__claim, .apertura__riga,
+    .apertura__azioni, .apertura__scorri { animation: none; }
+    .apertura__scorri i { animation: none; transform: scaleY(1); }
+    .apertura__foto { inset: 0; }
+  }
+</style>
+
+<script>
+  /* Parallasse tenue sulla fotografia d'apertura: una sola proprietà animata, in rAF. */
+  let stacca: (() => void) | null = null;
+
+  function avvia() {
+    stacca?.();
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const foto = document.querySelector<HTMLElement>('[data-parallasse]');
+    if (!foto) return;
+    let atteso = false;
+    const muovi = () => {
+      const y = Math.min(scrollY, innerHeight);
+      foto.style.transform = `translate3d(0, ${y * 0.14}px, 0)`;
+      atteso = false;
+    };
+    const alloScroll = () => { if (!atteso) { atteso = true; requestAnimationFrame(muovi); } };
+    addEventListener('scroll', alloScroll, { passive: true });
+    stacca = () => removeEventListener('scroll', alloScroll);
+    muovi();
+  }
+
+  document.addEventListener('astro:page-load', avvia);
+</script>

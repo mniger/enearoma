@@ -1,0 +1,137 @@
+---
+import Wordmark from './Wordmark.astro';
+import MenuMobile from './MenuMobile.astro';
+import { brand, nav, type Locale } from '../data/site';
+const locale = (Astro.currentLocale ?? 'it') as Locale;
+const voci = nav[locale];
+const base = locale === 'en' ? '/en' : '';
+const altLang = locale === 'en' ? { code: 'IT', href: '/' } : { code: 'EN', href: '/en/' };
+const prenota = locale === 'en' ? 'Book' : 'Prenota';
+---
+<header class="testata" id="testata" data-scrollato="no" data-tenda="no">
+  <a class="testata__marchio" href={base + '/'} aria-label={brand.nomeEsteso}><Wordmark /></a>
+
+  <nav class="testata__nav" aria-label={locale === 'en' ? 'Main navigation' : 'Navigazione principale'}>
+    {voci.map((v) => <a href={base + '/' + v.href} data-ancora={v.href.slice(1)}>{v.label}</a>)}
+  </nav>
+
+  <div class="testata__coda">
+    <a class="lingua" href={altLang.href} hreflang={altLang.code.toLowerCase()}>{altLang.code}</a>
+    <a class="btn--mini" href={base + '/#dove'}>{prenota}</a>
+    <MenuMobile />
+  </div>
+</header>
+
+<script>
+  let staccaScroll: (() => void) | null = null;
+  let spia: IntersectionObserver | null = null;
+
+  function avvia() {
+    staccaScroll?.();
+    spia?.disconnect();
+    const testata = document.getElementById('testata');
+    if (!testata) return;
+
+    let atteso = false;
+    const aggiorna = () => {
+      testata.dataset.scrollato = scrollY > 48 ? 'si' : 'no';
+      atteso = false;
+    };
+    const alloScroll = () => { if (!atteso) { atteso = true; requestAnimationFrame(aggiorna); } };
+    addEventListener('scroll', alloScroll, { passive: true });
+    staccaScroll = () => removeEventListener('scroll', alloScroll);
+    aggiorna();
+
+    // La voce di menu segue la sezione in lettura. Si tiene l'ultima sezione
+    // entrata nella fascia alta del viewport, non la più visibile: con sezioni
+    // di altezza molto diversa quella regola sfarfalla.
+    const link = new Map<string, Element>();
+    testata.querySelectorAll<HTMLAnchorElement>('.testata__nav a[data-ancora]')
+      .forEach((a) => link.set(a.dataset.ancora!, a));
+    const sezioni = [...link.keys()]
+      .map((id) => document.getElementById(id))
+      .filter((e): e is HTMLElement => e !== null);
+    if (!sezioni.length) return;
+
+    let corrente: string | null = null;
+    spia = new IntersectionObserver((voci) => {
+      voci.forEach((v) => { if (v.isIntersecting) corrente = v.target.id; });
+      link.forEach((a, id) => a.toggleAttribute('data-qui', id === corrente));
+    }, { rootMargin: '-18% 0px -70% 0px' });
+    sezioni.forEach((sez) => spia!.observe(sez));
+  }
+
+  document.addEventListener('astro:page-load', avvia);
+</script>
+
+<style>
+  .testata {
+    position: fixed; inset: 0 0 auto 0; z-index: 50;
+    display: flex; align-items: center; gap: 1.5rem;
+    padding: 1rem var(--gutter);
+    background: linear-gradient(to bottom, rgba(10,8,6,.72), transparent);
+    transition: background .5s var(--ease), padding .5s var(--ease), border-color .5s var(--ease);
+    border-bottom: 1px solid transparent;
+  }
+  /* dopo lo scroll la testata si posa: fondo pieno, filo d'oro, meno respiro */
+  .testata[data-scrollato='si'] {
+    background: rgba(10, 8, 6, .9);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    border-bottom-color: var(--bordo);
+    padding-block: .65rem;
+  }
+  .testata__marchio {
+    position: relative; z-index: 3; text-decoration: none; margin-right: auto;
+    --wordmark-larghezza: 132px; color: var(--oro-chiaro);
+    display: flex; align-items: center; min-height: 44px;   /* bersaglio pieno */
+    transition: color .4s var(--ease);
+  }
+  .testata__marchio:hover { color: var(--oro-luce); }
+  .testata[data-scrollato="si"] .testata__marchio { --wordmark-larghezza: 118px; }
+  .testata__nav { display: none; gap: clamp(1rem, 2vw, 2.1rem); }
+  .testata__nav a {
+    position: relative;
+    font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .2em;
+    text-transform: uppercase; text-decoration: none; color: var(--travertino); white-space: nowrap;
+    display: inline-flex; align-items: center; min-height: 40px;
+  }
+  /* filo d'oro che si apre da sinistra */
+  .testata__nav a::after {
+    content: ''; position: absolute; left: 0; bottom: 9px; height: 1px; width: 100%;
+    background: var(--oro); transform: scaleX(0); transform-origin: left;
+    transition: transform .45s var(--ease);
+  }
+  .testata__nav a:hover::after, .testata__nav a:focus-visible::after { transform: scaleX(1); }
+  .testata__nav a[data-qui] { color: var(--oro-chiaro); }
+  .testata__nav a[data-qui]::after { transform: scaleX(1); }
+
+  .testata__coda { position: relative; z-index: 2; display: flex; align-items: center; gap: 1rem; }
+  .lingua {
+    font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .12em;
+    color: var(--fumo); text-decoration: none; padding: .8rem .3rem;
+    transition: color .3s ease;
+  }
+  .lingua:hover { color: var(--oro-chiaro); }
+  .btn--mini {
+    font-family: var(--font-lapide); font-size: 0.625rem; letter-spacing: .2em; text-transform: uppercase;
+    text-decoration: none; padding: .8rem 1.15rem; border: 1px solid var(--oro); color: var(--oro-chiaro);
+    white-space: nowrap;
+    transition: background-color .4s var(--ease), color .4s var(--ease);
+  }
+  .btn--mini:hover { background: var(--oro); color: var(--pece); }
+
+  /* a tenda aperta il CTA vive dentro la tenda: in barra sarebbe un doppione */
+  .testata[data-tenda='si'] .btn--mini,
+  .testata[data-tenda='si'] .lingua { opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+
+  /* su schermi stretti il cambio lingua vive nella tenda, non nella barra */
+  @media (max-width: 30rem) { .lingua { display: none; } }
+  /* la barra stretta ospita marchio, prenotazione e menu: il marchio cede spazio */
+  @media (max-width: 34rem) {
+    .testata { gap: .75rem; }
+    .testata__marchio { --wordmark-larghezza: 100px; }
+    .testata[data-scrollato="si"] .testata__marchio { --wordmark-larghezza: 92px; }
+    .btn--mini { font-size: .5625rem; padding: .8rem .85rem; letter-spacing: .16em; }
+  }
+  @media (min-width: 62rem) { .testata__nav { display: flex; } }
+</style>

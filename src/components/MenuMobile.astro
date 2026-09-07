@@ -1,0 +1,142 @@
+---
+/** Navigazione mobile a tendina. Il pulsante vive nell'header; la tenda è fixed. */
+import { nav, type Locale } from '../data/site';
+const locale = (Astro.currentLocale ?? 'it') as Locale;
+const voci = nav[locale];
+const base = locale === 'en' ? '/en' : '';
+const altLang = locale === 'en' ? { code: 'Italiano', href: '/' } : { code: 'English', href: '/en/' };
+const etichetta = locale === 'en' ? 'Menu' : 'Menu';
+const prenota = locale === 'en' ? 'Book a table' : 'Prenota un tavolo';
+---
+<button class="apri" id="apri-menu" type="button" aria-expanded="false" aria-controls="tenda" aria-label={etichetta}>
+  <i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i>
+</button>
+
+<nav class="tenda" id="tenda" aria-label={etichetta} data-aperta="no">
+  <div class="tenda__voci">
+    {voci.map((v) => <a href={base + '/' + v.href}>{v.label}</a>)}
+  </div>
+  <a class="tenda__prenota" href={base + '/#dove'}>{prenota}</a>
+  <a class="tenda__lingua" href={altLang.href} hreflang={altLang.code === 'English' ? 'en' : 'it'}>{altLang.code}</a>
+</nav>
+
+<script>
+  let stacca: (() => void) | null = null;
+
+  function avvia() {
+    stacca?.();
+    const tasto = document.getElementById('apri-menu');
+    const tenda = document.getElementById('tenda');
+    const testata = document.getElementById('testata');
+    if (!tasto || !tenda) return;
+
+    // A tenda aperta il resto della pagina esce dal giro del focus: senza,
+    // il tabulatore continua a scorrere link coperti e invisibili.
+    const dietro = () => [
+      document.querySelector('main'),
+      document.querySelector('footer'),
+      testata?.querySelector('.btn--mini'),
+      testata?.querySelector('.lingua'),
+      document.querySelector('.salta'),
+    ].filter((e): e is HTMLElement => e instanceof HTMLElement);
+
+    const commuta = (apri: boolean) => {
+      tenda.dataset.aperta = apri ? 'si' : 'no';
+      tasto.setAttribute('aria-expanded', String(apri));
+      if (testata) testata.dataset.tenda = apri ? 'si' : 'no';
+      dietro().forEach((el) => { el.inert = apri; });
+      document.body.style.overflow = apri ? 'hidden' : '';
+      // il focus si sposta a transizione finita: su un elemento ancora
+      // invisibile la chiamata verrebbe ignorata dal browser
+      if (apri) {
+        tenda.addEventListener('transitionend', function primo() {
+          tenda.removeEventListener('transitionend', primo);
+          if (tenda.dataset.aperta === 'si') tenda.querySelector('a')?.focus({ preventScroll: true });
+        });
+      }
+    };
+
+    const alClick = () => commuta(tenda.dataset.aperta !== 'si');
+    const nellaTenda = (e: Event) => {
+      if ((e.target as HTMLElement).closest('a')) commuta(false);
+    };
+    const allaFuga = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && tenda.dataset.aperta === 'si') { commuta(false); tasto.focus(); }
+    };
+    const grande = matchMedia('(min-width: 62rem)');
+    const alCambio = (e: MediaQueryListEvent) => { if (e.matches) commuta(false); };
+
+    tasto.addEventListener('click', alClick);
+    tenda.addEventListener('click', nellaTenda);
+    addEventListener('keydown', allaFuga);
+    grande.addEventListener('change', alCambio);
+
+    stacca = () => {
+      tasto.removeEventListener('click', alClick);
+      tenda.removeEventListener('click', nellaTenda);
+      removeEventListener('keydown', allaFuga);
+      grande.removeEventListener('change', alCambio);
+      document.body.style.overflow = '';
+    };
+  }
+
+  document.addEventListener('astro:page-load', avvia);
+</script>
+
+<style>
+  .apri {
+    position: relative; z-index: 2;
+    display: grid; align-content: center; gap: 5px;
+    width: 44px; height: 44px; padding: 0 5px;   /* bersaglio pieno per il pollice */
+    background: none; border: 0; cursor: pointer;
+  }
+  .apri i { display: block; height: 1px; background: var(--travertino); transition: transform .4s var(--ease), opacity .25s ease; }
+  .apri[aria-expanded='true'] i:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .apri[aria-expanded='true'] i:nth-child(2) { opacity: 0; }
+  .apri[aria-expanded='true'] i:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+  @media (min-width: 62rem) { .apri { display: none; } }
+
+  .tenda {
+    position: fixed; inset: 0; z-index: 1;
+    display: grid; align-content: center; justify-items: center; gap: 2rem;
+    padding: 5rem var(--gutter) 3rem;
+    background: rgba(10, 8, 6, .975);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    opacity: 0; visibility: hidden;
+    transition: opacity .45s var(--ease), visibility .45s;
+  }
+  .tenda[data-aperta='si'] { opacity: 1; visibility: visible; }
+  .tenda__voci { display: grid; justify-items: center; gap: .2rem; }
+  .tenda__voci a {
+    font-family: var(--font-display); font-size: clamp(1.7rem, 1.2rem + 3vw, 2.4rem); line-height: 1.25;
+    color: var(--travertino); text-decoration: none; padding-block: .4rem;
+    opacity: 0; transform: translateY(14px);
+    transition: opacity .5s var(--ease), transform .5s var(--ease), color .3s ease;
+  }
+  .tenda[data-aperta='si'] .tenda__voci a { opacity: 1; transform: none; }
+  .tenda__voci a:nth-child(1) { transition-delay: .06s; }
+  .tenda__voci a:nth-child(2) { transition-delay: .12s; }
+  .tenda__voci a:nth-child(3) { transition-delay: .18s; }
+  .tenda__voci a:nth-child(4) { transition-delay: .24s; }
+  .tenda__voci a:nth-child(5) { transition-delay: .30s; }
+  .tenda__voci a:hover { color: var(--oro-chiaro); }
+  .tenda__prenota {
+    font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .22em; text-transform: uppercase;
+    text-decoration: none; padding: .95rem 1.8rem; background: var(--oro); color: var(--pece);
+    opacity: 0; transform: translateY(14px);
+    transition: opacity .5s var(--ease) .34s, transform .5s var(--ease) .34s;
+  }
+  .tenda[data-aperta='si'] .tenda__prenota { opacity: 1; transform: none; }
+  .tenda__lingua {
+    font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .24em; text-transform: uppercase;
+    color: var(--fumo); text-decoration: none; padding: .75rem .5rem;
+  }
+  .tenda__lingua::after {
+    content: ''; display: block; height: 1px; margin-top: .3rem; background: var(--bordo);
+  }
+  @media (min-width: 62rem) { .tenda { display: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .tenda, .tenda__voci a, .tenda__prenota, .apri i { transition-duration: .01ms !important; }
+    .tenda__voci a, .tenda__prenota { transform: none; }
+  }
+</style>
