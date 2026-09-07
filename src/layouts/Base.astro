@@ -1,10 +1,9 @@
 ---
 /** Layout di base: <head> SEO-ready, font self-hosted, header/footer. */
+// Solo i pesi realmente usati: Cormorant 400 (titoli), Cinzel 400 (etichette),
+// Jost 300 (testo) e 400 (evidenza). Ogni peso in più è banda sprecata.
 import '@fontsource/cormorant-garamond/400.css';
-import '@fontsource/cormorant-garamond/500.css';
-import '@fontsource/cormorant-garamond/400-italic.css';
 import '@fontsource/cinzel/400.css';
-import '@fontsource/cinzel/600.css';
 import '@fontsource/jost/300.css';
 import '@fontsource/jost/400.css';
 import '../styles/global.css';
@@ -12,7 +11,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Reveal from '../components/Reveal.astro';
 import { ClientRouter } from 'astro:transitions';
-import { brand, contatti, type Locale } from '../data/site';
+import { brand, contatti, legale, type Locale } from '../data/site';
 
 interface Props { title: string; description: string }
 const { title, description } = Astro.props;
@@ -26,6 +25,8 @@ const datiStrutturati = {
   '@context': 'https://schema.org',
   '@type': 'Restaurant',
   name: brand.nomeEsteso,
+  legalName: legale.ragioneSociale,
+  vatID: legale.partitaIva,
   servesCuisine: ['Mediterranea', 'Italiana'],
   url: Astro.site?.href,
   image: ogImage.href,
@@ -69,6 +70,7 @@ const datiStrutturati = {
     <link rel="alternate" hreflang="x-default" href={new URL('/', Astro.site)} />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#0A0806" />
     <!--
       Dati strutturati schema.org/Restaurant.

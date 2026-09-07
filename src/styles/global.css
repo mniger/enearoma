@@ -26,7 +26,7 @@ a { color: inherit; }
 ::selection { background: var(--oro); color: var(--pece); }
 :focus-visible { outline: 1px solid var(--oro-chiaro); outline-offset: 4px; }
 
-h1, h2, h3 { font-family: var(--font-display); font-weight: 300; text-wrap: balance; margin: 0; line-height: 1.12; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; text-wrap: balance; margin: 0; line-height: 1.12; }
 h2 { font-size: var(--fs-h2); letter-spacing: -0.012em; }
 h3 { font-size: var(--fs-h3); }
 p  { margin: 0; text-wrap: pretty; }

@@ -56,7 +56,12 @@ const prenota = locale === 'en' ? 'Book' : 'Prenota';
     let corrente: string | null = null;
     spia = new IntersectionObserver((voci) => {
       voci.forEach((v) => { if (v.isIntersecting) corrente = v.target.id; });
-      link.forEach((a, id) => a.toggleAttribute('data-qui', id === corrente));
+      link.forEach((a, id) => {
+        const attivo = id === corrente;
+        a.toggleAttribute('data-qui', attivo);
+        if (attivo) a.setAttribute('aria-current', 'true');
+        else a.removeAttribute('aria-current');
+      });
     }, { rootMargin: '-18% 0px -70% 0px' });
     sezioni.forEach((sez) => spia!.observe(sez));
   }
