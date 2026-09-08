@@ -82,7 +82,9 @@ const datiStrutturati = {
     <meta name="twitter:card" content="summary_large_image" />
 
     {noindex && <meta name="robots" content="noindex" />}
-    {!noindex && (
+    {/* gli hreflang valgono solo per la coppia di home: sulle altre pagine
+        dichiarerebbero alternates che non le ricambiano */}
+    {!noindex && ['/', '/en/'].includes(Astro.url.pathname) && (
       <>
         <link rel="alternate" hreflang="it" href={new URL('/', Astro.site)} />
         <link rel="alternate" hreflang="en" href={new URL('/en/', Astro.site)} />

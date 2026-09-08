@@ -8,8 +8,8 @@ const altLang = locale === 'en'
   ? { code: 'Italiano', href: '/', lang: 'it' }
   : { code: 'English', href: '/en/', lang: 'en' };
 const t = locale === 'en'
-  ? { attesa: 'Site in progress — some details still to come', iva: 'VAT no.' }
-  : { attesa: 'Sito in lavorazione — alcuni dati sono in arrivo', iva: 'P. IVA' };
+  ? { attesa: 'Site in progress — some details still to come', iva: 'VAT no.', note: 'Legal notes' }
+  : { attesa: 'Sito in lavorazione — alcuni dati sono in arrivo', iva: 'P. IVA', note: 'Note legali' };
 const citta = locale === 'en' ? 'Rome' : contatti.citta;
 const indirizzo = `${contatti.via} ${contatti.civico}, ${contatti.cap} ${citta}`;
 const anno = 2026;
@@ -21,6 +21,7 @@ const anno = 2026;
     <nav class="piede__nav" aria-label={locale === 'en' ? 'Footer' : 'Piè di pagina'}>
       {voci.map((v) => <a href={base + '/' + v.href}>{v.label}</a>)}
       <a href={altLang.href} hreflang={altLang.lang} lang={altLang.lang}>{altLang.code}</a>
+      <a href="/note-legali/" lang="it">{t.note}</a>
     </nav>
     <p class="piede__nota">© {anno} {legale.ragioneSociale} · {t.iva} {legale.partitaIva} · {t.attesa}</p>
   </div>

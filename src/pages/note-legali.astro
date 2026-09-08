@@ -1,0 +1,86 @@
+---
+/**
+ * Note legali — una pagina sola, sobria e vera.
+ * Il sito non ha moduli, cookie né tracciamento: la nota dice questo e chi è
+ * il titolare. Niente boilerplate GDPR gonfiato per trattamenti che non esistono.
+ */
+import Base from '../layouts/Base.astro';
+import { brand, legale, contatti } from '../data/site';
+---
+<Base
+  title="Note legali — ENEA Roma"
+  description="Titolare del sito, hosting e trattamento dei dati: le note legali di enearoma.it."
+>
+  <section class="nota-legale">
+    <div class="wrap nota-legale__corpo">
+      <p class="eyebrow">Note legali</p>
+      <h1>enearoma.it</h1>
+
+      <dl class="voci">
+        <div>
+          <dt>Titolare del sito</dt>
+          <dd>
+            {legale.ragioneSociale} — P. IVA {legale.partitaIva}<br />
+            Sede legale: {legale.sedeLegale}<br />
+            Ristorante: {contatti.via} {contatti.civico}, {contatti.cap} {contatti.citta}
+          </dd>
+        </div>
+        <div>
+          <dt>Contatti</dt>
+          <dd><a href="mailto:info@enearoma.it">info@enearoma.it</a></dd>
+        </div>
+        <div>
+          <dt>Cookie e tracciamento</dt>
+          <dd>
+            Questo sito non usa cookie, strumenti di analisi o profilazione.
+            Font e risorse sono serviti direttamente dal dominio, senza terze parti.
+          </dd>
+        </div>
+        <div>
+          <dt>Hosting</dt>
+          <dd>
+            Le pagine sono servite da GitHub Pages (GitHub, Inc.). Il server può
+            registrare dati tecnici di accesso (come gli indirizzi IP) nei log,
+            per la sola erogazione e sicurezza del servizio.
+          </dd>
+        </div>
+        <div>
+          <dt>Contenuti</dt>
+          <dd>Testi, fotografie e marchio © {legale.ragioneSociale} · Tutti i diritti riservati.</dd>
+        </div>
+      </dl>
+
+      <p class="nota-en" lang="en">
+        This site sets no cookies and runs no analytics or tracking. It is
+        operated by {legale.ragioneSociale} (VAT no. {legale.partitaIva}) and
+        served by GitHub Pages, which may log technical access data such as IP
+        addresses. Contact: <a href="mailto:info@enearoma.it">info@enearoma.it</a>.
+      </p>
+
+      <a class="ritorno" href="/">← {brand.nomeEsteso}</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nota-legale { display: grid; padding-block: calc(var(--testata-h) + var(--stack)) var(--stack); }
+  .nota-legale__corpo { display: grid; gap: 1.75rem; max-width: 46rem; }
+  h1 { font-size: var(--fs-h2); }
+  .voci { display: grid; gap: 1.5rem; margin: 0; }
+  .voci dt {
+    font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .22em;
+    text-transform: uppercase; color: var(--oro); margin-bottom: .4rem;
+  }
+  .voci dd { margin: 0; color: var(--fumo); max-width: var(--misura); }
+  .voci a, .nota-en a { color: var(--oro-chiaro); text-decoration: none; border-bottom: 1px solid var(--bordo); }
+  .voci a:hover, .nota-en a:hover { color: var(--oro-luce); }
+  .nota-en { font-size: var(--fs-sm); color: var(--fumo); opacity: .85; max-width: var(--misura); }
+  .ritorno {
+    justify-self: start; margin-top: .5rem;
+    font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .22em;
+    text-transform: uppercase; color: var(--oro-chiaro); text-decoration: none;
+    padding: .6rem 0;
+    transition: color .3s ease;
+  }
+  .ritorno:hover { color: var(--oro-luce); }
+</style>
