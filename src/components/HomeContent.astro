@@ -42,7 +42,7 @@ const L = locale === 'en'
       menuAttesa: 'The full menu will be published here as soon as the kitchen has finalised it.',
       barAttesa: 'The cocktail and wine list is on its way.',
       indirizzo: 'Address', telefono: 'Phone', orariL: 'Opening hours', scrivi: 'Email',
-      inArrivo: 'coming soon',
+      inArrivo: 'coming soon', indicazioni: 'Open in Google Maps',
       comePrenotare: 'Bookings will open when the restaurant does. The telephone number and booking email will appear on this page as soon as they are live.',
       altPanoramica: 'The ENEA dining room under its brick vaults',
       altSala: 'Tables laid for the evening at ENEA',
@@ -67,7 +67,7 @@ const L = locale === 'en'
       menuAttesa: 'Il menu completo comparirà qui appena la cucina lo avrà chiuso.',
       barAttesa: 'La carta dei cocktail e dei vini è in arrivo.',
       indirizzo: 'Indirizzo', telefono: 'Telefono', orariL: 'Orari', scrivi: 'Email',
-      inArrivo: 'in arrivo',
+      inArrivo: 'in arrivo', indicazioni: 'Apri in Google Maps',
       comePrenotare: 'Le prenotazioni aprono insieme al ristorante. Numero di telefono ed email per prenotare compariranno qui appena saranno attivi.',
       altPanoramica: 'La sala di ENEA sotto le volte in mattoni',
       altSala: 'Tavoli apparecchiati per la sera da ENEA',
@@ -177,7 +177,10 @@ const indirizzo = `${contatti.via} ${contatti.civico}, ${contatti.cap} ${citta}`
       <p class="eyebrow" data-reveal>{L.etDove}</p>
       <h2 data-reveal data-ritardo="1">{L.tDove}</h2>
       <dl class="recapiti" data-reveal data-ritardo="2">
-        <div><dt>{L.indirizzo}</dt><dd>{indirizzo}</dd></div>
+        <div>
+          <dt>{L.indirizzo}</dt>
+          <dd>{indirizzo}<br /><a class="indicazioni" href={contatti.mapsUrl} rel="noopener">{L.indicazioni}</a></dd>
+        </div>
         <div><dt>{L.orariL}</dt><dd data-attesa>{dato(orari.cucina)}</dd></div>
         <div><dt>{L.telefono}</dt><dd data-attesa>{dato(contatti.telefono)}</dd></div>
         <div><dt>{L.scrivi}</dt><dd data-attesa>{dato(contatti.email)}</dd></div>
@@ -312,6 +315,13 @@ const indirizzo = `${contatti.via} ${contatti.civico}, ${contatti.cap} ${citta}`
     text-transform: uppercase; color: var(--oro); margin-bottom: .45rem;
   }
   .recapiti dd { margin: 0; color: var(--travertino); }
+  .indicazioni {
+    display: inline-block; margin-top: .35rem;
+    font-size: var(--fs-sm); color: var(--oro-chiaro);
+    text-decoration: none; border-bottom: 1px solid var(--bordo);
+    transition: color .3s ease, border-color .3s ease;
+  }
+  .indicazioni:hover { color: var(--oro-luce); border-color: var(--oro); }
   .avviso {
     display: grid; gap: .7rem; max-width: 48ch; color: var(--fumo);
     padding: 1.25rem 1.4rem; border-left: 1px solid var(--oro); background: var(--notte);

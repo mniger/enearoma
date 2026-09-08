@@ -16,7 +16,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Reveal from '../components/Reveal.astro';
 import { ClientRouter } from 'astro:transitions';
-import { brand, contatti, legale, type Locale } from '../data/site';
+import { brand, contatti, legale, piattaforme, type Locale } from '../data/site';
 
 interface Props { title: string; description: string; noindex?: boolean }
 const { title, description, noindex = false } = Astro.props;
@@ -38,6 +38,8 @@ const datiStrutturati = {
   servesCuisine: locale === 'en' ? ['Mediterranean', 'Italian'] : ['Mediterranea', 'Italiana'],
   url: canonical.href,
   image: ogImage.href,
+  hasMap: contatti.mapsUrl,
+  sameAs: [piattaforme.tripadvisor, piattaforme.opentable],
   address: {
     '@type': 'PostalAddress',
     streetAddress: `${contatti.via} ${contatti.civico}`,

@@ -36,7 +36,21 @@ export const contatti = {
   telefono: ATTESA,
   whatsapp: ATTESA,
   email: ATTESA,
-  mapsUrl: ATTESA,
+  /** Link stabile alla scheda Google (CID della scheda "Enea Ristorante", verificato 08/09/2026). */
+  mapsUrl: 'https://maps.google.com/?cid=9374966341506913280',
+} as const;
+
+/**
+ * Presenze ufficiali del ristorante sulle piattaforme — verificate una a una.
+ * Usate nel JSON-LD (sameAs) e come riferimento per i collegamenti futuri;
+ * il link OpenTable porta il referral del ristorante (restref) e si pubblica
+ * sul sito solo quando le prenotazioni aprono.
+ */
+export const piattaforme = {
+  tripadvisor: 'https://www.tripadvisor.it/Restaurant_Review-g187791-d26790911',
+  opentable: 'https://www.opentable.it/r/enea-ristorante-reservations-roma',
+  opentablePrenota:
+    'https://www.opentable.it/r/enea-ristorante-reservations-roma?restref=363708&lang=it-IT&ot_source=Restaurant%20website',
 } as const;
 
 /** Orari — ATTESA. */
@@ -79,15 +93,15 @@ export const testi = {
     claimLancio: 'La Dolce Vita sta per ricominciare.',
     // [MANUALE] sottotitolo di copertina
     claimApertura:
-      "Un’esperienza di ospitalità romana contemporanea, ispirata all’eleganza, all’energia e al fascino senza tempo della Dolce Vita.",
+      'Un’esperienza di ospitalità romana contemporanea, ispirata all’eleganza, all’energia e al fascino senza tempo della Dolce Vita.',
     // [MANUALE] "Il concept ENEA"
     concept:
-      "ENEA è un ristorante mediterraneo raffinato nel cuore di Roma, a pochi passi da Via Veneto. Il concept unisce identità italiana e visione cosmopolita: abbastanza sofisticato per un’occasione speciale, ma al tempo stesso accogliente ed energico per diventare un punto di riferimento abituale.",
+      'ENEA è un ristorante mediterraneo raffinato nel cuore di Roma, a pochi passi da Via Veneto. Il concept unisce identità italiana e visione cosmopolita: abbastanza sofisticato per un’occasione speciale, ma al tempo stesso accogliente ed energico per diventare un punto di riferimento abituale.',
     // [MANUALE] "Benvenuto in ENEA"
     origine:
       "ENEA nasce per essere inequivocabilmente romano, senza risultare nostalgico o teatrale. Il concept trae ispirazione dalla sicurezza e dall’eleganza della Roma degli anni '60 e '70, dallo stile di vita mediterraneo e dall’energia sociale senza tempo della zona di Via Veneto.",
     // [MANUALE] "Il nome"
-    nome: "ENEA richiama l’eredità classica, romana e mediterranea mantenendo un’identità pulita, forte e contemporanea. Il nome lega il ristorante a Roma senza ricorrere a cliché.",
+    nome: 'ENEA richiama l’eredità classica, romana e mediterranea mantenendo un’identità pulita, forte e contemporanea. Il nome lega il ristorante a Roma senza ricorrere a cliché.',
     // [MANUALE] chiusura
     triade: [
       'Eleganza. Calore. Precisione.',
@@ -99,12 +113,12 @@ export const testi = {
       'Il nostro obiettivo è creare un ristorante in cui cucina raffinata, servizio caloroso, musica, design e connessione umana convivano in modo naturale.',
     // [MANUALE] "03 | Filosofia food & beverage — La cucina"
     cucina:
-      "L’identità gastronomica è mediterranea e italiana nel suo nucleo. Ingredienti, stagionalità e chiarezza dei sapori sono i protagonisti. La presentazione è raffinata, ma la cucina conserva generosità, riconoscibilità e piacere.",
+      'L’identità gastronomica è mediterranea e italiana nel suo nucleo. Ingredienti, stagionalità e chiarezza dei sapori sono i protagonisti. La presentazione è raffinata, ma la cucina conserva generosità, riconoscibilità e piacere.',
     // [MANUALE] "03 | Filosofia food & beverage — Il bar"
-    bar: "Il bar è parte integrante dell’esperienza ENEA: la cultura italiana dell’aperitivo, i grandi classici, cocktail eseguiti con precisione e una selezione di vini intelligente, che accompagnano la cucina e il ritmo della sala.",
+    bar: 'Il bar è parte integrante dell’esperienza ENEA: la cultura italiana dell’aperitivo, i grandi classici, cocktail eseguiti con precisione e una selezione di vini intelligente, che accompagnano la cucina e il ritmo della sala.',
     // [MANUALE] "02 | Il nostro ospite"
     ospiti:
-      "ENEA accoglie una clientela italiana e internazionale: romani, ospiti degli hotel, viaggiatori d’affari, turisti, creativi e persone che scelgono il ristorante per celebrare momenti importanti.",
+      'ENEA accoglie una clientela italiana e internazionale: romani, ospiti degli hotel, viaggiatori d’affari, turisti, creativi e persone che scelgono il ristorante per celebrare momenti importanti.',
     // [MANUALE] "02 | Il nostro ospite" — la frase in evidenza
     ricordo:
       'Un ospite deve ricordare più di un piatto. Deve ricordare come ENEA lo ha fatto sentire.',
@@ -113,14 +127,14 @@ export const testi = {
       'Riconosciuto e accolto fin dal suo arrivo.',
       'A proprio agio, mai intimidito.',
       'Seguito con attenzione, senza sentirsi osservato.',
-      "Parte dell’energia della sala.",
+      'Parte dell’energia della sala.',
     ],
     // [MANUALE] "L’atmosfera"
     atmosfera: [
       'Elegante, ma mai pretenziosa.',
       'Mediterranea, calda e materica.',
       "Richiami alla Roma degli anni '60 e '70 reinterpretati in chiave contemporanea.",
-      "Sociale ed energica, con un autentico senso dell’occasione.",
+      'Sociale ed energica, con un autentico senso dell’occasione.',
       'Standard internazionali, carattere profondamente romano.',
     ],
   },
