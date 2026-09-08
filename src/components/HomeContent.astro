@@ -12,7 +12,7 @@
  * si dichiara l’assenza, non la si maschera.
  */
 import { Image } from 'astro:assets';
-import { brand, testi, contatti, orari, apertura, ATTESA, type Locale } from '../data/site';
+import { brand, testi, contatti, orari, apertura, prenotazioni, piattaforme, ATTESA, type Locale } from '../data/site';
 import Marchio from './Marchio.astro';
 import Pino from './Pino.astro';
 import salaPanoramica from '../assets/foto/sala-panoramica.png';
@@ -43,6 +43,7 @@ const L = locale === 'en'
       barAttesa: 'The cocktail and wine list is on its way.',
       indirizzo: 'Address', telefono: 'Phone', orariL: 'Opening hours', scrivi: 'Email',
       inArrivo: 'coming soon', indicazioni: 'Open in Google Maps',
+      prenotaTitolo: 'Book a table', chiama: 'Call', suWhatsapp: 'WhatsApp', suOpentable: 'Book on OpenTable',
       comePrenotare: 'Bookings will open when the restaurant does. The telephone number and booking email will appear on this page as soon as they are live.',
       altPanoramica: 'The ENEA dining room under its brick vaults',
       altSala: 'Tables laid for the evening at ENEA',
@@ -68,6 +69,7 @@ const L = locale === 'en'
       barAttesa: 'La carta dei cocktail e dei vini è in arrivo.',
       indirizzo: 'Indirizzo', telefono: 'Telefono', orariL: 'Orari', scrivi: 'Email',
       inArrivo: 'in arrivo', indicazioni: 'Apri in Google Maps',
+      prenotaTitolo: 'Prenota un tavolo', chiama: 'Chiama', suWhatsapp: 'WhatsApp', suOpentable: 'Prenota su OpenTable',
       comePrenotare: 'Le prenotazioni aprono insieme al ristorante. Numero di telefono ed email per prenotare compariranno qui appena saranno attivi.',
       altPanoramica: 'La sala di ENEA sotto le volte in mattoni',
       altSala: 'Tavoli apparecchiati per la sera da ENEA',
@@ -83,6 +85,17 @@ const dato = (v: string) => (v === ATTESA ? L.inArrivo : v);
 // La città si localizza: su /en/ il titolo dice "Rome", l’indirizzo non può dire "Roma".
 const citta = locale === 'en' ? 'Rome' : contatti.citta;
 const indirizzo = `${contatti.via} ${contatti.civico}, ${contatti.cap} ${citta}`;
+
+// Canali di prenotazione: compaiono al lancio, e solo quelli con un dato reale.
+const c = (v: string) => v !== ATTESA;
+const soloCifre = (v: string) => v.replace(/[^\d+]/g, '');
+const canali = prenotazioni.aperte
+  ? [
+      c(contatti.telefono) && { href: `tel:${soloCifre(contatti.telefono)}`, testo: `${L.chiama} ${contatti.telefono}`, pieno: true },
+      c(contatti.whatsapp) && { href: `https://wa.me/${soloCifre(contatti.whatsapp).replace('+', '')}`, testo: L.suWhatsapp, pieno: false },
+      prenotazioni.conOpenTable && { href: piattaforme.opentablePrenota, testo: L.suOpentable, pieno: false },
+    ].filter((x): x is { href: string; testo: string; pieno: boolean } => Boolean(x))
+  : [];
 ---
 
 <!-- ═════════ APERTURA ═════════ -->
@@ -185,10 +198,21 @@ const indirizzo = `${contatti.via} ${contatti.civico}, ${contatti.cap} ${citta}`
         <div><dt>{L.telefono}</dt><dd data-attesa>{dato(contatti.telefono)}</dd></div>
         <div><dt>{L.scrivi}</dt><dd data-attesa>{dato(contatti.email)}</dd></div>
       </dl>
-      <div class="avviso" data-reveal data-ritardo="3">
-        <p><strong>{apertura.periodo[locale]}.</strong> {apertura.dettaglio[locale]}</p>
-        <p>{L.comePrenotare}</p>
-      </div>
+      {canali.length > 0 ? (
+        <div class="prenota-canali" data-reveal data-ritardo="3">
+          <p class="prenota-canali__titolo">{L.prenotaTitolo}</p>
+          <div class="prenota-canali__azioni">
+            {canali.map((k) => (
+              <a class={`btn ${k.pieno ? 'btn--pieno' : 'btn--nudo'}`} href={k.href} rel="noopener">{k.testo}</a>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div class="avviso" data-reveal data-ritardo="3">
+          <p><strong>{apertura.periodo[locale]}.</strong> {apertura.dettaglio[locale]}</p>
+          <p>{L.comePrenotare}</p>
+        </div>
+      )}
     </div>
     <figure class="quadro dove__foto" data-reveal data-ritardo="1">
       <Image src={facciataIngresso} alt={L.altIngresso} widths={[520, 800, 1086]} sizes="(min-width: 64rem) 38vw, 92vw" loading="lazy" />
@@ -327,6 +351,12 @@ const indirizzo = `${contatti.via} ${contatti.civico}, ${contatti.cap} ${citta}`
     padding: 1.25rem 1.4rem; border-left: 1px solid var(--oro); background: var(--notte);
   }
   .avviso strong { color: var(--travertino); font-weight: 400; }
+  .prenota-canali { display: grid; gap: 1rem; }
+  .prenota-canali__titolo {
+    font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .22em;
+    text-transform: uppercase; color: var(--oro);
+  }
+  .prenota-canali__azioni { display: flex; flex-wrap: wrap; gap: .8rem; }
   .dove__foto :global(img) { max-height: 64vh; object-fit: cover; }
   @media (min-width: 40rem) { .recapiti { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 64rem) { .dove { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); } }

@@ -53,6 +53,20 @@ export const piattaforme = {
     'https://www.opentable.it/r/enea-ristorante-reservations-roma?restref=363708&lang=it-IT&ot_source=Restaurant%20website',
 } as const;
 
+/**
+ * Prenotazioni — l'interruttore del lancio.
+ * Con `aperte: false` la sezione Dove siamo mostra l'avviso onesto di attesa.
+ * Al lancio: portare a true e compilare telefono/whatsapp qui sopra — i
+ * pulsanti (chiama, WhatsApp, OpenTable) compaiono da soli, e solo quelli
+ * con un dato reale. Il canale OpenTable si attiva aprendo il registro dal
+ * pannello (guestcenter, ID 363708), non da qui.
+ */
+export const prenotazioni = {
+  aperte: false,
+  /** Mostrare il canale OpenTable quando il registro del ristorante è aperto. */
+  conOpenTable: true,
+} as const;
+
 /** Orari — ATTESA. */
 export const orari = {
   cucina: ATTESA,
