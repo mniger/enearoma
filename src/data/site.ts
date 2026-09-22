@@ -75,15 +75,16 @@ export const orari = {
 } as const;
 
 /**
- * Apertura: il titolare indica metà settembre 2026, data esatta ancora da
- * fissare. Si comunica il periodo, mai una data precisa non confermata:
- * una data sbagliata in rete produce clienti davanti a una porta chiusa.
+ * Apertura: la data non è ancora fissata dal titolare («metà settembre» è
+ * passato senza conferma, 22/09). Si comunica solo che è imminente, mai una
+ * data non confermata: una data sbagliata in rete produce clienti davanti a
+ * una porta chiusa. Alla conferma: qui il periodo/data, e i canali in `contatti`.
  */
 export const apertura = {
-  periodo: { it: 'Apertura a metà settembre', en: 'Opening mid-September' },
+  periodo: { it: 'Prossima apertura', en: 'Opening soon' },
   dettaglio: {
-    it: 'La data esatta sarà annunciata qui a breve.',
-    en: 'The exact date will be announced here shortly.',
+    it: 'La data sarà annunciata qui.',
+    en: 'The date will be announced here.',
   },
 } as const;
 
@@ -113,7 +114,7 @@ export const testi = {
       'ENEA è un ristorante mediterraneo raffinato nel cuore di Roma, a pochi passi da Via Veneto. Il concept unisce identità italiana e visione cosmopolita: abbastanza sofisticato per un’occasione speciale, ma al tempo stesso accogliente ed energico per diventare un punto di riferimento abituale.',
     // [MANUALE] "Benvenuto in ENEA"
     origine:
-      "ENEA nasce per essere inequivocabilmente romano, senza risultare nostalgico o teatrale. Il concept trae ispirazione dalla sicurezza e dall’eleganza della Roma degli anni '60 e '70, dallo stile di vita mediterraneo e dall’energia sociale senza tempo della zona di Via Veneto.",
+      "ENEA nasce per essere inequivocabilmente romano, senza risultare nostalgico o teatrale. Il concept trae ispirazione dalla sicurezza e dall’eleganza della Roma degli anni ’60 e ’70, dallo stile di vita mediterraneo e dall’energia sociale senza tempo della zona di Via Veneto.",
     // [MANUALE] "Il nome"
     nome: 'ENEA richiama l’eredità classica, romana e mediterranea mantenendo un’identità pulita, forte e contemporanea. Il nome lega il ristorante a Roma senza ricorrere a cliché.',
     // [MANUALE] chiusura
@@ -147,7 +148,7 @@ export const testi = {
     atmosfera: [
       'Elegante, ma mai pretenziosa.',
       'Mediterranea, calda e materica.',
-      "Richiami alla Roma degli anni '60 e '70 reinterpretati in chiave contemporanea.",
+      "Richiami alla Roma degli anni ’60 e ’70 reinterpretati in chiave contemporanea.",
       'Sociale ed energica, con un autentico senso dell’occasione.',
       'Standard internazionali, carattere profondamente romano.',
     ],
@@ -209,3 +210,18 @@ export const nav = {
 } as const;
 
 export type Locale = 'it' | 'en';
+
+/** Pagine che esistono in entrambe le lingue: hreflang e cambio lingua si basano su queste. */
+export const traduzioni: ReadonlyArray<readonly [it: string, en: string]> = [
+  ['/', '/en/'],
+  ['/menu/', '/en/menu/'],
+  ['/menu/aperitivo/', '/en/menu/aperitivo/'],
+  ['/note-legali/', '/en/note-legali/'],
+];
+
+/** L'URL della stessa pagina nell'altra lingua (la home dell'altra lingua se non esiste). */
+export const altraLingua = (pathname: string, locale: Locale): string => {
+  const percorso = pathname.endsWith('/') ? pathname : `${pathname}/`;
+  const coppia = traduzioni.find(([it, en]) => it === percorso || en === percorso);
+  return locale === 'en' ? (coppia?.[0] ?? '/') : (coppia?.[1] ?? '/en/');
+};

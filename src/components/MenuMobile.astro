@@ -1,14 +1,16 @@
 ---
 /** Navigazione mobile a tendina. Il pulsante vive nell’header; la tenda è fixed. */
-import { nav, type Locale } from '../data/site';
+import { altraLingua, nav, prenotazioni, type Locale } from '../data/site';
 const locale = (Astro.currentLocale ?? 'it') as Locale;
 const voci = nav[locale];
 const base = locale === 'en' ? '/en' : '';
 const altLang = locale === 'en'
-  ? { code: 'Italiano', href: '/', lang: 'it' }
-  : { code: 'English', href: '/en/', lang: 'en' };
-const etichetta = 'Menu';
-const prenota = locale === 'en' ? 'Book a table' : 'Prenota un tavolo';
+  ? { code: 'Italiano', href: altraLingua(Astro.url.pathname, locale), lang: 'it' }
+  : { code: 'English', href: altraLingua(Astro.url.pathname, locale), lang: 'en' };
+const etichetta = locale === 'en' ? 'Navigation' : 'Navigazione';
+const prenota = prenotazioni.aperte
+  ? (locale === 'en' ? 'Book a table' : 'Prenota un tavolo')
+  : (locale === 'en' ? 'Bookings' : 'Prenotazioni');
 ---
 <button class="apri" id="apri-menu" type="button" aria-expanded="false" aria-controls="tenda" aria-label={etichetta}>
   <i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i>
@@ -16,9 +18,9 @@ const prenota = locale === 'en' ? 'Book a table' : 'Prenota un tavolo';
 
 <nav class="tenda" id="tenda" aria-label={etichetta} data-aperta="no">
   <div class="tenda__voci">
-    {voci.map((v) => <a href={base + v.href}>{v.label}</a>)}
+    {voci.map((v) => <a href={base + v.href} aria-current={!v.href.startsWith('/#') && Astro.url.pathname.startsWith(base + v.href) ? 'page' : undefined}>{v.label}</a>)}
   </div>
-  <a class="tenda__prenota" href={base + '/#dove'}>{prenota}</a>
+  <a class="tenda__prenota" href={base + '/#prenota'}>{prenota}</a>
   <a class="tenda__lingua" href={altLang.href} hreflang={altLang.lang} lang={altLang.lang}>{altLang.code}</a>
 </nav>
 
@@ -42,12 +44,25 @@ const prenota = locale === 'en' ? 'Book a table' : 'Prenota un tavolo';
       document.querySelector('.salta'),
     ].filter((e): e is HTMLElement => e instanceof HTMLElement);
 
+    // iOS Safari ignora overflow:hidden sul body: si blocca il documento
+    // fissandolo alla posizione corrente, e la si ripristina alla chiusura.
+    let scrollSalvato = 0;
+    const bloccaScroll = (blocca: boolean) => {
+      if (blocca) {
+        scrollSalvato = scrollY;
+        Object.assign(document.body.style, { position: 'fixed', top: `-${scrollSalvato}px`, width: '100%' });
+      } else if (document.body.style.position === 'fixed') {
+        Object.assign(document.body.style, { position: '', top: '', width: '' });
+        scrollTo({ top: scrollSalvato, behavior: 'instant' });
+      }
+    };
+
     const commuta = (apri: boolean) => {
       tenda.dataset.aperta = apri ? 'si' : 'no';
       tasto.setAttribute('aria-expanded', String(apri));
       if (testata) testata.dataset.tenda = apri ? 'si' : 'no';
       dietro().forEach((el) => { el.inert = apri; });
-      document.body.style.overflow = apri ? 'hidden' : '';
+      bloccaScroll(apri);
       // il focus si sposta a transizione finita: su un elemento ancora
       // invisibile la chiamata verrebbe ignorata dal browser
       if (apri) {
@@ -78,7 +93,7 @@ const prenota = locale === 'en' ? 'Book a table' : 'Prenota un tavolo';
       tenda.removeEventListener('click', nellaTenda);
       removeEventListener('keydown', allaFuga);
       grande.removeEventListener('change', alCambio);
-      document.body.style.overflow = '';
+      Object.assign(document.body.style, { position: '', top: '', width: '' });
     };
   }
 
@@ -104,6 +119,7 @@ const prenota = locale === 'en' ? 'Book a table' : 'Prenota un tavolo';
     padding: 5rem var(--gutter) 3rem;
     background: rgba(10, 8, 6, .975);
     -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    overscroll-behavior: contain;
     opacity: 0; visibility: hidden;
     transition: opacity .45s var(--ease), visibility .45s;
   }
@@ -121,7 +137,7 @@ const prenota = locale === 'en' ? 'Book a table' : 'Prenota un tavolo';
   .tenda__voci a:nth-child(3) { transition-delay: .18s; }
   .tenda__voci a:nth-child(4) { transition-delay: .24s; }
   .tenda__voci a:nth-child(5) { transition-delay: .30s; }
-  .tenda__voci a:hover { color: var(--oro-chiaro); }
+  .tenda__voci a:hover, .tenda__voci a[aria-current='page'] { color: var(--oro-chiaro); }
   .tenda__prenota {
     font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .22em; text-transform: uppercase;
     text-decoration: none; padding: .95rem 1.8rem; background: var(--oro); color: var(--pece);

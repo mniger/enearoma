@@ -1,23 +1,26 @@
 ---
 import Wordmark from './Wordmark.astro';
 import MenuMobile from './MenuMobile.astro';
-import { brand, nav, type Locale } from '../data/site';
+import { altraLingua, brand, nav, prenotazioni, type Locale } from '../data/site';
 const locale = (Astro.currentLocale ?? 'it') as Locale;
 const voci = nav[locale];
 const base = locale === 'en' ? '/en' : '';
-const altLang = locale === 'en' ? { code: 'IT', href: '/' } : { code: 'EN', href: '/en/' };
-const prenota = locale === 'en' ? 'Book' : 'Prenota';
+const altLang = { code: locale === 'en' ? 'IT' : 'EN', href: altraLingua(Astro.url.pathname, locale) };
+// Finché le prenotazioni non aprono il pulsante promette un'informazione, non un'azione.
+const prenota = prenotazioni.aperte
+  ? (locale === 'en' ? 'Book' : 'Prenota')
+  : (locale === 'en' ? 'Bookings' : 'Prenotazioni');
 ---
 <header class="testata" id="testata" data-scrollato="no" data-tenda="no">
   <a class="testata__marchio" href={base + '/'} aria-label={brand.nomeEsteso}><Wordmark /></a>
 
   <nav class="testata__nav" aria-label={locale === 'en' ? 'Main navigation' : 'Navigazione principale'}>
-    {voci.map((v) => <a href={base + v.href} data-ancora={v.href.startsWith('/#') ? v.href.slice(2) : undefined} aria-current={!v.href.startsWith('/#') && Astro.url.pathname === base + v.href ? 'page' : undefined}>{v.label}</a>)}
+    {voci.map((v) => <a href={base + v.href} data-ancora={v.href.startsWith('/#') ? v.href.slice(2) : undefined} aria-current={!v.href.startsWith('/#') && Astro.url.pathname.startsWith(base + v.href) ? 'page' : undefined}>{v.label}</a>)}
   </nav>
 
   <div class="testata__coda">
-    <a class="lingua" href={altLang.href} hreflang={altLang.code.toLowerCase()} lang={altLang.code.toLowerCase()}>{altLang.code}</a>
-    <a class="btn--mini" href={base + '/#dove'}>{prenota}</a>
+    <a class="lingua" href={altLang.href} hreflang={altLang.code.toLowerCase()} lang={altLang.code.toLowerCase()} aria-label={altLang.code === 'EN' ? 'English' : 'Italiano'}>{altLang.code}</a>
+    <a class="btn--mini" href={base + '/#prenota'}>{prenota}</a>
     <MenuMobile />
   </div>
 </header>
@@ -53,9 +56,10 @@ const prenota = locale === 'en' ? 'Book' : 'Prenota';
       .filter((e): e is HTMLElement => e !== null);
     if (!sezioni.length) return;
 
-    let corrente: string | null = null;
+    const inVista = new Set<string>();
     spia = new IntersectionObserver((voci) => {
-      voci.forEach((v) => { if (v.isIntersecting) corrente = v.target.id; });
+      voci.forEach((v) => { if (v.isIntersecting) inVista.add(v.target.id); else inVista.delete(v.target.id); });
+      const corrente = [...inVista].at(-1) ?? null;
       link.forEach((a, id) => {
         const attivo = id === corrente;
         a.toggleAttribute('data-qui', attivo);
@@ -92,6 +96,11 @@ const prenota = locale === 'en' ? 'Book' : 'Prenota';
     transition: color .4s var(--ease);
   }
   .testata__marchio:hover { color: var(--oro-luce); }
+  /* sull'apertura della home il lockup grande è già in scena: il marchio in
+     barra compare quando la pagina scorre */
+  :global(body:has(.apertura)) .testata[data-scrollato='no'][data-tenda='no'] .testata__marchio {
+    opacity: 0; visibility: hidden; transition: opacity .4s var(--ease), visibility 0s .4s;
+  }
   .testata[data-scrollato="si"] .testata__marchio { --wordmark-larghezza: 118px; }
   .testata__nav { display: none; gap: clamp(1rem, 2vw, 2.1rem); }
   .testata__nav a {
@@ -110,7 +119,7 @@ const prenota = locale === 'en' ? 'Book' : 'Prenota';
   .testata__nav a[data-qui], .testata__nav a[aria-current='page'] { color: var(--oro-chiaro); }
   .testata__nav a[data-qui]::after, .testata__nav a[aria-current='page']::after { transform: scaleX(1); }
 
-  .testata__coda { position: relative; z-index: 2; display: flex; align-items: center; gap: 1rem; }
+  .testata__coda { position: relative; z-index: 2; display: flex; align-items: center; gap: 1rem; margin-left: clamp(.5rem, 2vw, 2rem); }
   .lingua {
     font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .12em;
     color: var(--fumo); text-decoration: none; padding: .9rem .3rem;
@@ -119,8 +128,8 @@ const prenota = locale === 'en' ? 'Book' : 'Prenota';
   }
   .lingua:hover { color: var(--oro-chiaro); }
   .btn--mini {
-    font-family: var(--font-lapide); font-size: 0.625rem; letter-spacing: .2em; text-transform: uppercase;
-    text-decoration: none; padding: .9rem 1.15rem; border: 1px solid var(--oro); color: var(--oro-chiaro);
+    font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .22em; text-transform: uppercase;
+    text-decoration: none; padding: .8rem 1.15rem; border: 1px solid var(--oro); color: var(--oro-chiaro);
     white-space: nowrap;
     transition: background-color .4s var(--ease), color .4s var(--ease);
   }
@@ -130,14 +139,12 @@ const prenota = locale === 'en' ? 'Book' : 'Prenota';
   .testata[data-tenda='si'] .btn--mini,
   .testata[data-tenda='si'] .lingua { opacity: 0; pointer-events: none; transition: opacity .2s ease; }
 
-  /* su schermi stretti il cambio lingua vive nella tenda, non nella barra */
-  @media (max-width: 30rem) { .lingua { display: none; } }
   /* la barra stretta ospita marchio, prenotazione e menu: il marchio cede spazio */
   @media (max-width: 34rem) {
     .testata { gap: .75rem; }
     .testata__marchio { --wordmark-larghezza: 100px; }
     .testata[data-scrollato="si"] .testata__marchio { --wordmark-larghezza: 92px; }
-    .btn--mini { font-size: .5625rem; padding: .9rem .85rem; letter-spacing: .16em; }
+    .btn--mini { font-size: .625rem; padding: .75rem .85rem; letter-spacing: .16em; }
   }
   @media (min-width: 62rem) { .testata__nav { display: flex; } }
 </style>

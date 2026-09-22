@@ -1,0 +1,70 @@
+---
+/**
+ * Note legali — una pagina sola per lingua, sobria e vera.
+ * Il sito non ha moduli, cookie né tracciamento: la nota dice questo e chi è
+ * il titolare. Niente boilerplate GDPR gonfiato per trattamenti che non esistono.
+ */
+import { brand, legale, contatti, type Locale } from '../data/site';
+import Freccia from './Freccia.astro';
+const locale = (Astro.currentLocale ?? 'it') as Locale;
+const citta = locale === 'en' ? 'Rome' : contatti.citta;
+const L = locale === 'en'
+  ? {
+      titolo: 'Legal notes', titolare: 'Site owner', iva: 'VAT no.', sede: 'Registered office', ristorante: 'Restaurant',
+      contatti: 'Contact', cookieT: 'Cookies and tracking',
+      cookie: 'This site sets no cookies and runs no analytics or profiling. Fonts and assets are served from this domain, with no third parties.',
+      hostingT: 'Hosting',
+      hosting: 'Pages are served by GitHub Pages (GitHub, Inc.). The server may log technical access data (such as IP addresses) solely to deliver and secure the service.',
+      contenutiT: 'Content', contenuti: 'Texts, photographs and trademark ©', diritti: 'All rights reserved.',
+      ritorno: 'Back to', home: '/en/',
+    }
+  : {
+      titolo: 'Note legali', titolare: 'Titolare del sito', iva: 'P. IVA', sede: 'Sede legale', ristorante: 'Ristorante',
+      contatti: 'Contatti', cookieT: 'Cookie e tracciamento',
+      cookie: 'Questo sito non usa cookie, strumenti di analisi o profilazione. Font e risorse sono serviti direttamente dal dominio, senza terze parti.',
+      hostingT: 'Hosting',
+      hosting: 'Le pagine sono servite da GitHub Pages (GitHub, Inc.). Il server può registrare dati tecnici di accesso (come gli indirizzi IP) nei log, per la sola erogazione e sicurezza del servizio.',
+      contenutiT: 'Contenuti', contenuti: 'Testi, fotografie e marchio ©', diritti: 'Tutti i diritti riservati.',
+      ritorno: 'Torna a', home: '/',
+    };
+---
+<section class="nota-legale">
+  <div class="wrap nota-legale__corpo">
+    <p class="eyebrow">enearoma.it</p>
+    <h1>{L.titolo}</h1>
+
+    <dl class="voci">
+      <div>
+        <dt>{L.titolare}</dt>
+        <dd>
+          {legale.ragioneSociale} — {L.iva} {legale.partitaIva}<br />
+          {L.sede}: {legale.sedeLegale}<br />
+          {L.ristorante}: {contatti.via}&nbsp;{contatti.civico}, {contatti.cap}&nbsp;{citta}
+        </dd>
+      </div>
+      <div>
+        <dt>{L.contatti}</dt>
+        <dd><a href="mailto:info@enearoma.it">info@enearoma.it</a></dd>
+      </div>
+      <div><dt>{L.cookieT}</dt><dd>{L.cookie}</dd></div>
+      <div><dt>{L.hostingT}</dt><dd>{L.hosting}</dd></div>
+      <div><dt>{L.contenutiT}</dt><dd>{L.contenuti} {legale.ragioneSociale} · {L.diritti}</dd></div>
+    </dl>
+
+    <a class="rimando" href={L.home}>{L.ritorno} {brand.nomeEsteso} <Freccia /></a>
+  </div>
+</section>
+
+<style>
+  .nota-legale { display: grid; padding-block: calc(var(--testata-h) + clamp(2rem, 5vw, 4rem)) var(--stack); }
+  .nota-legale__corpo { display: grid; gap: 1.75rem; max-width: 46rem; }
+  .voci { display: grid; gap: 1.5rem; margin: 0; }
+  .voci dt {
+    font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .22em;
+    text-transform: uppercase; color: var(--oro); margin-bottom: .4rem;
+  }
+  .voci dd { margin: 0; color: var(--fumo); max-width: var(--misura); }
+  .voci a { color: var(--oro-chiaro); text-decoration: none; border-bottom: 1px solid rgba(194, 146, 78, .45); }
+  .voci a:hover { color: var(--oro-luce); }
+  .rimando { justify-self: start; margin-top: .5rem; }
+</style>

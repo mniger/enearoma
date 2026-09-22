@@ -15,6 +15,7 @@ import { Image } from 'astro:assets';
 import { brand, testi, contatti, orari, apertura, prenotazioni, piattaforme, ATTESA, type Locale } from '../data/site';
 import Marchio from './Marchio.astro';
 import Pino from './Pino.astro';
+import Freccia from './Freccia.astro';
 import salaPanoramica from '../assets/foto/sala-panoramica.png';
 import salaVerticale from '../assets/foto/sala-verticale.jpeg';
 import facciataIngresso from '../assets/foto/facciata-ingresso.jpeg';
@@ -29,7 +30,7 @@ const t = testi[locale];
 
 const L = locale === 'en'
   ? {
-      prenota: 'Book a table', scopri: 'The menu', scorri: 'Scroll',
+      prenota: prenotazioni.aperte ? 'Book a table' : 'Bookings', scopri: 'The menu', scorri: 'Scroll',
       etLocale: 'The restaurant', etCucina: 'The kitchen', etBar: 'The bar',
       etGalleria: 'ENEA in pictures', etDove: 'Visit us',
       tLocale: 'A dining room under brick vaults, a few steps from Via Veneto',
@@ -38,11 +39,11 @@ const L = locale === 'en'
       pCucina: 'Seasonal ingredients and clear flavours, plated with care but never precious. The dishes are the ones you want to order again.',
       tBar: 'Come in just for a drink',
       pBar: 'The Italian aperitivo, the classic cocktails made properly, and a wine list chosen to follow the kitchen.',
-      tDove: 'Via Boncompagni 83, Rome',
+      tDove: 'Via Boncompagni\u00a083, Rome',
       vediMenu: 'See the dinner menu', vediAperitivo: 'The aperitivo menu',
       barAttesa: 'The cocktail and wine list is on its way.',
       indirizzo: 'Address', telefono: 'Phone', orariL: 'Opening hours', scrivi: 'Email',
-      inArrivo: 'coming soon', indicazioni: 'Open in Google Maps',
+      inArrivo: 'coming soon', indicazioni: 'Open in Google Maps', nuovaScheda: 'opens in a new tab',
       prenotaTitolo: 'Book a table', chiama: 'Call', suWhatsapp: 'WhatsApp', suOpentable: 'Book on OpenTable',
       comePrenotare: 'Bookings will open when the restaurant does. The telephone number and booking email will appear on this page as soon as they are live.',
       altPanoramica: 'The ENEA dining room under its brick vaults',
@@ -55,20 +56,20 @@ const L = locale === 'en'
       altTavola: 'A table laid at ENEA: brass charger, glasses, candlelight',
     }
   : {
-      prenota: 'Prenota un tavolo', scopri: 'Il menu', scorri: 'Scorri',
+      prenota: prenotazioni.aperte ? 'Prenota un tavolo' : 'Prenotazioni', scopri: 'Il menu', scorri: 'Scorri',
       etLocale: 'Il ristorante', etCucina: 'La cucina', etBar: 'Il bar',
-      etGalleria: 'ENEA in immagini', etDove: 'Vieni a trovarci',
+      etGalleria: 'ENEA in immagini', etDove: 'Dove siamo',
       tLocale: 'Una sala sotto volte di mattoni, a due passi da Via Veneto',
       pLocale: 'Soffitti a volta, velluto verde, luce di candela e una parete di bottiglie. Romano nel carattere, mediterraneo nello spirito, aperto dall’aperitivo fino a cena.',
       tCucina: 'Cucina mediterranea, radici romane',
       pCucina: 'Ingredienti di stagione e sapori netti, impiattati con cura ma senza sussiego. Piatti che viene voglia di ordinare di nuovo.',
       tBar: 'Si entra anche solo per bere',
       pBar: "L’aperitivo italiano, i cocktail classici fatti come si deve e una carta dei vini scelta per seguire la cucina.",
-      tDove: 'Via Boncompagni 83, Roma',
+      tDove: 'Via Boncompagni\u00a083, Roma',
       vediMenu: 'Vedi il menu della cena', vediAperitivo: 'Il menu dell’aperitivo',
       barAttesa: 'La carta dei cocktail e dei vini è in arrivo.',
       indirizzo: 'Indirizzo', telefono: 'Telefono', orariL: 'Orari', scrivi: 'Email',
-      inArrivo: 'in arrivo', indicazioni: 'Apri in Google Maps',
+      inArrivo: 'in arrivo', indicazioni: 'Apri in Google Maps', nuovaScheda: 'si apre in una nuova scheda',
       prenotaTitolo: 'Prenota un tavolo', chiama: 'Chiama', suWhatsapp: 'WhatsApp', suOpentable: 'Prenota su OpenTable',
       comePrenotare: 'Le prenotazioni aprono insieme al ristorante. Numero di telefono ed email per prenotare compariranno qui appena saranno attivi.',
       altPanoramica: 'La sala di ENEA sotto le volte in mattoni',
@@ -84,7 +85,7 @@ const L = locale === 'en'
 const dato = (v: string) => (v === ATTESA ? L.inArrivo : v);
 // La città si localizza: su /en/ il titolo dice "Rome", l’indirizzo non può dire "Roma".
 const citta = locale === 'en' ? 'Rome' : contatti.citta;
-const indirizzo = `${contatti.via} ${contatti.civico}, ${contatti.cap} ${citta}`;
+const indirizzo = `${contatti.via}\u00a0${contatti.civico}, ${contatti.cap}\u00a0${citta}`;
 
 // Canali di prenotazione: compaiono al lancio, e solo quelli con un dato reale.
 const c = (v: string) => v !== ATTESA;
@@ -96,6 +97,12 @@ const canali = prenotazioni.aperte
       prenotazioni.conOpenTable && { href: piattaforme.opentablePrenota, testo: L.suOpentable, pieno: false },
     ].filter((x): x is { href: string; testo: string; pieno: boolean } => Boolean(x))
   : [];
+// Il pulsante pieno è l'azione possibile oggi: prenotare quando le prenotazioni
+// sono aperte, altrimenti leggere il menu. Il primo dei due è sempre quello pieno.
+const azioni = [
+  { href: '#prenota', testo: L.prenota, pieno: prenotazioni.aperte },
+  { href: locale === 'en' ? '/en/menu/' : '/menu/', testo: L.scopri, pieno: !prenotazioni.aperte },
+].sort((a, b) => Number(b.pieno) - Number(a.pieno));
 ---
 
 <!-- ═════════ APERTURA ═════════ -->
@@ -109,11 +116,10 @@ const canali = prenotazioni.aperte
     <h1 class="apertura__marchio"><Marchio completo titolo={brand.nomeEsteso} /></h1>
     <p class="apertura__claim">{t.claimLancio}</p>
     <p class="apertura__riga">
-      <span>{indirizzo}</span><i aria-hidden="true"></i><span>{apertura.periodo[locale]}</span>
+      <a href="#dove">{indirizzo}</a><i aria-hidden="true"></i><span><span class="sr-only">— </span>{apertura.periodo[locale]}</span>
     </p>
     <div class="apertura__azioni">
-      <a class="btn btn--pieno" href="#dove">{L.prenota}</a>
-      <a class="btn btn--nudo" href={locale === 'en' ? '/en/menu/' : '/menu/'}>{L.scopri}</a>
+      {azioni.map((a) => <a class:list={['btn', a.pieno ? 'btn--pieno' : 'btn--nudo']} href={a.href}>{a.testo}</a>)}
     </div>
   </div>
   <div class="apertura__scorri" aria-hidden="true"><span>{L.scorri}</span><i></i></div>
@@ -136,7 +142,7 @@ const canali = prenotazioni.aperte
 </section>
 
 <!-- ═════════ CUCINA E BAR ═════════ -->
-<section id="menu" class="portate">
+<section id="cucina-e-bar" class="portate">
   <div class="wrap portate__griglia">
     <article class="portata">
       <figure class="quadro portata__foto" data-reveal>
@@ -145,7 +151,7 @@ const canali = prenotazioni.aperte
       <p class="eyebrow" data-reveal>{L.etCucina}</p>
       <h2 data-reveal data-ritardo="1">{L.tCucina}</h2>
       <p class="corpo" data-reveal data-ritardo="2">{L.pCucina}</p>
-      <a class="rimando" href={locale === 'en' ? '/en/menu/' : '/menu/'} data-reveal data-ritardo="3">{L.vediMenu} <span aria-hidden="true">→</span></a>
+      <a class="rimando" href={locale === 'en' ? '/en/menu/' : '/menu/'} data-reveal data-ritardo="3">{L.vediMenu} <Freccia /></a>
     </article>
 
     <article class="portata">
@@ -155,7 +161,7 @@ const canali = prenotazioni.aperte
       <p class="eyebrow" data-reveal>{L.etBar}</p>
       <h2 data-reveal data-ritardo="1">{L.tBar}</h2>
       <p class="corpo" data-reveal data-ritardo="2">{L.pBar}</p>
-      <a class="rimando" href={locale === 'en' ? '/en/menu/aperitivo/' : '/menu/aperitivo/'} data-reveal data-ritardo="3">{L.vediAperitivo} <span aria-hidden="true">→</span></a>
+      <a class="rimando" href={locale === 'en' ? '/en/menu/aperitivo/' : '/menu/aperitivo/'} data-reveal data-ritardo="3">{L.vediAperitivo} <Freccia /></a>
       <p class="nota" data-reveal data-ritardo="3" data-attesa>{L.barAttesa}</p>
     </article>
   </div>
@@ -167,13 +173,13 @@ const canali = prenotazioni.aperte
     <h2 class="eyebrow galleria__et" data-reveal>{L.etGalleria}</h2>
     <div class="galleria__griglia">
       <figure class="quadro" data-reveal>
-        <Image src={facciataMarciapiede} alt={L.altMarciapiede} widths={[520, 800, 1086]} sizes="(min-width: 58rem) 38vw, 92vw" loading="lazy" />
+        <Image src={facciataMarciapiede} alt={L.altMarciapiede} widths={[520, 700, 1086]} sizes="(min-width: 58rem) 662px, 92vw" loading="lazy" />
       </figure>
       <figure class="quadro quadro--fermo" data-reveal data-ritardo="1">
-        <Image src={targa} alt={L.altTarga} widths={[294]} sizes="(min-width: 58rem) 24vw, 46vw" loading="lazy" />
+        <Image src={targa} alt={L.altTarga} widths={[294]} sizes="(min-width: 58rem) 294px, 46vw" loading="lazy" />
       </figure>
       <figure class="quadro quadro--fermo" data-reveal data-ritardo="2">
-        <Image src={cocktail} alt={L.altCocktail} widths={[268]} sizes="(min-width: 58rem) 24vw, 46vw" loading="lazy" />
+        <Image src={cocktail} alt={L.altCocktail} widths={[244]} sizes="(min-width: 58rem) 244px, 46vw" loading="lazy" />
       </figure>
     </div>
   </div>
@@ -193,27 +199,27 @@ const canali = prenotazioni.aperte
       <dl class="recapiti" data-reveal data-ritardo="2">
         <div>
           <dt>{L.indirizzo}</dt>
-          <dd>{indirizzo}<br /><a class="indicazioni" href={contatti.mapsUrl} rel="noopener">{L.indicazioni}</a></dd>
+          <dd>{indirizzo}<br /><a class="indicazioni" href={contatti.mapsUrl} target="_blank" rel="noopener">{L.indicazioni}<span class="sr-only"> ({L.nuovaScheda})</span></a></dd>
         </div>
         <div><dt>{L.orariL}</dt><dd data-attesa>{dato(orari.cucina)}</dd></div>
         <div><dt>{L.telefono}</dt><dd data-attesa>{dato(contatti.telefono)}</dd></div>
         <div><dt>{L.scrivi}</dt><dd data-attesa>{dato(contatti.email)}</dd></div>
       </dl>
-      {canali.length > 0 ? (
-        <div class="prenota-canali" data-reveal data-ritardo="3">
-          <p class="prenota-canali__titolo">{L.prenotaTitolo}</p>
+      <div id="prenota" class="prenota" tabindex="-1" data-reveal data-ritardo="3">
+        <p class="eyebrow">{L.prenotaTitolo}</p>
+        {canali.length > 0 ? (
           <div class="prenota-canali__azioni">
             {canali.map((k) => (
               <a class={`btn ${k.pieno ? 'btn--pieno' : 'btn--nudo'}`} href={k.href} rel="noopener">{k.testo}</a>
             ))}
           </div>
-        </div>
-      ) : (
-        <div class="avviso" data-reveal data-ritardo="3">
-          <p><strong>{apertura.periodo[locale]}.</strong> {apertura.dettaglio[locale]}</p>
-          <p>{L.comePrenotare}</p>
-        </div>
-      )}
+        ) : (
+          <div class="avviso">
+            <p><strong>{apertura.periodo[locale]}.</strong> {apertura.dettaglio[locale]}</p>
+            <p>{L.comePrenotare}</p>
+          </div>
+        )}
+      </div>
     </div>
     <figure class="quadro dove__foto" data-reveal data-ritardo="1">
       <Image src={facciataIngresso} alt={L.altIngresso} widths={[520, 800, 1086]} sizes="(min-width: 64rem) 38vw, 92vw" loading="lazy" />
@@ -226,14 +232,7 @@ const canali = prenotazioni.aperte
   .corpo { color: var(--fumo); max-width: var(--misura); }
   .corpo--tenue { font-size: var(--fs-sm); opacity: .85; }
   .nota { font-size: var(--fs-sm); color: var(--fumo); max-width: var(--misura); }
-  .rimando {
-    justify-self: start; display: inline-flex; align-items: center; gap: .5rem;
-    font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .22em;
-    text-transform: uppercase; color: var(--oro-chiaro); text-decoration: none;
-    padding: .7rem 0; border-bottom: 1px solid var(--oro);
-    transition: color .3s ease, gap .3s var(--ease);
-  }
-  .rimando:hover { color: var(--oro-luce); gap: .85rem; }
+  .rimando { justify-self: start; }
 
   /* ── apertura ── */
   .apertura {
@@ -251,12 +250,11 @@ const canali = prenotazioni.aperte
   .apertura__velo {
     position: absolute; inset: 0; z-index: -1;
     background:
-      radial-gradient(74% 58% at 50% 44%, rgba(10,8,6,.72), rgba(10,8,6,.85) 74%),
-      linear-gradient(to bottom, rgba(10,8,6,.9), transparent 26%, transparent 60%, var(--pece));
+      radial-gradient(74% 58% at 50% 44%, rgba(10,8,6,.66), rgba(10,8,6,.78) 74%),
+      linear-gradient(to bottom, rgba(10,8,6,.85), transparent 26%, transparent 60%, var(--pece));
   }
   .apertura__corpo {
     align-self: center; display: grid; justify-items: center; text-align: center;
-    gap: clamp(1.1rem, 2.4vw, 1.9rem);
   }
   .apertura__marchio {
     /* il lockup completo della dima è ~quadrato: più stretto del vecchio
@@ -267,15 +265,19 @@ const canali = prenotazioni.aperte
   @keyframes emerge { from { opacity: 0; transform: translateY(14px) scale(1.02); } to { opacity: 1; transform: none; } }
   .apertura__claim {
     font-family: var(--font-display); font-size: var(--fs-claim);
-    line-height: 1.35; max-width: 22ch; color: var(--travertino);
+    line-height: 1.35; max-width: 24ch; color: var(--travertino);
+    margin-top: 2rem;
     animation: sale 1.4s var(--ease) .85s both;
   }
   .apertura__riga {
     display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .5rem 1.15rem;
     font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .24em;
     text-transform: uppercase; color: var(--fumo);
+    margin-top: 1rem;
     animation: sale 1.4s var(--ease) 1.05s both;
   }
+  .apertura__riga a { color: inherit; text-decoration: none; padding-block: .5rem; transition: color .3s ease; }
+  .apertura__riga a:hover { color: var(--oro-chiaro); }
   .apertura__riga i { width: 3px; height: 3px; background: var(--oro); transform: rotate(45deg); }
   @media (max-width: 40rem) {
     .apertura__riga { flex-direction: column; gap: .45rem; }
@@ -283,8 +285,11 @@ const canali = prenotazioni.aperte
   }
   .apertura__azioni {
     display: flex; flex-wrap: wrap; gap: .8rem; justify-content: center;
+    margin-top: 2.25rem;
     animation: sale 1.4s var(--ease) 1.25s both;
   }
+  /* 13. impilati sul telefono, i due pulsanti hanno la stessa larghezza */
+  @media (max-width: 40rem) { .apertura__azioni .btn { min-width: 15rem; } }
   @keyframes sale { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
   .apertura__scorri {
     justify-self: center; display: grid; justify-items: center; gap: .7rem;
@@ -295,7 +300,7 @@ const canali = prenotazioni.aperte
   .apertura__scorri i {
     display: block; width: 1px; height: 48px; transform-origin: top;
     background: linear-gradient(to bottom, var(--oro), transparent);
-    animation: filo 3s var(--ease) infinite;
+    animation: filo 3s var(--ease) 3;
   }
   @keyframes filo { 0%, 100% { transform: scaleY(.3); opacity: .35; } 50% { transform: scaleY(1); opacity: .9; } }
   @media (max-height: 860px), (max-width: 48rem) { .apertura__scorri { display: none; } }
@@ -314,7 +319,11 @@ const canali = prenotazioni.aperte
   .portata { display: grid; gap: 1.15rem; align-content: start; }
   .portata__foto { margin-bottom: .6rem; }
   .portata__foto :global(img) { aspect-ratio: 4 / 3; object-fit: cover; }
-  @media (min-width: 58rem) { .portate__griglia { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 58rem) {
+    /* le righe delle due schede si allineano (foto, occhiello, titolo, testo, rimando, nota) */
+    .portate__griglia { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(6, auto); }
+    .portata { grid-template-rows: subgrid; grid-row: span 6; }
+  }
 
   /* ── galleria ── */
   .galleria__et { margin-bottom: clamp(1.5rem, 3vw, 2.5rem); }
@@ -325,7 +334,8 @@ const canali = prenotazioni.aperte
   .galleria__griglia figure { margin: 0; height: clamp(16rem, 60vw, 26rem); }
   .galleria__griglia figure:first-child { grid-column: 1 / -1; height: clamp(14rem, 52vw, 22rem); }
   @media (min-width: 58rem) {
-    .galleria__griglia { grid-template-columns: 38fr 24fr 24fr; }
+    /* i due ritagli alla loro larghezza nativa: la foto grande prende il resto */
+    .galleria__griglia { grid-template-columns: minmax(0, 1fr) 294px 244px; }
     /* un’unica altezza di riga: le tre cornici chiudono sullo stesso filo */
     .galleria__griglia figure,
     .galleria__griglia figure:first-child { grid-column: auto; height: clamp(24rem, 34vw, 30rem); }
@@ -336,7 +346,7 @@ const canali = prenotazioni.aperte
   .commiato__frase {
     font-family: var(--font-display); font-size: var(--fs-triade); line-height: 1.35;
     color: var(--travertino); text-wrap: balance;
-    max-width: 34ch; margin-inline: auto; padding-inline: var(--gutter);
+    max-width: 44ch; margin-inline: auto; padding-inline: var(--gutter);
   }
 
   /* ── dove siamo ── */
@@ -349,9 +359,9 @@ const canali = prenotazioni.aperte
   }
   .recapiti dd { margin: 0; color: var(--travertino); }
   .indicazioni {
-    display: inline-block; margin-top: .35rem;
+    display: inline-block; margin-top: .35rem; padding-block: .5rem;
     font-size: var(--fs-sm); color: var(--oro-chiaro);
-    text-decoration: none; border-bottom: 1px solid var(--bordo);
+    text-decoration: none; border-bottom: 1px solid rgba(194, 146, 78, .45);
     transition: color .3s ease, border-color .3s ease;
   }
   .indicazioni:hover { color: var(--oro-luce); border-color: var(--oro); }
@@ -360,11 +370,8 @@ const canali = prenotazioni.aperte
     padding: 1.25rem 1.4rem; border-left: 1px solid var(--oro); background: var(--notte);
   }
   .avviso strong { color: var(--travertino); font-weight: 400; }
-  .prenota-canali { display: grid; gap: 1rem; }
-  .prenota-canali__titolo {
-    font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .22em;
-    text-transform: uppercase; color: var(--oro);
-  }
+  .prenota { display: grid; gap: .9rem; }
+  .prenota:focus { outline: none; }   /* il focus è programmatico: lo SR legge, l'anello non serve */
   .prenota-canali__azioni { display: flex; flex-wrap: wrap; gap: .8rem; }
   .dove__foto :global(img) { max-height: 64vh; object-fit: cover; }
   @media (min-width: 40rem) { .recapiti { grid-template-columns: repeat(2, 1fr); } }

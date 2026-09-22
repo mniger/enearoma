@@ -16,7 +16,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Reveal from '../components/Reveal.astro';
 import { ClientRouter } from 'astro:transitions';
-import { brand, contatti, legale, piattaforme, type Locale } from '../data/site';
+import { brand, contatti, legale, piattaforme, traduzioni, type Locale } from '../data/site';
 
 interface Props { title: string; description: string; noindex?: boolean }
 const { title, description, noindex = false } = Astro.props;
@@ -25,9 +25,8 @@ const locale = (Astro.currentLocale ?? 'it') as Locale;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL('/og-enea.jpg', Astro.site);
 const salta = locale === 'en' ? 'Skip to content' : 'Vai al contenuto';
-// Coppie di pagine tradotte: solo queste dichiarano gli hreflang.
-const coppie: ReadonlyArray<readonly [it: string, en: string]> = [['/', '/en/'], ['/menu/', '/en/menu/'], ['/menu/aperitivo/', '/en/menu/aperitivo/']];
-const coppia = coppie.find(([it, en]) => it === Astro.url.pathname || en === Astro.url.pathname);
+// Solo le pagine tradotte dichiarano gli hreflang.
+const coppia = traduzioni.find(([it, en]) => it === Astro.url.pathname || en === Astro.url.pathname);
 const ogImageAlt = locale === 'en'
   ? 'The ENEA Roma mark: golden stone pine and wordmark on a dark ground'
   : 'Il marchio ENEA Roma: pino dorato e scritta su fondo scuro';
@@ -112,7 +111,20 @@ const datiStrutturati = {
   <body>
     <a class="salta" href="#contenuto">{salta}</a>
     <Header />
-    <main id="contenuto"><slot /></main>
+    <main id="contenuto" tabindex="-1"><slot /></main>
+    <script>
+      // Chi arriva con un'ancora (es. #prenota) trova il focus sul bersaglio, così
+      // lo screen reader legge subito il blocco; dopo una navigazione con
+      // transizione il focus riparte dal contenuto, come a un caricamento pieno.
+      const alBersaglio = () => {
+        const id = decodeURIComponent(location.hash.slice(1));
+        const el = id ? document.getElementById(id) : null;
+        if (el?.hasAttribute('tabindex')) el.focus({ preventScroll: true });
+      };
+      document.addEventListener('astro:after-swap', () => document.getElementById('contenuto')?.focus({ preventScroll: true }));
+      document.addEventListener('astro:page-load', alBersaglio);
+      addEventListener('hashchange', alBersaglio);
+    </script>
     <Footer />
   </body>
 </html>

@@ -58,6 +58,12 @@
   // nascosti finché tutte le immagini non sono scaricate.
   avvia();
   document.addEventListener('astro:page-load', avvia);
+  // Dopo lo scambio del documento la classe su <html> va rimessa (lo scambio
+  // la perde) e gli elementi nuovi vanno osservati subito, prima del paint.
+  document.addEventListener('astro:after-swap', () => {
+    if (!ridotto()) document.documentElement.classList.add('js-reveal');
+    avvia();
+  });
 </script>
 
 <!-- La classe che nasconde va messa PRIMA del primo paint: aggiunta più tardi
@@ -68,7 +74,7 @@
 </script>
 
 <style is:global>
-  .js-reveal [data-reveal] {
+  .js-reveal [data-reveal]:not([data-visto]) {
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 1s var(--ease-lento), transform 1s var(--ease-lento);

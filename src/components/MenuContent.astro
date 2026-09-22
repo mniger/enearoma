@@ -10,6 +10,7 @@
  */
 import { allergeni, pubblicabili, type Menu } from '../data/menu';
 import type { Locale } from '../data/site';
+import Freccia from './Freccia.astro';
 
 interface Props { menu: Menu; variante: 'cena' | 'aperitivo' }
 const { menu, variante } = Astro.props;
@@ -53,6 +54,12 @@ const L = locale === 'en'
       valuta: '€',
     };
 
+// In fondo al menu: l'altro menu e la strada per il ristorante.
+const altro = menuDisponibili.find((m) => m.id !== variante) ?? menuDisponibili[0];
+const R = locale === 'en'
+  ? { titolo: 'Continue', altro: variante === 'cena' ? 'The aperitivo menu' : 'The dinner menu', dove: 'Where we are and bookings' }
+  : { titolo: 'Continua', altro: variante === 'cena' ? 'Il menu dell’aperitivo' : 'Il menu della cena', dove: 'Dove siamo e prenotazioni' };
+
 const nomeAllergene = new Map(allergeni.map((a) => [a.n, a[locale]]));
 const etichettaAllergeni = (nn: readonly number[]) =>
   `${L.contiene}: ${nn.map((n) => nomeAllergene.get(n) ?? String(n)).join(', ')}`;
@@ -65,7 +72,7 @@ const etichettaAllergeni = (nn: readonly number[]) =>
         <a href={m.href} aria-current={m.id === variante ? 'page' : undefined}>{m.etichetta}</a>
       ))}
     </nav>
-    {menu.stagione && <p class="eyebrow" data-reveal data-ritardo="1">{menu.servizio[locale]} · {menu.stagione[locale]}</p>}
+    <p class="eyebrow" data-reveal data-ritardo="1">{['Menu', menu.stagione?.[locale]].filter(Boolean).join(' · ')}</p>
     <h1 data-reveal data-ritardo="1">{L.titolo}</h1>
     <p class="carta__intro" data-reveal data-ritardo="2">{L.intro}</p>
   </header>
@@ -84,14 +91,15 @@ const etichettaAllergeni = (nn: readonly number[]) =>
     {menu.sezioni.map((s) => (
       <section class="portata-lista" id={s.id} aria-labelledby={`t-${s.id}`}>
         <h2 id={`t-${s.id}`} class:list={{ 'sr-only': menu.sezioni.length === 1 }} data-reveal>{s.titolo[locale]}</h2>
-        <ul class="piatti">
+        <ul class="piatti" role="list">
           {pubblicabili(s).map((p, i) => (
             <li class="piatto" data-reveal data-ritardo={String(Math.min(i, 3))}>
               <span class="piatto__nome">
                 {p.nome[locale]}
                 {p.allergeni.length > 0 && (
-                  <small class="piatto__allergeni" aria-label={etichettaAllergeni(p.allergeni)}>
-                    {p.allergeni.join(' · ')}
+                  <small class="piatto__allergeni">
+                    <span aria-hidden="true">{p.allergeni.join(' · ')}</span>
+                    <span class="sr-only">{etichettaAllergeni(p.allergeni)}</span>
                   </small>
                 )}
               </span>
@@ -104,25 +112,30 @@ const etichettaAllergeni = (nn: readonly number[]) =>
 
     <section class="allergeni" aria-labelledby="t-allergeni">
       <h2 id="t-allergeni" class="eyebrow allergeni__titolo" data-reveal>{L.allergeniTitolo}</h2>
-      <ol class="allergeni__lista" data-reveal data-ritardo="1">
+      <ol class="allergeni__lista" role="list" data-reveal data-ritardo="1">
         {allergeni.map((a) => (
           <li><span class="allergeni__n">{a.n}</span> {a[locale]}</li>
         ))}
       </ol>
       <p class="allergeni__nota" data-reveal data-ritardo="2">{L.allergeniNota}</p>
     </section>
+
+    <nav class="carta__rimandi" aria-label={R.titolo} data-reveal>
+      <a class="rimando" href={altro.href}>{R.altro} <Freccia /></a>
+      <a class="rimando" href={`${base}/#prenota`}>{R.dove} <Freccia /></a>
+    </nav>
   </div>
 </article>
 
 <style>
-  .carta { padding-block: calc(var(--testata-h) + var(--stack)) var(--stack); }
-  .carta__testa { display: grid; gap: 1rem; max-width: 46rem; }
+  .carta { padding-block: calc(var(--testata-h) + clamp(2rem, 5vw, 4rem)) var(--stack); }
+  .carta__testa { display: grid; gap: 1rem; max-width: 52rem; }   /* = .carta__corpo: una sola linea a sinistra */
   /* selettore fra i menu: due voci, quella corrente segnata dal filo d'oro */
   .selettore { display: flex; gap: 1.75rem; margin-bottom: .5rem; }
   .selettore a {
     font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .22em;
     text-transform: uppercase; color: var(--fumo); text-decoration: none;
-    padding: .7rem 0; border-bottom: 1px solid transparent;
+    padding: .85rem 0; border-bottom: 1px solid transparent;
     transition: color .3s ease, border-color .3s ease;
   }
   .selettore a:hover, .selettore a:focus-visible { color: var(--oro-chiaro); }
@@ -133,13 +146,14 @@ const etichettaAllergeni = (nn: readonly number[]) =>
   .carta__indice {
     /* quando l'indice è incollato la testata è già "posata" (più bassa di
        --testata-h): 4rem la copre senza lasciare spiragli */
-    position: sticky; top: 4rem; z-index: 5;
+    position: sticky; top: 4.65rem; z-index: 5;   /* = altezza della testata posata a desktop */
     margin-top: clamp(1.5rem, 3vw, 2.5rem);
     background: rgba(10, 8, 6, .92);
     -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
     border-block: 1px solid var(--bordo);
   }
   .carta__indice-scorri {
+    max-width: 52rem;
     display: flex; gap: clamp(1rem, 3vw, 2.25rem);
     overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
     scroll-snap-type: x proximity;
@@ -152,15 +166,15 @@ const etichettaAllergeni = (nn: readonly number[]) =>
     padding: 1rem 0; border-bottom: 1px solid transparent; margin-bottom: -1px;
     transition: color .3s ease, border-color .3s ease;
   }
+  @media (max-width: 48rem) { .carta__indice { top: 4.35rem; } }   /* testata posata più bassa sul telefono */
   .carta__indice a:hover, .carta__indice a:focus-visible { color: var(--oro-chiaro); }
+  .carta__indice a:focus-visible { outline-offset: -3px; }   /* l'anello resta dentro la fascia, non sotto la testata */
   .carta__indice a[data-qui] { color: var(--oro-chiaro); border-bottom-color: var(--oro); }
 
   /* ── le portate ── */
   .carta__corpo { display: grid; gap: clamp(3rem, 6vw, 5rem); padding-top: clamp(2.5rem, 5vw, 4rem); max-width: 52rem; }
   .portata-lista { display: grid; gap: 1.25rem; scroll-margin-top: calc(var(--testata-h) + 4.5rem); }
   .portata-lista h2 { font-size: var(--fs-h3); color: var(--oro-chiaro); }
-  /* con una sezione sola il titolo ripeterebbe quello della pagina: resta per gli screen reader */
-  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .piatti { list-style: none; margin: 0; padding: 0; display: grid; }
   .piatto {
     display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 1.5rem; align-items: baseline;
@@ -200,12 +214,15 @@ const etichettaAllergeni = (nn: readonly number[]) =>
   }
   .allergeni__nota { font-size: var(--fs-sm); color: var(--fumo); max-width: var(--misura); }
 
+  .carta__rimandi { display: flex; flex-wrap: wrap; gap: .5rem 2.5rem; }
+
   /* ── stampa: il menu su carta, nero su bianco, senza cornice del sito ── */
   @media print {
     .carta { padding: 0; }
-    .carta__indice, .selettore { display: none; }
+    .carta__indice, .selettore, .carta__rimandi { display: none; }
     .carta__corpo { max-width: none; gap: 2rem; }
-    .portata-lista { break-inside: avoid; }
+    .piatto { break-inside: avoid; }
+    .portata-lista h2 { break-after: avoid; }
     .piatto { border-color: #999; }
     .piatto__nome, .piatto__prezzo, .portata-lista h2, .carta__testa h1 { color: #000; }
     .piatto__allergeni, .piatto__valuta, .carta__intro, .allergeni__lista, .allergeni__n, .allergeni__nota, .eyebrow { color: #444; }
@@ -230,9 +247,10 @@ const etichettaAllergeni = (nn: readonly number[]) =>
       .filter((e): e is HTMLElement => e !== null);
     if (!sezioni.length) return;
 
-    let corrente: string | null = null;
+    const inVista = new Set<string>();
     spia = new IntersectionObserver((voci) => {
-      voci.forEach((v) => { if (v.isIntersecting) corrente = v.target.id; });
+      voci.forEach((v) => { if (v.isIntersecting) inVista.add(v.target.id); else inVista.delete(v.target.id); });
+      const corrente = [...inVista].at(-1) ?? null;
       link.forEach((a, id) => {
         const attivo = id === corrente;
         a.toggleAttribute('data-qui', attivo);

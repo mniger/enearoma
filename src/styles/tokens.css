@@ -33,15 +33,15 @@
   --fs-sm: 0.8125rem;
   --fs-base: clamp(1rem, 0.96rem + 0.18vw, 1.0625rem);
   --fs-lede: clamp(1.3rem, 1.08rem + 0.95vw, 1.85rem);
-  --fs-claim: clamp(1.2rem, 1.02rem + 0.8vw, 1.7rem);
+  --fs-claim: clamp(1.4rem, 1.1rem + 1.2vw, 2.15rem);
   --fs-triade: clamp(1.45rem, 1.1rem + 1.5vw, 2.4rem);
   --fs-h3: clamp(1.35rem, 1.1rem + 1vw, 1.75rem);
   --fs-h2: clamp(1.95rem, 1.35rem + 2.6vw, 3.35rem);
 
   /* — Ritmo e misure — */
   --gutter: clamp(1.35rem, 5vw, 5.5rem);
-  --stack: clamp(5rem, 11vw, 9.5rem);
-  --misura: 60ch;
+  --stack: clamp(4rem, 9vw, 8rem);
+  --misura: 52ch; /* ≈ 68 caratteri in Jost 300, il cui ch è stretto */
   --testata-h: 5rem; /* riserva sotto la testata fissa */
 
   /* — Movimento —

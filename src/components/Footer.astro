@@ -1,29 +1,34 @@
 ---
 import Marchio from './Marchio.astro';
-import { brand, contatti, legale, nav, type Locale } from '../data/site';
+import { altraLingua, brand, contatti, legale, nav, type Locale } from '../data/site';
 const locale = (Astro.currentLocale ?? 'it') as Locale;
 const base = locale === 'en' ? '/en' : '';
-const voci = nav[locale];
+// Il piede è la mappa del sito: alle voci di navigazione si aggiunge l'aperitivo.
+const voci: ReadonlyArray<{ href: string; label: string }> = [
+  ...nav[locale].slice(0, 2),
+  { href: '/menu/aperitivo/', label: 'Aperitivo' },
+  ...nav[locale].slice(2),
+];
 const altLang = locale === 'en'
-  ? { code: 'Italiano', href: '/', lang: 'it' }
-  : { code: 'English', href: '/en/', lang: 'en' };
+  ? { code: 'Italiano', href: altraLingua(Astro.url.pathname, locale), lang: 'it' }
+  : { code: 'English', href: altraLingua(Astro.url.pathname, locale), lang: 'en' };
 const t = locale === 'en'
   ? { attesa: 'Site in progress — some details still to come', iva: 'VAT no.', note: 'Legal notes' }
   : { attesa: 'Sito in lavorazione — alcuni dati sono in arrivo', iva: 'P. IVA', note: 'Note legali' };
 const citta = locale === 'en' ? 'Rome' : contatti.citta;
-const indirizzo = `${contatti.via} ${contatti.civico}, ${contatti.cap} ${citta}`;
+const indirizzo = `${contatti.via}\u00a0${contatti.civico}, ${contatti.cap}\u00a0${citta}`;
 const anno = 2026;
 ---
 <footer class="piede">
   <div class="wrap piede__griglia">
     <a class="piede__marchio" href={locale === 'en' ? '/en/' : '/'} aria-label={brand.nomeEsteso}><Marchio /></a>
-    <p class="piede__dir">{indirizzo}</p>
+    <a class="piede__dir" href={contatti.mapsUrl} target="_blank" rel="noopener">{indirizzo}</a>
     <nav class="piede__nav" aria-label={locale === 'en' ? 'Footer' : 'Piè di pagina'}>
       {voci.map((v) => <a href={base + v.href}>{v.label}</a>)}
       <a href={altLang.href} hreflang={altLang.lang} lang={altLang.lang}>{altLang.code}</a>
-      <a href="/note-legali/" lang="it">{t.note}</a>
+      <a href={base + '/note-legali/'}>{t.note}</a>
     </nav>
-    <p class="piede__nota">© {anno} {legale.ragioneSociale} · {t.iva} {legale.partitaIva} · {t.attesa}</p>
+    <p class="piede__nota"><span>© {anno} {legale.ragioneSociale} · {t.iva} {legale.partitaIva}</span> <span>· {t.attesa}</span></p>
   </div>
 </footer>
 
@@ -31,7 +36,11 @@ const anno = 2026;
   .piede { border-top: 1px solid var(--bordo); background: var(--notte); padding-block: clamp(2.5rem, 5vw, 4rem); }
   .piede__griglia { display: grid; gap: 1rem; justify-items: center; text-align: center; }
   .piede__marchio { text-decoration: none; --marchio-larghezza: 128px; color: var(--oro-chiaro); }
-  .piede__dir { font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .24em; text-transform: uppercase; color: var(--fumo); }
+  .piede__dir {
+    font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .24em; text-transform: uppercase;
+    color: var(--fumo); text-decoration: none; padding: .5rem 0; transition: color .3s ease;
+  }
+  .piede__dir:hover { color: var(--oro-chiaro); }
   .piede__nav { display: flex; flex-wrap: wrap; justify-content: center; gap: .1rem 1.25rem; margin-top: .25rem; }
   .piede__nav a {
     font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .18em;
@@ -41,4 +50,5 @@ const anno = 2026;
   }
   .piede__nav a:hover { color: var(--oro-chiaro); }
   .piede__nota { font-size: var(--fs-sm); color: var(--fumo); margin-top: .5rem; }
+  .piede__nota span { display: inline-block; }
 </style>
