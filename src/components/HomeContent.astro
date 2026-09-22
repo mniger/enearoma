@@ -29,7 +29,7 @@ const t = testi[locale];
 
 const L = locale === 'en'
   ? {
-      prenota: 'Book a table', scopri: 'The restaurant', scorri: 'Scroll',
+      prenota: 'Book a table', scopri: 'The menu', scorri: 'Scroll',
       etLocale: 'The restaurant', etCucina: 'The kitchen', etBar: 'The bar',
       etGalleria: 'ENEA in pictures', etDove: 'Visit us',
       tLocale: 'A dining room under brick vaults, a few steps from Via Veneto',
@@ -55,7 +55,7 @@ const L = locale === 'en'
       altTavola: 'A table laid at ENEA: brass charger, glasses, candlelight',
     }
   : {
-      prenota: 'Prenota un tavolo', scopri: 'Il ristorante', scorri: 'Scorri',
+      prenota: 'Prenota un tavolo', scopri: 'Il menu', scorri: 'Scorri',
       etLocale: 'Il ristorante', etCucina: 'La cucina', etBar: 'Il bar',
       etGalleria: 'ENEA in immagini', etDove: 'Vieni a trovarci',
       tLocale: 'Una sala sotto volte di mattoni, a due passi da Via Veneto',
@@ -113,7 +113,7 @@ const canali = prenotazioni.aperte
     </p>
     <div class="apertura__azioni">
       <a class="btn btn--pieno" href="#dove">{L.prenota}</a>
-      <a class="btn btn--nudo" href="#locale">{L.scopri}</a>
+      <a class="btn btn--nudo" href={locale === 'en' ? '/en/menu/' : '/menu/'}>{L.scopri}</a>
     </div>
   </div>
   <div class="apertura__scorri" aria-hidden="true"><span>{L.scorri}</span><i></i></div>
