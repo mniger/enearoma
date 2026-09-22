@@ -19,7 +19,7 @@ const anno = 2026;
     <a class="piede__marchio" href={locale === 'en' ? '/en/' : '/'} aria-label={brand.nomeEsteso}><Marchio /></a>
     <p class="piede__dir">{indirizzo}</p>
     <nav class="piede__nav" aria-label={locale === 'en' ? 'Footer' : 'Piè di pagina'}>
-      {voci.map((v) => <a href={base + '/' + v.href}>{v.label}</a>)}
+      {voci.map((v) => <a href={base + v.href}>{v.label}</a>)}
       <a href={altLang.href} hreflang={altLang.lang} lang={altLang.lang}>{altLang.code}</a>
       <a href="/note-legali/" lang="it">{t.note}</a>
     </nav>

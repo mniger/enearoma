@@ -25,6 +25,9 @@ const locale = (Astro.currentLocale ?? 'it') as Locale;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL('/og-enea.jpg', Astro.site);
 const salta = locale === 'en' ? 'Skip to content' : 'Vai al contenuto';
+// Coppie di pagine tradotte: solo queste dichiarano gli hreflang.
+const coppie: ReadonlyArray<readonly [it: string, en: string]> = [['/', '/en/'], ['/menu/', '/en/menu/']];
+const coppia = coppie.find(([it, en]) => it === Astro.url.pathname || en === Astro.url.pathname);
 const ogImageAlt = locale === 'en'
   ? 'The ENEA Roma mark: golden stone pine and wordmark on a dark ground'
   : 'Il marchio ENEA Roma: pino dorato e scritta su fondo scuro';
@@ -39,6 +42,7 @@ const datiStrutturati = {
   url: canonical.href,
   image: ogImage.href,
   hasMap: contatti.mapsUrl,
+  hasMenu: new URL('/menu/', Astro.site).href,
   sameAs: [piattaforme.tripadvisor, piattaforme.opentable],
   address: {
     '@type': 'PostalAddress',
@@ -48,7 +52,7 @@ const datiStrutturati = {
     addressCountry: 'IT',
   },
   // TODO alla conferma del cliente: telephone, openingHoursSpecification,
-  // priceRange, hasMenu, acceptsReservations, sameAs (Instagram/Google).
+  // priceRange, acceptsReservations, sameAs (Instagram).
 };
 ---
 <!doctype html>
@@ -82,15 +86,15 @@ const datiStrutturati = {
     <meta name="twitter:card" content="summary_large_image" />
 
     {noindex && <meta name="robots" content="noindex" />}
-    {/* gli hreflang valgono solo per la coppia di home: sulle altre pagine
-        dichiarerebbero alternates che non le ricambiano */}
-    {!noindex && ['/', '/en/'].includes(Astro.url.pathname) && (
+    {/* gli hreflang valgono solo per le pagine che esistono in entrambe le lingue */}
+    {!noindex && coppia && (
       <>
-        <link rel="alternate" hreflang="it" href={new URL('/', Astro.site)} />
-        <link rel="alternate" hreflang="en" href={new URL('/en/', Astro.site)} />
-        <link rel="alternate" hreflang="x-default" href={new URL('/', Astro.site)} />
+        <link rel="alternate" hreflang="it" href={new URL(coppia[0], Astro.site)} />
+        <link rel="alternate" hreflang="en" href={new URL(coppia[1], Astro.site)} />
+        <link rel="alternate" hreflang="x-default" href={new URL(coppia[0], Astro.site)} />
       </>
     )}
+    <slot name="head" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />

@@ -12,7 +12,7 @@ const prenota = locale === 'en' ? 'Book' : 'Prenota';
   <a class="testata__marchio" href={base + '/'} aria-label={brand.nomeEsteso}><Wordmark /></a>
 
   <nav class="testata__nav" aria-label={locale === 'en' ? 'Main navigation' : 'Navigazione principale'}>
-    {voci.map((v) => <a href={base + '/' + v.href} data-ancora={v.href.slice(1)}>{v.label}</a>)}
+    {voci.map((v) => <a href={base + v.href} data-ancora={v.href.startsWith('/#') ? v.href.slice(2) : undefined} aria-current={!v.href.startsWith('/#') && Astro.url.pathname === base + v.href ? 'page' : undefined}>{v.label}</a>)}
   </nav>
 
   <div class="testata__coda">
@@ -107,8 +107,8 @@ const prenota = locale === 'en' ? 'Book' : 'Prenota';
     transition: transform .45s var(--ease);
   }
   .testata__nav a:hover::after, .testata__nav a:focus-visible::after { transform: scaleX(1); }
-  .testata__nav a[data-qui] { color: var(--oro-chiaro); }
-  .testata__nav a[data-qui]::after { transform: scaleX(1); }
+  .testata__nav a[data-qui], .testata__nav a[aria-current='page'] { color: var(--oro-chiaro); }
+  .testata__nav a[data-qui]::after, .testata__nav a[aria-current='page']::after { transform: scaleX(1); }
 
   .testata__coda { position: relative; z-index: 2; display: flex; align-items: center; gap: 1rem; }
   .lingua {

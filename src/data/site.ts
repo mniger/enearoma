@@ -192,19 +192,19 @@ export const testi = {
   },
 } as const;
 
-/** Navigazione — le ancore esistono; le pagine si popolano man mano che arrivano i contenuti. */
+/** Navigazione — percorsi assoluti dalla radice della lingua: le ancore puntano alla home, /menu/ è una pagina. */
 export const nav = {
   it: [
-    { href: '#locale', label: 'Il ristorante' },
-    { href: '#menu', label: 'La cucina' },
-    { href: '#galleria', label: 'Immagini' },
-    { href: '#dove', label: 'Dove siamo' },
+    { href: '/#locale', label: 'Il ristorante' },
+    { href: '/menu/', label: 'Menu' },
+    { href: '/#galleria', label: 'Immagini' },
+    { href: '/#dove', label: 'Dove siamo' },
   ],
   en: [
-    { href: '#locale', label: 'The restaurant' },
-    { href: '#menu', label: 'The kitchen' },
-    { href: '#galleria', label: 'Pictures' },
-    { href: '#dove', label: 'Visit us' },
+    { href: '/#locale', label: 'The restaurant' },
+    { href: '/menu/', label: 'Menu' },
+    { href: '/#galleria', label: 'Pictures' },
+    { href: '/#dove', label: 'Visit us' },
   ],
 } as const;
 

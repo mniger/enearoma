@@ -39,7 +39,7 @@ const L = locale === 'en'
       tBar: 'Come in just for a drink',
       pBar: 'The Italian aperitivo, the classic cocktails made properly, and a wine list chosen to follow the kitchen.',
       tDove: 'Via Boncompagni 83, Rome',
-      menuAttesa: 'The full menu will be published here as soon as the kitchen has finalised it.',
+      vediMenu: 'See the dinner menu',
       barAttesa: 'The cocktail and wine list is on its way.',
       indirizzo: 'Address', telefono: 'Phone', orariL: 'Opening hours', scrivi: 'Email',
       inArrivo: 'coming soon', indicazioni: 'Open in Google Maps',
@@ -65,7 +65,7 @@ const L = locale === 'en'
       tBar: 'Si entra anche solo per bere',
       pBar: "L’aperitivo italiano, i cocktail classici fatti come si deve e una carta dei vini scelta per seguire la cucina.",
       tDove: 'Via Boncompagni 83, Roma',
-      menuAttesa: 'Il menu completo comparirà qui appena la cucina lo avrà chiuso.',
+      vediMenu: 'Vedi il menu della cena',
       barAttesa: 'La carta dei cocktail e dei vini è in arrivo.',
       indirizzo: 'Indirizzo', telefono: 'Telefono', orariL: 'Orari', scrivi: 'Email',
       inArrivo: 'in arrivo', indicazioni: 'Apri in Google Maps',
@@ -145,7 +145,7 @@ const canali = prenotazioni.aperte
       <p class="eyebrow" data-reveal>{L.etCucina}</p>
       <h2 data-reveal data-ritardo="1">{L.tCucina}</h2>
       <p class="corpo" data-reveal data-ritardo="2">{L.pCucina}</p>
-      <p class="nota" data-reveal data-ritardo="3" data-attesa>{L.menuAttesa}</p>
+      <a class="rimando" href={locale === 'en' ? '/en/menu/' : '/menu/'} data-reveal data-ritardo="3">{L.vediMenu} <span aria-hidden="true">→</span></a>
     </article>
 
     <article class="portata">
@@ -225,6 +225,14 @@ const canali = prenotazioni.aperte
   .corpo { color: var(--fumo); max-width: var(--misura); }
   .corpo--tenue { font-size: var(--fs-sm); opacity: .85; }
   .nota { font-size: var(--fs-sm); color: var(--fumo); max-width: var(--misura); }
+  .rimando {
+    justify-self: start; display: inline-flex; align-items: center; gap: .5rem;
+    font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .22em;
+    text-transform: uppercase; color: var(--oro-chiaro); text-decoration: none;
+    padding: .7rem 0; border-bottom: 1px solid var(--oro);
+    transition: color .3s ease, gap .3s var(--ease);
+  }
+  .rimando:hover { color: var(--oro-luce); gap: .85rem; }
 
   /* ── apertura ── */
   .apertura {

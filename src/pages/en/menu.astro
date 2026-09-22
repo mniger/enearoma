@@ -1,0 +1,32 @@
+---
+import Base from '../../layouts/Base.astro';
+import MenuContent from '../../components/MenuContent.astro';
+import { menuCena } from '../../data/menu';
+import { brand } from '../../data/site';
+
+const datiMenu = {
+  '@context': 'https://schema.org',
+  '@type': 'Menu',
+  name: `Dinner menu — ${menuCena.stagione.en}`,
+  inLanguage: 'en',
+  url: new URL('/en/menu/', Astro.site).href,
+  hasMenuSection: menuCena.sezioni.map((s) => ({
+    '@type': 'MenuSection',
+    name: s.titolo.en,
+    hasMenuItem: s.piatti.map((p) => ({
+      '@type': 'MenuItem',
+      name: p.nome.en,
+      offers: { '@type': 'Offer', price: String(p.prezzo), priceCurrency: 'EUR' },
+    })),
+  })),
+};
+---
+<Base
+  title={`Dinner menu — ${brand.nomeEsteso}`}
+  description="ENEA Roma's dinner menu for autumn 2026: starters, first courses, mains and desserts with prices and allergens. Mediterranean cooking on Via Boncompagni, steps from Via Veneto."
+>
+  <Fragment slot="head">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(datiMenu)} />
+  </Fragment>
+  <MenuContent />
+</Base>

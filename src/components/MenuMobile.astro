@@ -16,7 +16,7 @@ const prenota = locale === 'en' ? 'Book a table' : 'Prenota un tavolo';
 
 <nav class="tenda" id="tenda" aria-label={etichetta} data-aperta="no">
   <div class="tenda__voci">
-    {voci.map((v) => <a href={base + '/' + v.href}>{v.label}</a>)}
+    {voci.map((v) => <a href={base + v.href}>{v.label}</a>)}
   </div>
   <a class="tenda__prenota" href={base + '/#dove'}>{prenota}</a>
   <a class="tenda__lingua" href={altLang.href} hreflang={altLang.lang} lang={altLang.lang}>{altLang.code}</a>

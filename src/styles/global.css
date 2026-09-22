@@ -201,3 +201,13 @@ p {
   border-bottom: 1px dashed rgba(194, 146, 78, 0.65);
   padding-bottom: 0.25em;
 }
+
+/* ── stampa: nero su bianco, senza cornice del sito; le rivelazioni si
+   mostrano tutte, perché in stampa nessuno scorre ── */
+@media print {
+  html { scroll-behavior: auto; }
+  body { background: #fff; color: #000; }
+  .testata, .piede, .salta, .tenda, .apri { display: none !important; }
+  .js-reveal [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
+  a { color: inherit; text-decoration: none; }
+}
