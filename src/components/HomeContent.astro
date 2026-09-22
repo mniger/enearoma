@@ -39,7 +39,7 @@ const L = locale === 'en'
       tBar: 'Come in just for a drink',
       pBar: 'The Italian aperitivo, the classic cocktails made properly, and a wine list chosen to follow the kitchen.',
       tDove: 'Via Boncompagni 83, Rome',
-      vediMenu: 'See the dinner menu',
+      vediMenu: 'See the dinner menu', vediAperitivo: 'The aperitivo menu',
       barAttesa: 'The cocktail and wine list is on its way.',
       indirizzo: 'Address', telefono: 'Phone', orariL: 'Opening hours', scrivi: 'Email',
       inArrivo: 'coming soon', indicazioni: 'Open in Google Maps',
@@ -65,7 +65,7 @@ const L = locale === 'en'
       tBar: 'Si entra anche solo per bere',
       pBar: "L’aperitivo italiano, i cocktail classici fatti come si deve e una carta dei vini scelta per seguire la cucina.",
       tDove: 'Via Boncompagni 83, Roma',
-      vediMenu: 'Vedi il menu della cena',
+      vediMenu: 'Vedi il menu della cena', vediAperitivo: 'Il menu dell’aperitivo',
       barAttesa: 'La carta dei cocktail e dei vini è in arrivo.',
       indirizzo: 'Indirizzo', telefono: 'Telefono', orariL: 'Orari', scrivi: 'Email',
       inArrivo: 'in arrivo', indicazioni: 'Apri in Google Maps',
@@ -155,6 +155,7 @@ const canali = prenotazioni.aperte
       <p class="eyebrow" data-reveal>{L.etBar}</p>
       <h2 data-reveal data-ritardo="1">{L.tBar}</h2>
       <p class="corpo" data-reveal data-ritardo="2">{L.pBar}</p>
+      <a class="rimando" href={locale === 'en' ? '/en/menu/aperitivo/' : '/menu/aperitivo/'} data-reveal data-ritardo="3">{L.vediAperitivo} <span aria-hidden="true">→</span></a>
       <p class="nota" data-reveal data-ritardo="3" data-attesa>{L.barAttesa}</p>
     </article>
   </div>

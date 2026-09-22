@@ -8,15 +8,35 @@
  * pollice. Niente PDF: Google legge i piatti come pagina (e li marca
  * come Menu nei dati strutturati).
  */
-import { menuCena, allergeni } from '../data/menu';
+import { allergeni, pubblicabili, type Menu } from '../data/menu';
 import type { Locale } from '../data/site';
 
+interface Props { menu: Menu; variante: 'cena' | 'aperitivo' }
+const { menu, variante } = Astro.props;
 const locale = (Astro.currentLocale ?? 'it') as Locale;
+const base = locale === 'en' ? '/en' : '';
+
+const T = {
+  cena: {
+    it: { titolo: 'Il menu della cena', intro: 'Cucina mediterranea di stagione, radici romane. I prezzi sono in euro; i numeri accanto ai piatti indicano gli allergeni contenuti.' },
+    en: { titolo: 'The dinner menu', intro: 'Seasonal Mediterranean cooking with Roman roots. Prices in euro; the small numbers next to each dish are the allergens it contains.' },
+  },
+  aperitivo: {
+    it: { titolo: 'L’aperitivo', intro: 'Piccoli piatti per l’ora dell’aperitivo. I prezzi sono in euro; i numeri accanto ai piatti indicano gli allergeni contenuti.' },
+    en: { titolo: 'The aperitivo', intro: 'Small plates for aperitivo hour. Prices in euro; the small numbers next to each dish are the allergens it contains.' },
+  },
+}[variante][locale];
+
+// Selettore fra i menu: due pagine, nessuno script.
+const menuDisponibili = [
+  { id: 'cena', href: `${base}/menu/`, etichetta: locale === 'en' ? 'Dinner' : 'Cena' },
+  { id: 'aperitivo', href: `${base}/menu/aperitivo/`, etichetta: 'Aperitivo' },
+] as const;
 
 const L = locale === 'en'
   ? {
-      titolo: 'The dinner menu',
-      intro: 'Seasonal Mediterranean cooking with Roman roots. Prices in euro; the small numbers next to each dish are the allergens it contains.',
+      ...T,
+      selettore: 'Choose a menu',
       indice: 'Menu sections',
       allergeniTitolo: 'Allergens',
       allergeniNota: 'Allergen numbering follows EU Regulation 1169/2011. Our staff will gladly help with any question about ingredients and allergens.',
@@ -24,8 +44,8 @@ const L = locale === 'en'
       valuta: '€',
     }
   : {
-      titolo: 'Il menu della cena',
-      intro: 'Cucina mediterranea di stagione, radici romane. I prezzi sono in euro; i numeri accanto ai piatti indicano gli allergeni contenuti.',
+      ...T,
+      selettore: 'Scegli il menu',
       indice: 'Sezioni del menu',
       allergeniTitolo: 'Allergeni',
       allergeniNota: 'La numerazione degli allergeni segue il Regolamento UE 1169/2011. Per qualsiasi informazione su ingredienti e allergeni il personale di sala è a disposizione.',
@@ -40,25 +60,32 @@ const etichettaAllergeni = (nn: readonly number[]) =>
 
 <article class="carta">
   <header class="wrap carta__testa">
-    <p class="eyebrow" data-reveal>{menuCena.servizio[locale]} · {menuCena.stagione[locale]}</p>
+    <nav class="selettore" aria-label={L.selettore} data-reveal>
+      {menuDisponibili.map((m) => (
+        <a href={m.href} aria-current={m.id === variante ? 'page' : undefined}>{m.etichetta}</a>
+      ))}
+    </nav>
+    {menu.stagione && <p class="eyebrow" data-reveal data-ritardo="1">{menu.servizio[locale]} · {menu.stagione[locale]}</p>}
     <h1 data-reveal data-ritardo="1">{L.titolo}</h1>
     <p class="carta__intro" data-reveal data-ritardo="2">{L.intro}</p>
   </header>
 
-  <nav class="carta__indice" aria-label={L.indice} data-reveal data-ritardo="3">
-    <div class="wrap carta__indice-scorri">
-      {menuCena.sezioni.map((s) => (
-        <a href={`#${s.id}`} data-sezione={s.id}>{s.titolo[locale]}</a>
-      ))}
-    </div>
-  </nav>
+  {menu.sezioni.length > 1 && (
+    <nav class="carta__indice" aria-label={L.indice} data-reveal data-ritardo="3">
+      <div class="wrap carta__indice-scorri">
+        {menu.sezioni.map((s) => (
+          <a href={`#${s.id}`} data-sezione={s.id}>{s.titolo[locale]}</a>
+        ))}
+      </div>
+    </nav>
+  )}
 
   <div class="wrap carta__corpo">
-    {menuCena.sezioni.map((s) => (
+    {menu.sezioni.map((s) => (
       <section class="portata-lista" id={s.id} aria-labelledby={`t-${s.id}`}>
-        <h2 id={`t-${s.id}`} data-reveal>{s.titolo[locale]}</h2>
+        <h2 id={`t-${s.id}`} class:list={{ 'sr-only': menu.sezioni.length === 1 }} data-reveal>{s.titolo[locale]}</h2>
         <ul class="piatti">
-          {s.piatti.map((p, i) => (
+          {pubblicabili(s).map((p, i) => (
             <li class="piatto" data-reveal data-ritardo={String(Math.min(i, 3))}>
               <span class="piatto__nome">
                 {p.nome[locale]}
@@ -90,6 +117,16 @@ const etichettaAllergeni = (nn: readonly number[]) =>
 <style>
   .carta { padding-block: calc(var(--testata-h) + var(--stack)) var(--stack); }
   .carta__testa { display: grid; gap: 1rem; max-width: 46rem; }
+  /* selettore fra i menu: due voci, quella corrente segnata dal filo d'oro */
+  .selettore { display: flex; gap: 1.75rem; margin-bottom: .5rem; }
+  .selettore a {
+    font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .22em;
+    text-transform: uppercase; color: var(--fumo); text-decoration: none;
+    padding: .7rem 0; border-bottom: 1px solid transparent;
+    transition: color .3s ease, border-color .3s ease;
+  }
+  .selettore a:hover, .selettore a:focus-visible { color: var(--oro-chiaro); }
+  .selettore a[aria-current='page'] { color: var(--oro-chiaro); border-bottom-color: var(--oro); }
   .carta__intro { color: var(--fumo); max-width: var(--misura); }
 
   /* ── indice delle sezioni: resta sotto la testata, scorre di lato sul telefono ── */
@@ -122,6 +159,8 @@ const etichettaAllergeni = (nn: readonly number[]) =>
   .carta__corpo { display: grid; gap: clamp(3rem, 6vw, 5rem); padding-top: clamp(2.5rem, 5vw, 4rem); max-width: 52rem; }
   .portata-lista { display: grid; gap: 1.25rem; scroll-margin-top: calc(var(--testata-h) + 4.5rem); }
   .portata-lista h2 { font-size: var(--fs-h3); color: var(--oro-chiaro); }
+  /* con una sezione sola il titolo ripeterebbe quello della pagina: resta per gli screen reader */
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .piatti { list-style: none; margin: 0; padding: 0; display: grid; }
   .piatto {
     display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 1.5rem; align-items: baseline;
@@ -164,7 +203,7 @@ const etichettaAllergeni = (nn: readonly number[]) =>
   /* ── stampa: il menu su carta, nero su bianco, senza cornice del sito ── */
   @media print {
     .carta { padding: 0; }
-    .carta__indice { display: none; }
+    .carta__indice, .selettore { display: none; }
     .carta__corpo { max-width: none; gap: 2rem; }
     .portata-lista { break-inside: avoid; }
     .piatto { border-color: #999; }

@@ -16,14 +16,22 @@ export interface Piatto {
   readonly nome: { readonly it: string; readonly en: string };
   /** Numeri degli allergeni dichiarati dalla cucina (vuoto = nessuno dichiarato). */
   readonly allergeni: readonly number[];
-  /** Prezzo in euro, intero. */
-  readonly prezzo: number;
+  /** Prezzo in euro, intero. Assente = non comunicato dal titolare: il piatto
+   *  resta nei dati ma NON si pubblica finché il prezzo non arriva. */
+  readonly prezzo?: number;
 }
 
 export interface SezioneMenu {
   readonly id: string;
   readonly titolo: { readonly it: string; readonly en: string };
   readonly piatti: readonly Piatto[];
+}
+
+export interface Menu {
+  readonly servizio: { readonly it: string; readonly en: string };
+  /** Stagione, se il menu la dichiara. */
+  readonly stagione?: { readonly it: string; readonly en: string };
+  readonly sezioni: readonly SezioneMenu[];
 }
 
 export const menuCena = {
@@ -223,11 +231,109 @@ export const menuCena = {
       ],
     },
   ],
-} as const satisfies {
-  servizio: { it: string; en: string };
-  stagione: { it: string; en: string };
-  sezioni: readonly SezioneMenu[];
-};
+} as const satisfies Menu;
+
+/**
+ * Menu dell'aperitivo — trascritto dal testo inviato dal titolare il 22/09/2026
+ * (stesse regole del menu della cena: solo prezzo di vendita, allergeni come
+ * dichiarati). I tre taglieri sono arrivati SENZA prezzo: non si pubblicano
+ * finché il titolare non lo comunica.
+ */
+export const menuAperitivo = {
+  servizio: { it: 'Aperitivo', en: 'Aperitivo' },
+  sezioni: [
+    {
+      id: 'aperitivo',
+      titolo: { it: 'Aperitivo', en: 'Aperitivo' },
+      piatti: [
+        {
+          nome: {
+            it: 'Avocado toast con salmone marinato artigianalmente, rucola e panna acida',
+            en: 'Avocado toast with house-cured salmon, rocket and sour cream',
+          },
+          allergeni: [1, 3, 4, 6, 7],
+          prezzo: 16,
+        },
+        {
+          nome: {
+            it: 'Pan brioche con stracciata e alici del Canale di Sicilia',
+            en: 'Brioche bun with stracciatella and Sicilian Channel anchovies',
+          },
+          allergeni: [1, 3, 4, 6, 7],
+          prezzo: 12,
+        },
+        {
+          nome: {
+            it: 'Pan brioche con stracciata, pomodoro confit e crema di basilico',
+            en: 'Brioche bun with stracciatella, confit tomato and basil cream',
+          },
+          allergeni: [1, 3, 6, 7],
+          prezzo: 10,
+        },
+        {
+          nome: {
+            it: 'Alici fritte e maionese al mojito',
+            en: 'Fried anchovies with mojito mayonnaise',
+          },
+          allergeni: [1, 3, 4, 6],
+          prezzo: 10,
+        },
+        {
+          nome: {
+            it: 'Straccetti di pollo panati con salsa ENEA',
+            en: 'Breaded chicken strips with ENEA sauce',
+          },
+          allergeni: [1, 3, 6],
+          prezzo: 9,
+        },
+        {
+          nome: { it: 'Tagliere di salumi e formaggi', en: 'Cured meats and cheese board' },
+          allergeni: [7],
+        },
+        {
+          nome: { it: 'Tagliere di salumi', en: 'Cured meats board' },
+          allergeni: [],
+        },
+        {
+          nome: { it: 'Tagliere di formaggi', en: 'Cheese board' },
+          allergeni: [7],
+        },
+        {
+          nome: { it: 'Tartare di salmone marinato', en: 'Cured salmon tartare' },
+          allergeni: [4, 6],
+          prezzo: 11,
+        },
+        {
+          nome: { it: 'Tartare di manzo', en: 'Beef tartare' },
+          allergeni: [6],
+          prezzo: 10,
+        },
+      ],
+    },
+  ],
+} as const satisfies Menu;
+
+/** Solo i piatti pubblicabili: quelli con un prezzo comunicato dal titolare. */
+export const pubblicabili = (s: SezioneMenu): ReadonlyArray<Piatto & { readonly prezzo: number }> =>
+  s.piatti.filter((p): p is Piatto & { readonly prezzo: number } => typeof p.prezzo === 'number');
+
+/** Dati strutturati schema.org/Menu: sezioni, piatti e prezzi come li legge Google. */
+export const datiStrutturatiMenu = (menu: Menu, locale: 'it' | 'en', url: string) => ({
+  '@context': 'https://schema.org',
+  '@type': 'Menu',
+  name: [menu.servizio[locale], menu.stagione?.[locale]].filter(Boolean).join(' — '),
+  inLanguage: locale,
+  url,
+  hasMenuSection: menu.sezioni.map((s) => ({
+    '@type': 'MenuSection',
+    name: s.titolo[locale],
+    hasMenuItem: pubblicabili(s).map((p) => ({
+      '@type': 'MenuItem',
+      name: p.nome[locale],
+      offers: { '@type': 'Offer', price: String(p.prezzo), priceCurrency: 'EUR' },
+    })),
+  })),
+});
 
 /** I 14 allergeni del Reg. UE 1169/2011, nella numerazione usata dalla cucina. */
 export const allergeni: ReadonlyArray<{ n: number; it: string; en: string }> = [
