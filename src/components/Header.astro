@@ -7,6 +7,8 @@ const voci = nav[locale];
 const base = locale === 'en' ? '/en' : '';
 const altLang = { code: locale === 'en' ? 'IT' : 'EN', href: altraLingua(Astro.url.pathname, locale) };
 // Finché le prenotazioni non aprono il pulsante promette un'informazione, non un'azione.
+const corrente = (href: string) => !href.startsWith('/#') && Astro.url.pathname === base + href;
+const apriTendina = locale === 'en' ? 'Show the menus' : 'Mostra i menu';
 const prenota = prenotazioni.aperte
   ? (locale === 'en' ? 'Book' : 'Prenota')
   : (locale === 'en' ? 'Bookings' : 'Prenotazioni');
@@ -15,7 +17,19 @@ const prenota = prenotazioni.aperte
   <a class="testata__marchio" href={base + '/'} aria-label={brand.nomeEsteso}><Wordmark /></a>
 
   <nav class="testata__nav" aria-label={locale === 'en' ? 'Main navigation' : 'Navigazione principale'}>
-    {voci.map((v) => <a href={base + v.href} data-ancora={v.href.startsWith('/#') ? v.href.slice(2) : undefined} aria-current={!v.href.startsWith('/#') && Astro.url.pathname.startsWith(base + v.href) ? 'page' : undefined}>{v.label}</a>)}
+    {voci.map((v) => v.sotto ? (
+      <div class="gruppo" data-aperto="no">
+        <a href={base + v.href} aria-current={Astro.url.pathname.startsWith(base + v.href) ? 'page' : undefined}>{v.label}</a>
+        <button class="gruppo__apri" type="button" aria-expanded="false" aria-controls={`tendina-${v.href.replace(/\W/g, '')}`} aria-label={apriTendina}>
+          <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true" focusable="false"><path d="m1 1 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1"/></svg>
+        </button>
+        <ul class="tendina" id={`tendina-${v.href.replace(/\W/g, '')}`}>
+          {v.sotto.map((s) => <li><a href={base + s.href} aria-current={corrente(s.href) ? 'page' : undefined}>{s.label}</a></li>)}
+        </ul>
+      </div>
+    ) : (
+      <a href={base + v.href} data-ancora={v.href.startsWith('/#') ? v.href.slice(2) : undefined}>{v.label}</a>
+    ))}
   </nav>
 
   <div class="testata__coda">
@@ -27,13 +41,49 @@ const prenota = prenotazioni.aperte
 
 <script>
   let staccaScroll: (() => void) | null = null;
+  let staccaTendina: (() => void) | null = null;
   let spia: IntersectionObserver | null = null;
 
   function avvia() {
     staccaScroll?.();
+    staccaTendina?.();
     spia?.disconnect();
     const testata = document.getElementById('testata');
     if (!testata) return;
+
+    // Tendina dei menu: al mouse si apre da sola (CSS); il pulsante serve al
+    // tocco e alla tastiera, Escape e il click fuori la chiudono.
+    const gruppi = [...testata.querySelectorAll<HTMLElement>('.gruppo')];
+    const imposta = (g: HTMLElement, aperto: boolean) => {
+      g.dataset.aperto = aperto ? 'si' : 'no';
+      g.querySelector('.gruppo__apri')?.setAttribute('aria-expanded', String(aperto));
+    };
+    const alClick = (e: Event) => {
+      const tasto = (e.target as HTMLElement).closest('.gruppo__apri');
+      const g = tasto?.closest<HTMLElement>('.gruppo');
+      if (g) { imposta(g, g.dataset.aperto !== 'si'); return; }
+      gruppi.forEach((x) => { if (!x.contains(e.target as Node)) imposta(x, false); });
+    };
+    const allaFuga = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      gruppi.forEach((g) => {
+        if (g.dataset.aperto === 'si' || g.contains(document.activeElement)) {
+          imposta(g, false); g.querySelector<HTMLElement>('.gruppo__apri')?.focus();
+        }
+      });
+    };
+    const alFocusOut = (e: FocusEvent) => {
+      const g = (e.target as HTMLElement).closest<HTMLElement>('.gruppo');
+      if (g && !g.contains(e.relatedTarget as Node)) imposta(g, false);
+    };
+    document.addEventListener('click', alClick);
+    addEventListener('keydown', allaFuga);
+    testata.addEventListener('focusout', alFocusOut);
+    staccaTendina = () => {
+      document.removeEventListener('click', alClick);
+      removeEventListener('keydown', allaFuga);
+      testata.removeEventListener('focusout', alFocusOut);
+    };
 
     let atteso = false;
     const aggiorna = () => {
@@ -118,6 +168,33 @@ const prenota = prenotazioni.aperte
   .testata__nav a:hover::after, .testata__nav a:focus-visible::after { transform: scaleX(1); }
   .testata__nav a[data-qui], .testata__nav a[aria-current='page'] { color: var(--oro-chiaro); }
   .testata__nav a[data-qui]::after, .testata__nav a[aria-current='page']::after { transform: scaleX(1); }
+
+  /* ── tendina dei menu ── */
+  .gruppo { position: relative; display: inline-flex; align-items: center; gap: .3rem; }
+  .gruppo__apri {
+    display: inline-grid; place-items: center; width: 28px; height: 44px;
+    padding: 0; background: none; border: 0; color: var(--fumo); cursor: pointer;
+    transition: color .3s ease, transform .3s var(--ease);
+  }
+  .gruppo__apri:hover, .gruppo:hover .gruppo__apri { color: var(--oro-chiaro); }
+  .gruppo[data-aperto='si'] .gruppo__apri svg { transform: rotate(180deg); }
+  .tendina {
+    position: absolute; top: calc(100% - 4px); left: -1.25rem; min-width: 12rem;
+    margin: 0; padding: .6rem 0; list-style: none;
+    background: rgba(10, 8, 6, .96); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    border: 1px solid var(--bordo); border-top-color: var(--oro);
+    opacity: 0; visibility: hidden; transform: translateY(-4px);
+    transition: opacity .3s var(--ease), transform .3s var(--ease), visibility 0s .3s;
+  }
+  .gruppo:hover .tendina, .gruppo:focus-within .tendina, .gruppo[data-aperto='si'] .tendina {
+    opacity: 1; visibility: visible; transform: none; transition-delay: 0s;
+  }
+  .tendina a {
+    display: flex; min-height: 44px; padding: 0 1.25rem; white-space: nowrap;
+  }
+  .tendina a::after { left: 1.25rem; right: 1.25rem; width: auto; }
+  .tendina a[aria-current='page'] { color: var(--oro-chiaro); }
+  @media (prefers-reduced-motion: reduce) { .tendina, .gruppo__apri svg { transition: none; } }
 
   .testata__coda { position: relative; z-index: 2; display: flex; align-items: center; gap: 1rem; margin-left: clamp(.5rem, 2vw, 2rem); }
   .lingua {

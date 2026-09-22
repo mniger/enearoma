@@ -193,21 +193,29 @@ export const testi = {
   },
 } as const;
 
-/** Navigazione — percorsi assoluti dalla radice della lingua: le ancore puntano alla home, /menu/ è una pagina. */
-export const nav = {
+/** Voce di navigazione; `sotto` = le pagine figlie (tendina in barra, voci esplicite nella tenda). */
+export interface VoceNav {
+  readonly href: string;
+  readonly label: string;
+  readonly sotto?: ReadonlyArray<{ readonly href: string; readonly label: string }>;
+}
+
+/** Navigazione — percorsi assoluti dalla radice della lingua: le ancore puntano alla home, /menu/ è una pagina.
+ *  I menu sono due: la voce "Menu" li elenca, così si vede da ogni pagina che esistono entrambi. */
+export const nav: { readonly it: readonly VoceNav[]; readonly en: readonly VoceNav[] } = {
   it: [
     { href: '/#locale', label: 'Il ristorante' },
-    { href: '/menu/', label: 'Menu' },
+    { href: '/menu/', label: 'Menu', sotto: [{ href: '/menu/', label: 'Cena' }, { href: '/menu/aperitivo/', label: 'Aperitivo' }] },
     { href: '/#galleria', label: 'Immagini' },
     { href: '/#dove', label: 'Dove siamo' },
   ],
   en: [
     { href: '/#locale', label: 'The restaurant' },
-    { href: '/menu/', label: 'Menu' },
+    { href: '/menu/', label: 'Menu', sotto: [{ href: '/menu/', label: 'Dinner' }, { href: '/menu/aperitivo/', label: 'Aperitivo' }] },
     { href: '/#galleria', label: 'Pictures' },
     { href: '/#dove', label: 'Visit us' },
   ],
-} as const;
+};
 
 export type Locale = 'it' | 'en';
 

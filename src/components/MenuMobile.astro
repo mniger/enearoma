@@ -2,7 +2,10 @@
 /** Navigazione mobile a tendina. Il pulsante vive nell’header; la tenda è fixed. */
 import { altraLingua, nav, prenotazioni, type Locale } from '../data/site';
 const locale = (Astro.currentLocale ?? 'it') as Locale;
-const voci = nav[locale];
+// Nella tenda le sottovoci sono voci piene: "Menu · Cena", "Menu · Aperitivo".
+const voci = nav[locale].flatMap((v) =>
+  v.sotto ? v.sotto.map((s) => ({ href: s.href, label: `${v.label} · ${s.label}` })) : [{ href: v.href, label: v.label }],
+);
 const base = locale === 'en' ? '/en' : '';
 const altLang = locale === 'en'
   ? { code: 'Italiano', href: altraLingua(Astro.url.pathname, locale), lang: 'it' }
@@ -18,7 +21,7 @@ const prenota = prenotazioni.aperte
 
 <nav class="tenda" id="tenda" aria-label={etichetta} data-aperta="no">
   <div class="tenda__voci">
-    {voci.map((v) => <a href={base + v.href} aria-current={!v.href.startsWith('/#') && Astro.url.pathname.startsWith(base + v.href) ? 'page' : undefined}>{v.label}</a>)}
+    {voci.map((v) => <a href={base + v.href} aria-current={!v.href.startsWith('/#') && Astro.url.pathname === base + v.href ? 'page' : undefined}>{v.label}</a>)}
   </div>
   <a class="tenda__prenota" href={base + '/#prenota'}>{prenota}</a>
   <a class="tenda__lingua" href={altLang.href} hreflang={altLang.lang} lang={altLang.lang}>{altLang.code}</a>
@@ -137,6 +140,7 @@ const prenota = prenotazioni.aperte
   .tenda__voci a:nth-child(3) { transition-delay: .18s; }
   .tenda__voci a:nth-child(4) { transition-delay: .24s; }
   .tenda__voci a:nth-child(5) { transition-delay: .30s; }
+  .tenda__voci a:nth-child(6) { transition-delay: .36s; }
   .tenda__voci a:hover, .tenda__voci a[aria-current='page'] { color: var(--oro-chiaro); }
   .tenda__prenota {
     font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .22em; text-transform: uppercase;

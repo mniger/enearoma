@@ -130,16 +130,19 @@ const etichettaAllergeni = (nn: readonly number[]) =>
 <style>
   .carta { padding-block: calc(var(--testata-h) + clamp(2rem, 5vw, 4rem)) var(--stack); }
   .carta__testa { display: grid; gap: 1rem; max-width: 52rem; }   /* = .carta__corpo: una sola linea a sinistra */
-  /* selettore fra i menu: due voci, quella corrente segnata dal filo d'oro */
-  .selettore { display: flex; gap: 1.75rem; margin-bottom: .5rem; }
+  /* interruttore fra i menu: due schede a tutta larghezza, quella corrente
+     in oro con il filo pieno sotto; si vede prima ancora del titolo */
+  .selettore { display: grid; grid-template-columns: 1fr 1fr; margin-bottom: 1.25rem; border-bottom: 1px solid var(--bordo); }
   .selettore a {
-    font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .22em;
+    display: flex; align-items: center; justify-content: center; min-height: 3.5rem;
+    font-family: var(--font-lapide); font-size: var(--fs-sm); letter-spacing: .24em;
     text-transform: uppercase; color: var(--fumo); text-decoration: none;
-    padding: .85rem 0; border-bottom: 1px solid transparent;
+    margin-bottom: -1px; border-bottom: 1px solid transparent;
     transition: color .3s ease, border-color .3s ease;
   }
   .selettore a:hover, .selettore a:focus-visible { color: var(--oro-chiaro); }
-  .selettore a[aria-current='page'] { color: var(--oro-chiaro); border-bottom-color: var(--oro); }
+  .selettore a[aria-current='page'] { color: var(--oro-chiaro); border-bottom: 2px solid var(--oro); }
+  @media (min-width: 40rem) { .selettore { grid-template-columns: repeat(2, minmax(0, 14rem)); } }
   .carta__intro { color: var(--fumo); max-width: var(--misura); }
 
   /* ── indice delle sezioni: resta sotto la testata, scorre di lato sul telefono ── */

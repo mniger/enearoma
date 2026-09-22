@@ -3,12 +3,10 @@ import Marchio from './Marchio.astro';
 import { altraLingua, brand, contatti, legale, nav, type Locale } from '../data/site';
 const locale = (Astro.currentLocale ?? 'it') as Locale;
 const base = locale === 'en' ? '/en' : '';
-// Il piede è la mappa del sito: alle voci di navigazione si aggiunge l'aperitivo.
-const voci: ReadonlyArray<{ href: string; label: string }> = [
-  ...nav[locale].slice(0, 2),
-  { href: '/menu/aperitivo/', label: 'Aperitivo' },
-  ...nav[locale].slice(2),
-];
+// Il piede è la mappa del sito: le voci con sottovoci si aprono (Menu · Cena, Menu · Aperitivo).
+const voci: ReadonlyArray<{ href: string; label: string }> = nav[locale].flatMap((v) =>
+  v.sotto ? v.sotto.map((s) => ({ href: s.href, label: `${v.label} · ${s.label}` })) : [v],
+);
 const altLang = locale === 'en'
   ? { code: 'Italiano', href: altraLingua(Astro.url.pathname, locale), lang: 'it' }
   : { code: 'English', href: altraLingua(Astro.url.pathname, locale), lang: 'en' };
