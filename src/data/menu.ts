@@ -234,10 +234,10 @@ export const menuCena = {
 } as const satisfies Menu;
 
 /**
- * Menu dell'aperitivo — trascritto dal testo inviato dal titolare il 22/09/2026
- * (stesse regole del menu della cena: solo prezzo di vendita, allergeni come
- * dichiarati). I tre taglieri sono arrivati SENZA prezzo: non si pubblicano
- * finché il titolare non lo comunica.
+ * Menu dell'aperitivo — trascritto dal testo inviato dal titolare il 22/09/2026,
+ * prezzi dei taglieri arrivati il 23/09/2026 (stesse regole del menu della
+ * cena: solo prezzo di vendita, mai il food cost che il titolare scrive
+ * accanto; allergeni come dichiarati).
  */
 export const menuAperitivo = {
   servizio: { it: 'Aperitivo', en: 'Aperitivo' },
@@ -289,14 +289,17 @@ export const menuAperitivo = {
         {
           nome: { it: 'Tagliere di salumi e formaggi', en: 'Cured meats and cheese board' },
           allergeni: [7],
+          prezzo: 18,
         },
         {
           nome: { it: 'Tagliere di salumi', en: 'Cured meats board' },
           allergeni: [],
+          prezzo: 15,
         },
         {
           nome: { it: 'Tagliere di formaggi', en: 'Cheese board' },
           allergeni: [7],
+          prezzo: 15,
         },
         {
           nome: { it: 'Tartare di salmone marinato', en: 'Cured salmon tartare' },
