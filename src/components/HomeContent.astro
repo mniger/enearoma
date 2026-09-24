@@ -34,13 +34,13 @@ const L = locale === 'en'
       etLocale: 'The restaurant', etCucina: 'The kitchen', etBar: 'The bar',
       etGalleria: 'ENEA in pictures', etDove: 'Visit us',
       tLocale: 'A dining room under brick vaults, a few steps from Via Veneto',
-      pLocale: 'Vaulted ceilings, green velvet, candlelight and a wall of bottles. Roman in character, Mediterranean in spirit, open from the evening aperitivo through to dinner.',
+      pLocale: 'Vaulted ceilings, green velvet, candlelight and a wall of bottles. Roman in character, Mediterranean in spirit, open for lunch, aperitivo and dinner.',
       tCucina: 'Mediterranean cooking, Roman roots',
       pCucina: 'Seasonal ingredients and clear flavours, plated with care but never precious. The dishes are the ones you want to order again.',
       tBar: 'Come in just for a drink',
       pBar: 'The Italian aperitivo, the classic cocktails made properly, and a wine list chosen to follow the kitchen.',
       tDove: `${contatti.via}\u00a0${contatti.civico}, Rome`,
-      vediMenu: 'See the dinner menu', vediAperitivo: 'The aperitivo menu',
+      vediMenu: 'See the dinner menu', vediPranzo: 'The business lunch', vediAperitivo: 'The aperitivo menu',
       barAttesa: 'The cocktail and wine list is on its way.',
       indirizzo: 'Address', telefono: 'Phone', orariL: 'Opening hours', scrivi: 'Email',
       inArrivo: 'coming soon', indicazioni: 'Open in Google Maps', nuovaScheda: 'opens in a new tab',
@@ -60,13 +60,13 @@ const L = locale === 'en'
       etLocale: 'Il ristorante', etCucina: 'La cucina', etBar: 'Il bar',
       etGalleria: 'ENEA in immagini', etDove: 'Dove siamo',
       tLocale: 'Una sala sotto volte di mattoni, a due passi da Via Veneto',
-      pLocale: 'Soffitti a volta, velluto verde, luce di candela e una parete di bottiglie. Romano nel carattere, mediterraneo nello spirito, aperto dall’aperitivo fino a cena.',
+      pLocale: 'Soffitti a volta, velluto verde, luce di candela e una parete di bottiglie. Romano nel carattere, mediterraneo nello spirito, aperto a pranzo, all’aperitivo e a cena.',
       tCucina: 'Cucina mediterranea, radici romane',
       pCucina: 'Ingredienti di stagione e sapori netti, impiattati con cura ma senza sussiego. Piatti che viene voglia di ordinare di nuovo.',
       tBar: 'Si entra anche solo per bere',
       pBar: "L’aperitivo italiano, i cocktail classici fatti come si deve e una carta dei vini scelta per seguire la cucina.",
       tDove: `${contatti.via}\u00a0${contatti.civico}, Roma`,
-      vediMenu: 'Vedi il menu della cena', vediAperitivo: 'Il menu dell’aperitivo',
+      vediMenu: 'Vedi il menu della cena', vediPranzo: 'Il business lunch', vediAperitivo: 'Il menu dell’aperitivo',
       barAttesa: 'La carta dei cocktail e dei vini è in arrivo.',
       indirizzo: 'Indirizzo', telefono: 'Telefono', orariL: 'Orari', scrivi: 'Email',
       inArrivo: 'in arrivo', indicazioni: 'Apri in Google Maps', nuovaScheda: 'si apre in una nuova scheda',
@@ -152,6 +152,7 @@ const azioni = [
       <h2 data-reveal data-ritardo="1">{L.tCucina}</h2>
       <p class="corpo" data-reveal data-ritardo="2">{L.pCucina}</p>
       <a class="rimando" href={locale === 'en' ? '/en/menu/' : '/menu/'} data-reveal data-ritardo="3">{L.vediMenu} <Freccia /></a>
+      <a class="rimando" href={locale === 'en' ? '/en/menu/lunch/' : '/menu/pranzo/'} data-reveal data-ritardo="3">{L.vediPranzo} <Freccia /></a>
     </article>
 
     <article class="portata">

@@ -1,0 +1,14 @@
+---
+import Base from '../../../layouts/Base.astro';
+import MenuContent from '../../../components/MenuContent.astro';
+import { menuPranzo, datiStrutturatiMenu } from '../../../data/menu';
+import { brand } from '../../../data/site';
+
+const url = new URL(Astro.url.pathname, Astro.site).href;
+---
+<Base title={`Business lunch — ${brand.nomeEsteso}`} description="The business lunch at ENEA Roma: a starter, first or main course of the day at a set price, with water, bread and coffee included. On Via Boncompagni, steps from Via Veneto.">
+  <Fragment slot="head">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(datiStrutturatiMenu(menuPranzo, 'en', url))} />
+  </Fragment>
+  <MenuContent menu={menuPranzo} variante="pranzo" />
+</Base>

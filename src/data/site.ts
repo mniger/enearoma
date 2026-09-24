@@ -209,13 +209,13 @@ export interface VoceNav {
 export const nav: { readonly it: readonly VoceNav[]; readonly en: readonly VoceNav[] } = {
   it: [
     { href: '/#locale', label: 'Il ristorante' },
-    { href: '/menu/', label: 'Menu', sotto: [{ href: '/menu/', label: 'Cena' }, { href: '/menu/aperitivo/', label: 'Aperitivo' }] },
+    { href: '/menu/', label: 'Menu', sotto: [{ href: '/menu/pranzo/', label: 'Pranzo' }, { href: '/menu/aperitivo/', label: 'Aperitivo' }, { href: '/menu/', label: 'Cena' }] },
     { href: '/#galleria', label: 'Immagini' },
     { href: '/#dove', label: 'Dove siamo' },
   ],
   en: [
     { href: '/#locale', label: 'The restaurant' },
-    { href: '/menu/', label: 'Menu', sotto: [{ href: '/menu/', label: 'Dinner' }, { href: '/menu/aperitivo/', label: 'Aperitivo' }] },
+    { href: '/menu/', label: 'Menu', sotto: [{ href: '/menu/lunch/', label: 'Lunch' }, { href: '/menu/aperitivo/', label: 'Aperitivo' }, { href: '/menu/', label: 'Dinner' }] },
     { href: '/#galleria', label: 'Pictures' },
     { href: '/#dove', label: 'Visit us' },
   ],
@@ -227,6 +227,7 @@ export type Locale = 'it' | 'en';
 export const traduzioni: ReadonlyArray<readonly [it: string, en: string]> = [
   ['/', '/en/'],
   ['/menu/', '/en/menu/'],
+  ['/menu/pranzo/', '/en/menu/lunch/'],
   ['/menu/aperitivo/', '/en/menu/aperitivo/'],
   ['/note-legali/', '/en/note-legali/'],
 ];

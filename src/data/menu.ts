@@ -218,6 +218,32 @@ export const menuAperitivo = {
   ],
 } as const satisfies Menu;
 
+/**
+ * Business lunch — dal titolare, 24/09/2026 (WhatsApp). I piatti cambiano a
+ * periodi, quindi sul sito niente nomi: solo le tre scelte col loro prezzo.
+ * Acqua, pane e caffè sono compresi; dolci ed extra restano fuori dal sito
+ * (li gestisce la sala). Allergeni: dipendono dal piatto del giorno, li dice
+ * il personale (nota in fondo alla pagina).
+ */
+export const menuPranzo = {
+  servizio: { it: 'Business lunch', en: 'Business lunch' },
+  sezioni: [
+    {
+      id: 'business-lunch',
+      titolo: { it: 'Business lunch', en: 'Business lunch' },
+      piatti: [
+        { nome: { it: 'Antipasto del giorno', en: 'Starter of the day' }, allergeni: [], prezzo: 8 },
+        { nome: { it: 'Primo del giorno', en: 'First course of the day' }, allergeni: [], prezzo: 12 },
+        { nome: { it: 'Secondo del giorno', en: 'Main course of the day' }, allergeni: [], prezzo: 15 },
+      ],
+    },
+  ],
+  note: {
+    it: ['Il prezzo di ogni piatto comprende acqua, pane e caffè.'],
+    en: ['Each price includes water, bread and coffee.'],
+  },
+} as const satisfies Menu;
+
 /** Solo i piatti pubblicabili: quelli con un prezzo comunicato dal titolare. */
 export const pubblicabili = (s: SezioneMenu): ReadonlyArray<Piatto & { readonly prezzo: number }> =>
   s.piatti.filter((p): p is Piatto & { readonly prezzo: number } => typeof p.prezzo === 'number');

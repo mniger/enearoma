@@ -12,12 +12,16 @@ import { allergeni, pubblicabili, type Menu } from '../data/menu';
 import type { Locale } from '../data/site';
 import Freccia from './Freccia.astro';
 
-interface Props { menu: Menu; variante: 'cena' | 'aperitivo' }
+interface Props { menu: Menu; variante: 'pranzo' | 'aperitivo' | 'cena' }
 const { menu, variante } = Astro.props;
 const locale = (Astro.currentLocale ?? 'it') as Locale;
 const base = locale === 'en' ? '/en' : '';
 
 const T = {
+  pranzo: {
+    it: { titolo: 'Il business lunch', intro: 'A pranzo, un piatto del giorno a prezzo fisso. I piatti cambiano con la stagione: il personale di sala vi dirà quelli di oggi.' },
+    en: { titolo: 'The business lunch', intro: 'At lunchtime, a dish of the day at a set price. The dishes change with the season: our staff will tell you today’s.' },
+  },
   cena: {
     it: { titolo: 'Il menu della cena', intro: 'Cucina mediterranea di stagione, radici romane. I prezzi sono in euro; i numeri accanto ai piatti indicano gli allergeni contenuti.' },
     en: { titolo: 'The dinner menu', intro: 'Seasonal Mediterranean cooking with Roman roots. Prices in euro; the small numbers next to each dish are the allergens it contains.' },
@@ -28,10 +32,11 @@ const T = {
   },
 }[variante][locale];
 
-// Selettore fra i menu: due pagine, nessuno script.
+// Selettore fra i menu, nell'ordine della giornata: tre pagine, nessuno script.
 const menuDisponibili = [
-  { id: 'cena', href: `${base}/menu/`, etichetta: locale === 'en' ? 'Dinner' : 'Cena' },
+  { id: 'pranzo', href: locale === 'en' ? '/en/menu/lunch/' : '/menu/pranzo/', etichetta: locale === 'en' ? 'Lunch' : 'Pranzo' },
   { id: 'aperitivo', href: `${base}/menu/aperitivo/`, etichetta: 'Aperitivo' },
+  { id: 'cena', href: `${base}/menu/`, etichetta: locale === 'en' ? 'Dinner' : 'Cena' },
 ] as const;
 
 const L = locale === 'en'
@@ -41,6 +46,7 @@ const L = locale === 'en'
       indice: 'Menu sections',
       allergeniTitolo: 'Allergens',
       allergeniNota: 'Allergen numbering follows EU Regulation 1169/2011. Our staff will gladly help with any question about ingredients and allergens.',
+      allergeniGiorno: 'The dishes of the day change: our staff will tell you their ingredients and allergens.',
       contiene: 'Contains',
       valuta: '€',
     }
@@ -50,21 +56,27 @@ const L = locale === 'en'
       indice: 'Sezioni del menu',
       allergeniTitolo: 'Allergeni',
       allergeniNota: 'La numerazione degli allergeni segue il Regolamento UE 1169/2011. Per qualsiasi informazione su ingredienti e allergeni il personale di sala è a disposizione.',
+      allergeniGiorno: 'I piatti del giorno cambiano: ingredienti e allergeni ve li indica il personale di sala.',
       contiene: 'Contiene',
       valuta: '€',
     };
 
-// In fondo al menu: l'altro menu e la strada per il ristorante.
-const altro = menuDisponibili.find((m) => m.id !== variante) ?? menuDisponibili[0];
+// In fondo al menu: gli altri due menu e la strada per il ristorante.
+const nomeMenu = locale === 'en'
+  ? { pranzo: 'The business lunch', aperitivo: 'The aperitivo menu', cena: 'The dinner menu' }
+  : { pranzo: 'Il business lunch', aperitivo: 'Il menu dell’aperitivo', cena: 'Il menu della cena' };
+const altri = menuDisponibili.filter((m) => m.id !== variante);
 const R = locale === 'en'
-  ? { titolo: 'Continue', altro: variante === 'cena' ? 'The aperitivo menu' : 'The dinner menu', dove: 'Where we are and bookings' }
-  : { titolo: 'Continua', altro: variante === 'cena' ? 'Il menu dell’aperitivo' : 'Il menu della cena', dove: 'Dove siamo e prenotazioni' };
+  ? { titolo: 'Continue', dove: 'Where we are and bookings' }
+  : { titolo: 'Continua', dove: 'Dove siamo e prenotazioni' };
 
 // Prezzi: interi come sul menu stampato (€ 14), decimali alla maniera della lingua (2,50 / 2.50).
 const cifra = (n: number) =>
   Number.isInteger(n) ? String(n) : n.toLocaleString(locale === 'en' ? 'en-GB' : 'it-IT', { minimumFractionDigits: 2 });
 const da = locale === 'en' ? 'from' : 'da';
 
+// La legenda numerata serve solo se qualche piatto porta i numeri (il pranzo no: piatti del giorno).
+const numerati = menu.sezioni.some((s) => pubblicabili(s).some((p) => p.allergeni.length > 0));
 const nomeAllergene = new Map(allergeni.map((a) => [a.n, a[locale]]));
 const etichettaAllergeni = (nn: readonly number[]) =>
   `${L.contiene}: ${nn.map((n) => nomeAllergene.get(n) ?? String(n)).join(', ')}`;
@@ -135,16 +147,18 @@ const etichettaAllergeni = (nn: readonly number[]) =>
 
     <section class="allergeni" aria-labelledby="t-allergeni">
       <h2 id="t-allergeni" class="eyebrow allergeni__titolo" data-reveal>{L.allergeniTitolo}</h2>
-      <ol class="allergeni__lista" role="list" data-reveal data-ritardo="1">
-        {allergeni.map((a) => (
-          <li><span class="allergeni__n">{a.n}</span> {a[locale]}</li>
-        ))}
-      </ol>
-      <p class="allergeni__nota" data-reveal data-ritardo="2">{L.allergeniNota}</p>
+      {numerati && (
+        <ol class="allergeni__lista" role="list" data-reveal data-ritardo="1">
+          {allergeni.map((a) => (
+            <li><span class="allergeni__n">{a.n}</span> {a[locale]}</li>
+          ))}
+        </ol>
+      )}
+      <p class="allergeni__nota" data-reveal data-ritardo="2">{numerati ? L.allergeniNota : L.allergeniGiorno}</p>
     </section>
 
     <nav class="carta__rimandi" aria-label={R.titolo} data-reveal>
-      <a class="rimando" href={altro.href}>{R.altro} <Freccia /></a>
+      {altri.map((m) => <a class="rimando" href={m.href}>{nomeMenu[m.id]} <Freccia /></a>)}
       <a class="rimando" href={`${base}/#prenota`}>{R.dove} <Freccia /></a>
     </nav>
   </div>
@@ -153,9 +167,9 @@ const etichettaAllergeni = (nn: readonly number[]) =>
 <style>
   .carta { padding-block: calc(var(--testata-h) + clamp(2rem, 5vw, 4rem)) var(--stack); }
   .carta__testa { display: grid; gap: 1rem; max-width: 52rem; }   /* = .carta__corpo: una sola linea a sinistra */
-  /* interruttore fra i menu: due schede a tutta larghezza, quella corrente
-     in oro con il filo pieno sotto; si vede prima ancora del titolo */
-  .selettore { display: grid; grid-template-columns: 1fr 1fr; margin-bottom: 1.25rem; border-bottom: 1px solid var(--bordo); }
+  /* interruttore fra i menu: una scheda per menu a tutta larghezza, quella
+     corrente in oro con il filo pieno sotto; si vede prima ancora del titolo */
+  .selettore { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); margin-bottom: 1.25rem; border-bottom: 1px solid var(--bordo); }
   .selettore a {
     display: flex; align-items: center; justify-content: center; min-height: 3.5rem;
     font-family: var(--font-lapide); font-size: var(--fs-sm); letter-spacing: .24em;
@@ -165,7 +179,9 @@ const etichettaAllergeni = (nn: readonly number[]) =>
   }
   .selettore a:hover, .selettore a:focus-visible { color: var(--oro-chiaro); }
   .selettore a[aria-current='page'] { color: var(--oro-chiaro); border-bottom: 2px solid var(--oro); }
-  @media (min-width: 40rem) { .selettore { grid-template-columns: repeat(2, minmax(0, 14rem)); } }
+  /* tre schede sul telefono più stretto: «Aperitivo» a .24em non ci sta (97 px in 92) */
+  @media (max-width: 23.75rem) { .selettore a { letter-spacing: .12em; } }
+  @media (min-width: 40rem) { .selettore { grid-auto-columns: minmax(0, 14rem); justify-content: start; } }
   .carta__intro { color: var(--fumo); max-width: var(--misura); }
 
   /* ── indice delle sezioni: resta sotto la testata, scorre di lato sul telefono ── */
