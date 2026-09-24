@@ -39,7 +39,7 @@ const L = locale === 'en'
       pCucina: 'Seasonal ingredients and clear flavours, plated with care but never precious. The dishes are the ones you want to order again.',
       tBar: 'Come in just for a drink',
       pBar: 'The Italian aperitivo, the classic cocktails made properly, and a wine list chosen to follow the kitchen.',
-      tDove: 'Via Boncompagni\u00a083, Rome',
+      tDove: `${contatti.via}\u00a0${contatti.civico}, Rome`,
       vediMenu: 'See the dinner menu', vediAperitivo: 'The aperitivo menu',
       barAttesa: 'The cocktail and wine list is on its way.',
       indirizzo: 'Address', telefono: 'Phone', orariL: 'Opening hours', scrivi: 'Email',
@@ -65,7 +65,7 @@ const L = locale === 'en'
       pCucina: 'Ingredienti di stagione e sapori netti, impiattati con cura ma senza sussiego. Piatti che viene voglia di ordinare di nuovo.',
       tBar: 'Si entra anche solo per bere',
       pBar: "L’aperitivo italiano, i cocktail classici fatti come si deve e una carta dei vini scelta per seguire la cucina.",
-      tDove: 'Via Boncompagni\u00a083, Roma',
+      tDove: `${contatti.via}\u00a0${contatti.civico}, Roma`,
       vediMenu: 'Vedi il menu della cena', vediAperitivo: 'Il menu dell’aperitivo',
       barAttesa: 'La carta dei cocktail e dei vini è in arrivo.',
       indirizzo: 'Indirizzo', telefono: 'Telefono', orariL: 'Orari', scrivi: 'Email',
@@ -201,9 +201,11 @@ const azioni = [
           <dt>{L.indirizzo}</dt>
           <dd>{indirizzo}<br /><a class="indicazioni" href={contatti.mapsUrl} target="_blank" rel="noopener">{L.indicazioni}<span class="sr-only"> ({L.nuovaScheda})</span></a></dd>
         </div>
-        <div><dt>{L.orariL}</dt><dd data-attesa>{dato(orari.cucina)}</dd></div>
-        <div><dt>{L.telefono}</dt><dd data-attesa>{dato(contatti.telefono)}</dd></div>
-        <div><dt>{L.scrivi}</dt><dd data-attesa>{dato(contatti.email)}</dd></div>
+        <div><dt>{L.orariL}</dt><dd data-attesa={orari.cucina === ATTESA || undefined}>{dato(orari.cucina)}</dd></div>
+        <div><dt>{L.telefono}</dt>{c(contatti.telefono)
+          ? <dd><a class="indicazioni tel" href={`tel:${soloCifre(contatti.telefono)}`}>{contatti.telefono}</a></dd>
+          : <dd data-attesa>{dato(contatti.telefono)}</dd>}</div>
+        <div><dt>{L.scrivi}</dt><dd data-attesa={contatti.email === ATTESA || undefined}>{dato(contatti.email)}</dd></div>
       </dl>
       <div id="prenota" class="prenota" tabindex="-1" data-reveal data-ritardo="3">
         <p class="eyebrow">{L.prenotaTitolo}</p>
@@ -213,6 +215,7 @@ const azioni = [
               <a class={`btn ${k.pieno ? 'btn--pieno' : 'btn--nudo'}`} href={k.href} rel="noopener">{k.testo}</a>
             ))}
           </div>
+          <p class="nota">{apertura.periodo[locale]}. {apertura.dettaglio[locale]}</p>
         ) : (
           <div class="avviso">
             <p><strong>{apertura.periodo[locale]}.</strong> {apertura.dettaglio[locale]}</p>
@@ -365,6 +368,7 @@ const azioni = [
     transition: color .3s ease, border-color .3s ease;
   }
   .indicazioni:hover { color: var(--oro-luce); border-color: var(--oro); }
+  .indicazioni.tel { font-size: var(--fs-base); color: var(--travertino); margin-top: 0; }
   .avviso {
     display: grid; gap: .7rem; max-width: 48ch; color: var(--fumo);
     padding: 1.25rem 1.4rem; border-left: 1px solid var(--oro); background: var(--notte);

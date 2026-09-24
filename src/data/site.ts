@@ -22,18 +22,16 @@ export const brand = {
 } as const;
 
 /**
- * Recapiti. Via e civico provengono dalle schede online della gestione
- * precedente (stesso indirizzo, stesso locale) e sono coerenti con le foto
- * della facciata nel manuale: si pubblicano in attesa di conferma scritta.
- * Telefono ed email restano ATTESA: quelli in rete sono della vecchia gestione
- * e pubblicarli manderebbe i clienti a un numero che non risponde.
+ * Recapiti. Civico «83/85» e telefono come li scrive il titolare sul suo menu
+ * stampato (Canva, 24/09/2026) e sul biglietto da visita di riferimento.
+ * WhatsApp ed email restano ATTESA.
  */
 export const contatti = {
   via: 'Via Boncompagni', // [MANUALE] footer e foto della facciata
-  civico: '83', // dalle schede online preesistenti — da confermare
+  civico: '83/85', // [TITOLARE] menu stampato e biglietto
   cap: '00187', // CAP del rione Ludovisi
   citta: 'Roma',
-  telefono: ATTESA,
+  telefono: '+39 06 7227 2403', // [TITOLARE] 24/09/2026
   whatsapp: ATTESA,
   email: ATTESA,
   /** Link stabile alla scheda Google (CID della scheda "Enea Ristorante", verificato 08/09/2026). */
@@ -62,9 +60,12 @@ export const piattaforme = {
  * pannello (guestcenter, ID 363708), non da qui.
  */
 export const prenotazioni = {
-  aperte: false,
-  /** Mostrare il canale OpenTable quando il registro del ristorante è aperto. */
-  conOpenTable: true,
+  // Aperte per telefono dal 24/09/2026: il titolare ha dato il numero e il suo
+  // biglietto dice «Prenota ora».
+  aperte: true,
+  /** Mostrare il canale OpenTable quando il registro del ristorante è aperto
+   *  (verifica dell'identità ancora in corso: finché no, niente link morti). */
+  conOpenTable: false,
 } as const;
 
 /** Orari — ATTESA. */

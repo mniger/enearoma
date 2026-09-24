@@ -60,6 +60,11 @@ const R = locale === 'en'
   ? { titolo: 'Continue', altro: variante === 'cena' ? 'The aperitivo menu' : 'The dinner menu', dove: 'Where we are and bookings' }
   : { titolo: 'Continua', altro: variante === 'cena' ? 'Il menu dell’aperitivo' : 'Il menu della cena', dove: 'Dove siamo e prenotazioni' };
 
+// Prezzi: interi come sul menu stampato (€ 14), decimali alla maniera della lingua (2,50 / 2.50).
+const cifra = (n: number) =>
+  Number.isInteger(n) ? String(n) : n.toLocaleString(locale === 'en' ? 'en-GB' : 'it-IT', { minimumFractionDigits: 2 });
+const da = locale === 'en' ? 'from' : 'da';
+
 const nomeAllergene = new Map(allergeni.map((a) => [a.n, a[locale]]));
 const etichettaAllergeni = (nn: readonly number[]) =>
   `${L.contiene}: ${nn.map((n) => nomeAllergene.get(n) ?? String(n)).join(', ')}`;
@@ -92,23 +97,41 @@ const etichettaAllergeni = (nn: readonly number[]) =>
       <section class="portata-lista" id={s.id} aria-labelledby={`t-${s.id}`}>
         <h2 id={`t-${s.id}`} class:list={{ 'sr-only': menu.sezioni.length === 1 }} data-reveal>{s.titolo[locale]}</h2>
         <ul class="piatti" role="list">
-          {pubblicabili(s).map((p, i) => (
-            <li class="piatto" data-reveal data-ritardo={String(Math.min(i, 3))}>
-              <span class="piatto__nome">
-                {p.nome[locale]}
-                {p.allergeni.length > 0 && (
-                  <small class="piatto__allergeni">
-                    <span aria-hidden="true">{p.allergeni.join(' · ')}</span>
-                    <span class="sr-only">{etichettaAllergeni(p.allergeni)}</span>
-                  </small>
-                )}
-              </span>
-              <span class="piatto__prezzo"><span class="piatto__valuta">{L.valuta}</span>{p.prezzo}</span>
-            </li>
-          ))}
+          {pubblicabili(s).map((p, i, tutti) => {
+            const descrizione = locale === 'it' ? p.descrizione?.it : p.descrizione?.en;
+            const nuovoGruppo = p.gruppo && p.gruppo.it !== tutti[i - 1]?.gruppo?.it;
+            return (
+              <>
+                {nuovoGruppo && <li class="piatti__gruppo" data-reveal><h3>{p.gruppo?.[locale]}</h3></li>}
+                <li class="piatto" data-reveal data-ritardo={String(Math.min(i, 3))}>
+                  <div class="piatto__testo">
+                    <span class="piatto__nome">
+                      {p.nome[locale]}
+                      {p.allergeni.length > 0 && (
+                        <small class="piatto__allergeni">
+                          <span aria-hidden="true">{p.allergeni.join(' · ')}</span>
+                          <span class="sr-only">{etichettaAllergeni(p.allergeni)}</span>
+                        </small>
+                      )}
+                    </span>
+                    {descrizione && <span class="piatto__descrizione">{descrizione}</span>}
+                  </div>
+                  <span class="piatto__prezzo">
+                    {p.prezzoDa && <span class="piatto__da">{da} </span>}<span class="piatto__valuta">{L.valuta}</span>{cifra(p.prezzo)}
+                  </span>
+                </li>
+              </>
+            );
+          })}
         </ul>
       </section>
     ))}
+
+    {menu.note && (
+      <div class="carta__note" data-reveal>
+        {menu.note[locale].map((riga) => <p>{riga}</p>)}
+      </div>
+    )}
 
     <section class="allergeni" aria-labelledby="t-allergeni">
       <h2 id="t-allergeni" class="eyebrow allergeni__titolo" data-reveal>{L.allergeniTitolo}</h2>
@@ -198,6 +221,16 @@ const etichettaAllergeni = (nn: readonly number[]) =>
     color: var(--travertino); font-variant-numeric: tabular-nums; white-space: nowrap;
   }
   .piatto__valuta { color: var(--fumo); margin-right: .2em; font-size: .85em; }
+  .piatto__da { color: var(--fumo); font-size: .85em; }
+  .piatto__testo { display: grid; gap: .3rem; min-width: 0; }
+  .piatto__descrizione { font: 300 var(--fs-sm)/1.5 var(--font-ui); color: var(--fumo); }
+  .piatti__gruppo { padding: 1.4rem 0 .5rem; }
+  .piatti__gruppo:first-child { padding-top: 0; }
+  .piatti__gruppo h3 {
+    font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .24em;
+    text-transform: uppercase; color: var(--oro);
+  }
+  .carta__note { display: grid; gap: .35rem; font-size: var(--fs-sm); color: var(--fumo); }
   /* sul telefono i nomi vanno a capo: gli allergeni stanno meglio su una riga propria */
   @media (max-width: 40rem) {
     .piatto__allergeni { display: block; margin: .25rem 0 0; vertical-align: baseline; }
@@ -228,7 +261,7 @@ const etichettaAllergeni = (nn: readonly number[]) =>
     .portata-lista h2 { break-after: avoid; }
     .piatto { border-color: #999; }
     .piatto__nome, .piatto__prezzo, .portata-lista h2, .carta__testa h1 { color: #000; }
-    .piatto__allergeni, .piatto__valuta, .carta__intro, .allergeni__lista, .allergeni__n, .allergeni__nota, .eyebrow { color: #444; }
+    .piatto__allergeni, .piatto__valuta, .piatto__descrizione, .piatto__da, .carta__intro, .carta__note, .allergeni__lista, .allergeni__n, .allergeni__nota, .eyebrow { color: #444; }
   }
 </style>
 
