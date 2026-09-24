@@ -1,6 +1,6 @@
 ---
 import Marchio from './Marchio.astro';
-import { altraLingua, brand, contatti, legale, nav, type Locale } from '../data/site';
+import { altraLingua, brand, contatti, legale, nav, piattaforme, type Locale } from '../data/site';
 const locale = (Astro.currentLocale ?? 'it') as Locale;
 const base = locale === 'en' ? '/en' : '';
 // Il piede è la mappa del sito: le voci con sottovoci si aprono (Menu · Cena, Menu · Aperitivo).
@@ -21,6 +21,11 @@ const anno = 2026;
   <div class="wrap piede__griglia">
     <a class="piede__marchio" href={locale === 'en' ? '/en/' : '/'} aria-label={brand.nomeEsteso}><Marchio /></a>
     <a class="piede__dir" href={contatti.mapsUrl} target="_blank" rel="noopener">{indirizzo}</a>
+    <a class="piede__dir piede__social" href={piattaforme.instagram} target="_blank" rel="noopener me"
+      aria-label={locale === 'en' ? 'ENEA Roma on Instagram' : 'ENEA Roma su Instagram'}>
+      <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.6" y="2.6" width="14.8" height="14.8" rx="4.2" /><circle cx="10" cy="10" r="3.5" /><circle cx="14.4" cy="5.6" r=".4" /></svg>
+      Instagram
+    </a>
     <nav class="piede__nav" aria-label={locale === 'en' ? 'Footer' : 'Piè di pagina'}>
       {voci.map((v) => <a href={base + v.href}>{v.label}</a>)}
       <a href={altLang.href} hreflang={altLang.lang} lang={altLang.lang}>{altLang.code}</a>
@@ -39,6 +44,8 @@ const anno = 2026;
     color: var(--fumo); text-decoration: none; padding: .5rem 0; transition: color .3s ease;
   }
   .piede__dir:hover { color: var(--oro-chiaro); }
+  .piede__social { display: inline-flex; align-items: center; gap: .6rem; margin-top: -.75rem; }
+  .piede__social svg { width: 1.05rem; height: 1.05rem; fill: none; stroke: currentColor; stroke-width: 1.4; }
   .piede__nav { display: flex; flex-wrap: wrap; justify-content: center; gap: .1rem 1.25rem; margin-top: .25rem; }
   .piede__nav a {
     font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .18em;

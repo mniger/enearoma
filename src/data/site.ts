@@ -45,6 +45,9 @@ export const contatti = {
  * sul sito solo quando le prenotazioni aprono.
  */
 export const piattaforme = {
+  // [TITOLARE] 24/09/2026. Bio «ENEA | Ristorante & Cocktail Bar», Via Boncompagni.
+  // Due trattini bassi: @enearoma, @enea_roma ed @enea.roma sono di altri.
+  instagram: 'https://www.instagram.com/enea__roma/',
   tripadvisor: 'https://www.tripadvisor.it/Restaurant_Review-g187791-d26790911',
   opentable: 'https://www.opentable.it/r/enea-ristorante-reservations-roma',
   opentablePrenota:

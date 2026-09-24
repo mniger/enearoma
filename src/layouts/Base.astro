@@ -44,7 +44,7 @@ const datiStrutturati = {
   acceptsReservations: prenotazioni.aperte,
   hasMap: contatti.mapsUrl,
   hasMenu: new URL('/menu/', Astro.site).href,
-  sameAs: [piattaforme.tripadvisor, piattaforme.opentable],
+  sameAs: [piattaforme.instagram, piattaforme.tripadvisor, piattaforme.opentable],
   address: {
     '@type': 'PostalAddress',
     streetAddress: `${contatti.via} ${contatti.civico}`,
@@ -52,7 +52,7 @@ const datiStrutturati = {
     addressLocality: contatti.citta,
     addressCountry: 'IT',
   },
-  // Alla conferma del cliente: openingHoursSpecification, priceRange, sameAs (Instagram).
+  // Alla conferma del cliente: openingHoursSpecification, priceRange.
 };
 ---
 <!doctype html>
