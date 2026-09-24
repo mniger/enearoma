@@ -1,0 +1,71 @@
+---
+/**
+ * L'anteprima della posizione in «Dove siamo».
+ *
+ * Non è un iframe di Google Maps: quello porta cookie di terzi (servirebbe il
+ * banner, e le note legali dichiarano che il sito non ne usa). È la mappa di
+ * OpenStreetMap disegnata nei colori del sito (scripts/genera-mappa.py) e un
+ * tocco apre la scheda vera in Google Maps, dove ci sono indicazioni e
+ * recensioni. Sul telefono il riquadro è più alto e taglia i lati: il
+ * segnaposto sta al centro, quindi resta sempre in vista.
+ */
+import mappa from '../assets/mappa-dove.svg?raw';
+import { contatti, type Locale } from '../data/site';
+import Freccia from './Freccia.astro';
+
+const locale = (Astro.currentLocale ?? 'it') as Locale;
+const L = locale === 'en'
+  ? { apri: 'Open in Google Maps', nuovaScheda: 'opens in a new tab', dati: 'Map data' }
+  : { apri: 'Apri in Google Maps', nuovaScheda: 'si apre in una nuova scheda', dati: 'Dati della mappa' };
+---
+<figure class="mappa" data-reveal>
+  <a class="mappa__quadro" href={contatti.mapsUrl} target="_blank" rel="noopener" aria-label={`${L.apri} (${L.nuovaScheda})`}>
+    <Fragment set:html={mappa} />
+  </a>
+  <figcaption class="mappa__piede">
+    <a class="rimando" href={contatti.mapsUrl} target="_blank" rel="noopener">{L.apri}<span class="sr-only"> ({L.nuovaScheda})</span> <Freccia /></a>
+    <small>{L.dati} © <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a></small>
+  </figcaption>
+</figure>
+
+<style>
+  .mappa { display: grid; gap: .9rem; margin: 0; }
+  .mappa__quadro {
+    display: block; overflow: hidden; aspect-ratio: 4 / 3;
+    border: 1px solid var(--bordo); background: var(--notte);
+    transition: border-color .3s ease;
+  }
+  .mappa__quadro:hover, .mappa__quadro:focus-visible { border-color: rgba(194, 146, 78, .55); }
+  @media (min-width: 40rem) { .mappa__quadro { aspect-ratio: 5 / 2; } }
+  .mappa__piede { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: .5rem 1.5rem; }
+  .mappa__piede small { font-size: var(--fs-xs); color: var(--fumo); }
+  .mappa__piede small a { color: inherit; }
+
+  /* il disegno: le classi le scrive scripts/genera-mappa.py */
+  .mappa__quadro :global(svg) { display: block; width: 100%; height: 100%; }
+  .mappa :global(.fondo) { fill: var(--notte); }
+  .mappa :global(.verde) { fill: var(--muschio); fill-opacity: .32; }
+  .mappa :global(.strada) { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .mappa :global(.s5) { stroke: #221b14; stroke-width: 1.5; }
+  .mappa :global(.s4) { stroke: #2b231a; stroke-width: 3; }
+  .mappa :global(.s3) { stroke: #382e23; stroke-width: 4.5; }
+  .mappa :global(.s2) { stroke: #463a2b; stroke-width: 6; }
+  .mappa :global(.s1) { stroke: #564734; stroke-width: 8; }
+  .mappa :global(.evidenza) { stroke: var(--oro); stroke-opacity: .6; stroke-width: 5; }
+  .mappa :global(.mura) { fill: none; stroke: #7a6a52; stroke-opacity: .55; stroke-width: 3; stroke-dasharray: 1 7; stroke-linecap: round; }
+  .mappa :global(.nome), .mappa :global(.insegna) {
+    font-family: var(--font-lapide); text-transform: uppercase;
+    paint-order: stroke; stroke: var(--notte); stroke-width: 6px; stroke-linejoin: round;
+  }
+  .mappa :global(.nome) { font-size: 15px; letter-spacing: .28em; fill: var(--fumo); }
+  .mappa :global(.insegna) { font-size: 22px; letter-spacing: .32em; fill: var(--oro-chiaro); }
+  .mappa :global(.alone) { fill: var(--oro); fill-opacity: .14; }
+  .mappa :global(.anello) { fill: none; stroke: var(--oro); stroke-width: 2; }
+  .mappa :global(.punto) { fill: var(--oro-chiaro); }
+  /* sul telefono la mappa scala a un quarto: i nomi delle vie diventerebbero di 6 px e
+     tagliati dai lati; resta il segnaposto, ingrandito attorno al suo centro (800, 320) */
+  @media (max-width: 39.99rem) {
+    .mappa :global(.nome) { display: none; }
+    .mappa :global(.segnaposto) { transform-origin: 800px 320px; transform: scale(1.9); }
+  }
+</style>

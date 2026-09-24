@@ -16,7 +16,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Reveal from '../components/Reveal.astro';
 import { ClientRouter } from 'astro:transitions';
-import { brand, contatti, legale, piattaforme, prenotazioni, traduzioni, type Locale } from '../data/site';
+import { brand, contatti, legale, orari, piattaforme, prenotazioni, traduzioni, type Locale } from '../data/site';
 
 interface Props { title: string; description: string; noindex?: boolean }
 const { title, description, noindex = false } = Astro.props;
@@ -52,7 +52,14 @@ const datiStrutturati = {
     addressLocality: contatti.citta,
     addressCountry: 'IT',
   },
-  // Alla conferma del cliente: openingHoursSpecification, priceRange.
+  geo: { '@type': 'GeoCoordinates', latitude: contatti.geo.lat, longitude: contatti.geo.lon },
+  openingHoursSpecification: orari.cucina.map((f) => ({
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    opens: f.apre,
+    closes: f.chiude,
+  })),
+  // Alla conferma del cliente: priceRange.
 };
 ---
 <!doctype html>

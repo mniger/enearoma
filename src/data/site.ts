@@ -36,6 +36,8 @@ export const contatti = {
   email: ATTESA,
   /** Link stabile alla scheda Google (CID della scheda "Enea Ristorante", verificato 08/09/2026). */
   mapsUrl: 'https://maps.google.com/?cid=9374966341506913280',
+  /** Il segnaposto della scheda Google (24/09/2026); lo stesso centra la mappa di scripts/genera-mappa.py. */
+  geo: { lat: 41.9091979, lon: 12.496061 },
 } as const;
 
 /**
@@ -71,11 +73,15 @@ export const prenotazioni = {
   conOpenTable: false,
 } as const;
 
-/** Orari — ATTESA. */
+/**
+ * Orario della cucina — dal biglietto da visita del titolare (24/09/2026), che
+ * non indica giorni di chiusura: vale per tutti i giorni.
+ */
 export const orari = {
-  cucina: ATTESA,
-  bar: ATTESA,
-  chiusura: ATTESA,
+  cucina: [
+    { apre: '12:00', chiude: '15:00' },
+    { apre: '18:30', chiude: '23:00' },
+  ],
 } as const;
 
 /**

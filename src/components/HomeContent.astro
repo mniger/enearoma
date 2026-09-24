@@ -16,6 +16,7 @@ import { brand, testi, contatti, orari, apertura, prenotazioni, piattaforme, ATT
 import Marchio from './Marchio.astro';
 import Pino from './Pino.astro';
 import Freccia from './Freccia.astro';
+import MappaDove from './MappaDove.astro';
 import salaPanoramica from '../assets/foto/sala-panoramica.png';
 import salaVerticale from '../assets/foto/sala-verticale.jpeg';
 import facciataIngresso from '../assets/foto/facciata-ingresso.jpeg';
@@ -42,7 +43,7 @@ const L = locale === 'en'
       tDove: `${contatti.via}\u00a0${contatti.civico}, Rome`,
       vediMenu: 'See the dinner menu', vediPranzo: 'The business lunch', vediAperitivo: 'The aperitivo menu',
       barAttesa: 'The cocktail and wine list is on its way.',
-      indirizzo: 'Address', telefono: 'Phone', orariL: 'Opening hours', scrivi: 'Email',
+      indirizzo: 'Address', telefono: 'Phone', orariL: 'Kitchen hours', scrivi: 'Email',
       inArrivo: 'coming soon', indicazioni: 'Open in Google Maps', nuovaScheda: 'opens in a new tab',
       prenotaTitolo: 'Book a table', chiama: 'Call', suWhatsapp: 'WhatsApp', suOpentable: 'Book on OpenTable',
       comePrenotare: 'Bookings will open when the restaurant does. The telephone number and booking email will appear on this page as soon as they are live.',
@@ -68,7 +69,7 @@ const L = locale === 'en'
       tDove: `${contatti.via}\u00a0${contatti.civico}, Roma`,
       vediMenu: 'Vedi il menu della cena', vediPranzo: 'Il business lunch', vediAperitivo: 'Il menu dell’aperitivo',
       barAttesa: 'La carta dei cocktail e dei vini è in arrivo.',
-      indirizzo: 'Indirizzo', telefono: 'Telefono', orariL: 'Orari', scrivi: 'Email',
+      indirizzo: 'Indirizzo', telefono: 'Telefono', orariL: 'Orario cucina', scrivi: 'Email',
       inArrivo: 'in arrivo', indicazioni: 'Apri in Google Maps', nuovaScheda: 'si apre in una nuova scheda',
       prenotaTitolo: 'Prenota un tavolo', chiama: 'Chiama', suWhatsapp: 'WhatsApp', suOpentable: 'Prenota su OpenTable',
       comePrenotare: 'Le prenotazioni aprono insieme al ristorante. Numero di telefono ed email per prenotare compariranno qui appena saranno attivi.',
@@ -202,7 +203,7 @@ const azioni = [
           <dt>{L.indirizzo}</dt>
           <dd>{indirizzo}<br /><a class="indicazioni" href={contatti.mapsUrl} target="_blank" rel="noopener">{L.indicazioni}<span class="sr-only"> ({L.nuovaScheda})</span></a></dd>
         </div>
-        <div><dt>{L.orariL}</dt><dd data-attesa={orari.cucina === ATTESA || undefined}>{dato(orari.cucina)}</dd></div>
+        <div><dt>{L.orariL}</dt><dd>{orari.cucina.map((f, i) => <>{i > 0 && <br />}{f.apre}–{f.chiude}</>)}</dd></div>
         <div><dt>{L.telefono}</dt>{c(contatti.telefono)
           ? <dd><a class="indicazioni tel" href={`tel:${soloCifre(contatti.telefono)}`}>{contatti.telefono}</a></dd>
           : <dd data-attesa>{dato(contatti.telefono)}</dd>}</div>
@@ -228,6 +229,7 @@ const azioni = [
     <figure class="quadro dove__foto" data-reveal data-ritardo="1">
       <Image src={facciataIngresso} alt={L.altIngresso} widths={[520, 800, 1086]} sizes="(min-width: 64rem) 38vw, 92vw" loading="lazy" />
     </figure>
+    <div class="dove__mappa"><MappaDove /></div>
   </div>
 </section>
 
@@ -379,6 +381,7 @@ const azioni = [
   .prenota:focus { outline: none; }   /* il focus è programmatico: lo SR legge, l'anello non serve */
   .prenota-canali__azioni { display: flex; flex-wrap: wrap; gap: .8rem; }
   .dove__foto :global(img) { max-height: 64vh; object-fit: cover; }
+  .dove__mappa { grid-column: 1 / -1; }
   @media (min-width: 40rem) { .recapiti { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 64rem) { .dove { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); } }
 

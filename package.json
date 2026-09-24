@@ -9,7 +9,8 @@
     "preview": "astro preview",
     "check": "astro check",
     "og": "uv run --with playwright python scripts/genera-og.py",
-    "marchio": "uv run --with pillow --with numpy python scripts/estrai-marchio.py"
+    "marchio": "uv run --with pillow --with numpy python scripts/estrai-marchio.py",
+    "mappa": "uv run python scripts/genera-mappa.py"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.3.0",
