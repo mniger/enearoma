@@ -59,6 +59,10 @@ const datiStrutturati = {
 <html lang={locale}>
   <head>
     <meta charset="utf-8" />
+    <!-- GitHub Pages non può forzare l'HTTPS finché il certificato di www è bloccato:
+         chi arriva in http (per esempio dal link «sito web» di Google, che è http://www)
+         passa qui all'https dell'apex, che ha il certificato valido -->
+    <script is:inline>if (location.protocol === 'http:' && /^(www\.)?enearoma\.it$/.test(location.hostname)) location.replace('https://enearoma.it' + location.pathname + location.search + location.hash);</script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
