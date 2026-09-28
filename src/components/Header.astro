@@ -19,7 +19,7 @@ const prenota = prenotazioni.aperte
   <nav class="testata__nav" aria-label={locale === 'en' ? 'Main navigation' : 'Navigazione principale'}>
     {voci.map((v) => v.sotto ? (
       <div class="gruppo" data-aperto="no">
-        <a href={base + v.href} aria-current={Astro.url.pathname.startsWith(base + v.href) ? 'page' : undefined}>{v.label}</a>
+        <a href={base + v.href} aria-current={Astro.url.pathname === base + v.href ? 'page' : Astro.url.pathname.startsWith(base + v.href) ? 'true' : undefined}>{v.label}</a>
         <button class="gruppo__apri" type="button" aria-expanded="false" aria-controls={`tendina-${v.href.replace(/\W/g, '')}`} aria-label={apriTendina}>
           <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true" focusable="false"><path d="m1 1 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1"/></svg>
         </button>
@@ -68,7 +68,9 @@ const prenota = prenotazioni.aperte
       if (e.key !== 'Escape') return;
       gruppi.forEach((g) => {
         if (g.dataset.aperto === 'si' || g.contains(document.activeElement)) {
-          imposta(g, false); g.querySelector<HTMLElement>('.gruppo__apri')?.focus();
+          // «chiusa» vince su :hover e :focus-within, che la terrebbero aperta col focus sulla freccia
+          imposta(g, false); g.dataset.aperto = 'chiusa';
+          g.querySelector<HTMLElement>('.gruppo__apri')?.focus();
         }
       });
     };
@@ -76,13 +78,19 @@ const prenota = prenotazioni.aperte
       const g = (e.target as HTMLElement).closest<HTMLElement>('.gruppo');
       if (g && !g.contains(e.relatedTarget as Node)) imposta(g, false);
     };
+    const allUscita = (e: MouseEvent) => {
+      const g = e.currentTarget as HTMLElement;
+      if (g.dataset.aperto === 'chiusa') g.dataset.aperto = 'no';
+    };
     document.addEventListener('click', alClick);
     addEventListener('keydown', allaFuga);
     testata.addEventListener('focusout', alFocusOut);
+    gruppi.forEach((g) => g.addEventListener('mouseleave', allUscita));
     staccaTendina = () => {
       document.removeEventListener('click', alClick);
       removeEventListener('keydown', allaFuga);
       testata.removeEventListener('focusout', alFocusOut);
+      gruppi.forEach((g) => g.removeEventListener('mouseleave', allUscita));
     };
 
     let atteso = false;
@@ -166,8 +174,8 @@ const prenota = prenotazioni.aperte
     transition: transform .45s var(--ease);
   }
   .testata__nav a:hover::after, .testata__nav a:focus-visible::after { transform: scaleX(1); }
-  .testata__nav a[data-qui], .testata__nav a[aria-current='page'] { color: var(--oro-chiaro); }
-  .testata__nav a[data-qui]::after, .testata__nav a[aria-current='page']::after { transform: scaleX(1); }
+  .testata__nav a[data-qui], .testata__nav a[aria-current] { color: var(--oro-chiaro); }
+  .testata__nav a[data-qui]::after, .testata__nav a[aria-current]::after { transform: scaleX(1); }
 
   /* ── tendina dei menu ── */
   .gruppo { position: relative; display: inline-flex; align-items: center; gap: .3rem; }
@@ -189,6 +197,7 @@ const prenota = prenotazioni.aperte
   .gruppo:hover .tendina, .gruppo:focus-within .tendina, .gruppo[data-aperto='si'] .tendina {
     opacity: 1; visibility: visible; transform: none; transition-delay: 0s;
   }
+  .gruppo[data-aperto='chiusa'] .tendina { opacity: 0; visibility: hidden; }
   .tendina a {
     display: flex; min-height: 44px; padding: 0 1.25rem; white-space: nowrap;
   }

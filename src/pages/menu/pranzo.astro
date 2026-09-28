@@ -6,7 +6,7 @@ import { brand } from '../../data/site';
 
 const url = new URL(Astro.url.pathname, Astro.site).href;
 ---
-<Base title={`Business lunch — ${brand.nomeEsteso}`} description="Il business lunch di ENEA Roma: antipasto, primo o secondo del giorno a prezzo fisso, con acqua, pane e caffè compresi. In Via Boncompagni, a due passi da Via Veneto.">
+<Base title={`Business lunch — ${brand.nomeEsteso}`} description="Il business lunch di ENEA Roma: antipasto, primo o secondo del giorno a prezzo fisso, con acqua, pane e caffè compresi. In Via Boncompagni, vicino a Via Veneto.">
   <Fragment slot="head">
     <script is:inline type="application/ld+json" set:html={JSON.stringify(datiStrutturatiMenu(menuPranzo, 'it', url))} />
   </Fragment>

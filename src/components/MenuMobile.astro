@@ -118,7 +118,8 @@ const prenota = prenotazioni.aperte
 
   .tenda {
     position: fixed; inset: 0; z-index: 1;
-    display: grid; align-content: center; justify-items: center; gap: 2rem;
+    display: grid; align-content: safe center; justify-items: center; gap: 2rem;
+    overflow-y: auto;   /* telefono in orizzontale o zoom: la tenda scorre invece di tagliare le voci */
     padding: 5rem var(--gutter) 3rem;
     background: rgba(10, 8, 6, .975);
     -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
@@ -141,6 +142,7 @@ const prenota = prenotazioni.aperte
   .tenda__voci a:nth-child(4) { transition-delay: .24s; }
   .tenda__voci a:nth-child(5) { transition-delay: .30s; }
   .tenda__voci a:nth-child(6) { transition-delay: .36s; }
+  .tenda__voci a:nth-child(7) { transition-delay: .42s; }
   .tenda__voci a:hover, .tenda__voci a[aria-current='page'] { color: var(--oro-chiaro); }
   .tenda__prenota {
     font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .22em; text-transform: uppercase;
@@ -155,6 +157,10 @@ const prenota = prenotazioni.aperte
   }
   .tenda__lingua::after {
     content: ''; display: block; height: 1px; margin-top: .3rem; background: var(--bordo);
+  }
+  @media (max-height: 32rem) {
+    .tenda { gap: 1rem; padding-block: 4.5rem 1.5rem; }
+    .tenda__voci a { font-size: clamp(1.25rem, 6vh, 1.7rem); padding-block: .25rem; }
   }
   @media (min-width: 62rem) { .tenda { display: none; } }
   @media (prefers-reduced-motion: reduce) {

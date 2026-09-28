@@ -6,7 +6,7 @@ import { brand } from '../../data/site';
 
 const url = new URL(Astro.url.pathname, Astro.site).href;
 ---
-<Base title={`Cocktail — ${brand.nomeEsteso}`} description="La carta dei cocktail di ENEA Roma, La Dolce Vita: i signature del bar, i grandi classici e i drink senza alcol, con i prezzi. In Via Boncompagni, a due passi da Via Veneto.">
+<Base title={`Cocktail — ${brand.nomeEsteso}`} description="I cocktail di ENEA Roma, carta La Dolce Vita: signature del bar, grandi classici e drink senza alcol, con i prezzi. In Via Boncompagni, vicino a Via Veneto.">
   <Fragment slot="head">
     <script is:inline type="application/ld+json" set:html={JSON.stringify(datiStrutturatiMenu(menuCocktail, 'it', url))} />
   </Fragment>

@@ -78,7 +78,7 @@ const nomeMenu = locale === 'en'
   : { carta: 'Il menu à la carte', pranzo: 'Il business lunch', aperitivo: 'Il menu dell’aperitivo', cocktail: 'La carta dei cocktail' };
 const altri = menuDisponibili.filter((m) => m.id !== variante);
 const R = locale === 'en'
-  ? { titolo: 'Continue', dove: 'Where we are and bookings' }
+  ? { titolo: 'Continue', dove: 'Visit us and book' }
   : { titolo: 'Continua', dove: 'Dove siamo e prenotazioni' };
 
 // Prezzi: interi come sul menu stampato (€ 14), decimali alla maniera della lingua (2,50 / 2.50).
@@ -138,7 +138,7 @@ const segniUsati = (Object.keys(segni) as Segno[]).filter((k) => usati.has(k));
                     <span class="piatto__nome">
                       {p.nome[locale]}
                       {p.segno && (
-                        <sup class="piatto__segno"><span aria-hidden="true">{segni[p.segno].simbolo}</span><span class="sr-only">{segni[p.segno][locale]}</span></sup>
+                        <sup class="piatto__segno"><span aria-hidden="true">{segni[p.segno].simbolo}</span><span class="sr-only">{`(${segni[p.segno].breve[locale]})`}</span></sup>
                       )}
                       {p.allergeni.length > 0 && (
                         <small class="piatto__allergeni">

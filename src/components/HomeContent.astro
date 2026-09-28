@@ -28,6 +28,7 @@ import targa from '../assets/dettagli/targa.jpg';
 
 const locale = (Astro.currentLocale ?? 'it') as Locale;
 const t = testi[locale];
+const titoloPagina = locale === 'en' ? `${brand.nomeEsteso} — restaurant and cocktail bar` : `${brand.nomeEsteso} — ristorante e cocktail bar`;
 
 const L = locale === 'en'
   ? {
@@ -114,7 +115,7 @@ const azioni = [
   <div class="apertura__velo" aria-hidden="true"></div>
 
   <div class="wrap apertura__corpo">
-    <h1 class="apertura__marchio"><Marchio completo titolo={brand.nomeEsteso} /></h1>
+    <h1 class="apertura__marchio"><Marchio completo /><span class="sr-only">{titoloPagina}</span></h1>
     <p class="apertura__claim">{t.claimLancio}</p>
     <p class="apertura__riga">
       <a href="#dove">{indirizzo}</a><i aria-hidden="true"></i><span><span class="sr-only">— </span>{apertura.periodo[locale]}</span>
@@ -152,8 +153,10 @@ const azioni = [
       <p class="eyebrow" data-reveal>{L.etCucina}</p>
       <h2 data-reveal data-ritardo="1">{L.tCucina}</h2>
       <p class="corpo" data-reveal data-ritardo="2">{L.pCucina}</p>
-      <a class="rimando" href={locale === 'en' ? '/en/menu/' : '/menu/'} data-reveal data-ritardo="3">{L.vediMenu} <Freccia /></a>
-      <a class="rimando" href={locale === 'en' ? '/en/menu/lunch/' : '/menu/pranzo/'} data-reveal data-ritardo="3">{L.vediPranzo} <Freccia /></a>
+      <div class="portata__rimandi">
+        <a class="rimando" href={locale === 'en' ? '/en/menu/' : '/menu/'} data-reveal data-ritardo="3">{L.vediMenu} <Freccia /></a>
+        <a class="rimando" href={locale === 'en' ? '/en/menu/lunch/' : '/menu/pranzo/'} data-reveal data-ritardo="3">{L.vediPranzo} <Freccia /></a>
+      </div>
     </article>
 
     <article class="portata">
@@ -163,8 +166,10 @@ const azioni = [
       <p class="eyebrow" data-reveal>{L.etBar}</p>
       <h2 data-reveal data-ritardo="1">{L.tBar}</h2>
       <p class="corpo" data-reveal data-ritardo="2">{L.pBar}</p>
-      <a class="rimando" href={locale === 'en' ? '/en/menu/aperitivo/' : '/menu/aperitivo/'} data-reveal data-ritardo="3">{L.vediAperitivo} <Freccia /></a>
-      <a class="rimando" href={locale === 'en' ? '/en/menu/cocktails/' : '/menu/cocktail/'} data-reveal data-ritardo="3">{L.vediCocktail} <Freccia /></a>
+      <div class="portata__rimandi">
+        <a class="rimando" href={locale === 'en' ? '/en/menu/aperitivo/' : '/menu/aperitivo/'} data-reveal data-ritardo="3">{L.vediAperitivo} <Freccia /></a>
+        <a class="rimando" href={locale === 'en' ? '/en/menu/cocktails/' : '/menu/cocktail/'} data-reveal data-ritardo="3">{L.vediCocktail} <Freccia /></a>
+      </div>
       <p class="nota" data-reveal data-ritardo="3" data-attesa>{L.barAttesa}</p>
     </article>
   </div>
@@ -325,9 +330,11 @@ const azioni = [
   .portate__griglia { display: grid; gap: clamp(2.5rem, 5vw, 4rem); }
   .portata { display: grid; gap: 1.15rem; align-content: start; }
   .portata__foto { margin-bottom: .6rem; }
+  .portata__rimandi { display: grid; gap: 1.15rem; }
   .portata__foto :global(img) { aspect-ratio: 4 / 3; object-fit: cover; }
   @media (min-width: 58rem) {
-    /* le righe delle due schede si allineano (foto, occhiello, titolo, testo, rimando, nota) */
+    /* le righe delle due schede si allineano (foto, occhiello, titolo, testo, rimandi, nota):
+       sei figli per scheda, uno per riga; un figlio in più finirebbe sovrapposto all'ultimo */
     .portate__griglia { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(6, auto); }
     .portata { grid-template-rows: subgrid; grid-row: span 6; }
   }

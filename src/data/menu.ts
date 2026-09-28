@@ -54,20 +54,27 @@ export interface Menu {
 
 export type Segno = 'casa' | 'surgelato' | 'crudo';
 
-/** I segni dei prodotti congelati e la nota di legge, parola per parola dal menu stampato. */
-export const segni: Readonly<Record<Segno, { readonly simbolo: string; readonly it: string; readonly en: string }>> = {
+/** I segni dei prodotti congelati e la nota di legge, parola per parola dal menu stampato;
+ *  `breve` è quello che il lettore di schermo dice accanto al piatto. */
+export const segni: Readonly<Record<Segno, {
+  readonly simbolo: string; readonly it: string; readonly en: string;
+  readonly breve: { readonly it: string; readonly en: string };
+}>> = {
   casa: {
     simbolo: '°',
+    breve: { it: 'congelato da noi', en: 'frozen in house' },
     it: 'Prodotto preparato nella nostra cucina e congelato da noi per garantirne la corretta conservazione.',
     en: 'Product prepared in our kitchen and frozen by us to ensure proper preservation.',
   },
   surgelato: {
     simbolo: '*',
+    breve: { it: 'può essere congelato o surgelato', en: 'may be frozen or deep-frozen' },
     it: 'Prodotto che potrebbe essere congelato o surgelato a seconda della disponibilità.',
     en: 'Product may be frozen or deep-frozen depending on availability.',
   },
   crudo: {
     simbolo: '**',
+    breve: { it: 'pesce crudo bonificato col congelamento', en: 'raw fish, frozen beforehand for safety' },
     it: 'I prodotti della pesca destinati al consumo crudo o praticamente crudo sono sottoposti a trattamento di bonifica preventiva mediante congelamento, conformemente al Reg. (CE) n. 853/2004 e successive modifiche.',
     en: 'Fishery products intended to be consumed raw or practically raw are subject to preventive freezing treatment in accordance with Regulation (EC) No. 853/2004 and subsequent amendments.',
   },
@@ -346,6 +353,7 @@ export const pubblicabili = (s: SezioneMenu): ReadonlyArray<Piatto & { readonly 
 export const datiStrutturatiMenu = (menu: Menu, locale: 'it' | 'en', url: string) => ({
   '@context': 'https://schema.org',
   '@type': 'Menu',
+  '@id': `${url}#menu`,
   name: [menu.servizio[locale], menu.stagione?.[locale]].filter(Boolean).join(' — '),
   inLanguage: locale,
   url,

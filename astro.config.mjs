@@ -12,7 +12,8 @@ export default defineConfig({
     defaultLocale: 'it',
     routing: { prefixDefaultLocale: false },
   },
-  // i18n della sitemap: senza, le due lingue restano URL scollegati (niente xhtml:link).
-  integrations: [sitemap({ i18n: { defaultLocale: 'it', locales: { it: 'it-IT', en: 'en-GB' } } })],
+  // Gli hreflang stanno nell'HTML (Base.astro, dalle coppie di `traduzioni`): l'i18n della
+  // sitemap accoppia solo percorsi identici e lasciava fuori pranzo/lunch e cocktail/cocktails.
+  integrations: [sitemap()],
   build: { inlineStylesheets: 'auto' },
 });

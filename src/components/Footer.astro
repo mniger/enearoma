@@ -11,8 +11,8 @@ const altLang = locale === 'en'
   ? { code: 'Italiano', href: altraLingua(Astro.url.pathname, locale), lang: 'it' }
   : { code: 'English', href: altraLingua(Astro.url.pathname, locale), lang: 'en' };
 const t = locale === 'en'
-  ? { attesa: 'Site in progress — some details still to come', iva: 'VAT no.', note: 'Legal notes' }
-  : { attesa: 'Sito in lavorazione — alcuni dati sono in arrivo', iva: 'P. IVA', note: 'Note legali' };
+  ? { attesa: 'Site in progress — some details still to come', iva: 'VAT no.', note: 'Legal notes', scheda: 'opens in a new tab' }
+  : { attesa: 'Sito in lavorazione — alcuni dati sono in arrivo', iva: 'P. IVA', note: 'Note legali', scheda: 'si apre in una nuova scheda' };
 const citta = locale === 'en' ? 'Rome' : contatti.citta;
 const indirizzo = `${contatti.via}\u00a0${contatti.civico}, ${contatti.cap}\u00a0${citta}`;
 const anno = 2026;
@@ -20,9 +20,9 @@ const anno = 2026;
 <footer class="piede">
   <div class="wrap piede__griglia">
     <a class="piede__marchio" href={locale === 'en' ? '/en/' : '/'} aria-label={brand.nomeEsteso}><Marchio /></a>
-    <a class="piede__dir" href={contatti.mapsUrl} target="_blank" rel="noopener">{indirizzo}</a>
+    <a class="piede__dir" href={contatti.mapsUrl} target="_blank" rel="noopener">{indirizzo}<span class="sr-only"> ({t.scheda})</span></a>
     <a class="piede__dir piede__social" href={piattaforme.instagram} target="_blank" rel="noopener me"
-      aria-label={locale === 'en' ? 'ENEA Roma on Instagram' : 'ENEA Roma su Instagram'}>
+      aria-label={`${locale === 'en' ? 'ENEA Roma on Instagram' : 'ENEA Roma su Instagram'} (${t.scheda})`}>
       <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.6" y="2.6" width="14.8" height="14.8" rx="4.2" /><circle cx="10" cy="10" r="3.5" /><circle cx="14.4" cy="5.6" r=".4" /></svg>
       Instagram
     </a>

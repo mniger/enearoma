@@ -16,7 +16,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Reveal from '../components/Reveal.astro';
 import { ClientRouter } from 'astro:transitions';
-import { brand, contatti, dataApertura, legale, orari, piattaforme, prenotazioni, traduzioni, type Locale } from '../data/site';
+import { brand, contatti, dataApertura, legale, nav, orari, piattaforme, prenotazioni, traduzioni, type Locale } from '../data/site';
 
 interface Props { title: string; description: string; noindex?: boolean }
 const { title, description, noindex = false } = Astro.props;
@@ -31,19 +31,25 @@ const ogImageAlt = locale === 'en'
   ? 'The ENEA Roma mark: golden stone pine and wordmark on a dark ground'
   : 'Il marchio ENEA Roma: pino dorato e scritta su fondo scuro';
 
+// I quattro menu nella lingua della pagina: ognuno dichiara il suo Menu con @id = url#menu.
+const menuDelSito = nav[locale].flatMap((v) => v.sotto ?? [])
+  .map((s) => new URL((locale === 'en' ? '/en' : '') + s.href, Astro.site).href);
+
 const datiStrutturati = {
   '@context': 'https://schema.org',
   '@type': 'Restaurant',
+  // lo stesso ristorante su tutte le pagine e in tutte e due le lingue
+  '@id': new URL('/#ristorante', Astro.site).href,
   name: brand.nomeEsteso,
   legalName: legale.ragioneSociale,
-  vatID: legale.partitaIva,
+  vatID: `IT${legale.partitaIva}`,
   servesCuisine: locale === 'en' ? ['Mediterranean', 'Italian'] : ['Mediterranea', 'Italiana'],
-  url: canonical.href,
+  url: new URL(locale === 'en' ? '/en/' : '/', Astro.site).href,
   image: ogImage.href,
   telephone: contatti.telefono,
   acceptsReservations: prenotazioni.aperte,
   hasMap: contatti.mapsUrl,
-  hasMenu: new URL('/menu/', Astro.site).href,
+  hasMenu: menuDelSito.map((u) => ({ '@type': 'Menu', '@id': `${u}#menu`, url: u })),
   sameAs: [piattaforme.instagram, piattaforme.tripadvisor, piattaforme.opentable],
   address: {
     '@type': 'PostalAddress',
@@ -102,7 +108,7 @@ const datiStrutturati = {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={canonical} />
+    {!noindex && <meta property="og:url" content={canonical} />}
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
@@ -127,12 +133,11 @@ const datiStrutturati = {
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#0A0806" />
     <!--
-      Dati strutturati schema.org/Restaurant.
-      Emessi SOLO per i campi confermati: finché indirizzo, telefono e orari non
-      sono validati dal cliente restano fuori, perché dati errati nei rich result
-      fanno più danno che non averli.
+      Dati strutturati schema.org/Restaurant: solo dati confermati dal titolare
+      (gli orari entrano con dataApertura). Dati errati nei rich result fanno
+      più danno che non averli. Le pagine noindex (la 404) non li emettono.
     -->
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(datiStrutturati)} />
+    {!noindex && <script is:inline type="application/ld+json" set:html={JSON.stringify(datiStrutturati)} />}
     <ClientRouter />
     <Reveal />
   </head>
