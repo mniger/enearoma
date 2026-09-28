@@ -14,7 +14,7 @@ export const brand = {
   nome: 'ENEA',
   // CONFERMATO: marchio ufficiale = pino domestico + "ROMA". Sull’insegna fisica
   // compare una variante "RISTORANTE" con simbolo a ramo: non si usa sul web.
-  // Il lockup vero è in Marchio.astro, vettorializzato dal render del manuale.
+  // Il lockup vero è in Marchio.astro, dalla dima vettoriale ufficiale (07/09/2026).
   sottotitolo: 'ROMA',
   /** Come si scrive il nome in prosa: nei metadati e per gli assistenti vocali
    *  la capitalizzazione naturale è preferibile al maiuscolo del marchio. */
@@ -50,8 +50,9 @@ export const piattaforme = {
   // [TITOLARE] 24/09/2026. Bio «ENEA | Ristorante & Cocktail Bar», Via Boncompagni.
   // Due trattini bassi: @enearoma, @enea_roma ed @enea.roma sono di altri.
   instagram: 'https://www.instagram.com/enea__roma/',
-  tripadvisor: 'https://www.tripadvisor.it/Restaurant_Review-g187791-d26790911',
-  opentable: 'https://www.opentable.it/r/enea-ristorante-reservations-roma',
+  // gli indirizzi definitivi delle schede (28/09/2026): i vecchi passavano da un redirect
+  tripadvisor: 'https://www.tripadvisor.it/Restaurant_Review-g187791-d26790911-Reviews-Enea_Ristorante-Rome_Lazio.html',
+  opentable: 'https://www.opentable.it/r/enea-ristorante-roma',
   opentablePrenota:
     'https://www.opentable.it/r/enea-ristorante-reservations-roma?restref=363708&lang=it-IT&ot_source=Restaurant%20website',
 } as const;
@@ -97,6 +98,10 @@ export const apertura = {
     en: 'The date will be announced here.',
   },
 } as const;
+
+/** Il giorno di apertura (AAAA-MM-GG), quando il titolare lo conferma: da quel giorno gli
+ *  orari entrano nei dati strutturati. Prima no: motori e mappe li leggerebbero come «aperto». */
+export const dataApertura: string | null = null;
 
 /**
  * Dati legali — CONFERMATI (anagrafica Aruba dell’account aziendale,

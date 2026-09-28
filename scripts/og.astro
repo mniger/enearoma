@@ -5,6 +5,7 @@ import '@fontsource/jost/300.css';
 import '../styles/global.css';
 import { Image } from 'astro:assets';
 import Marchio from '../components/Marchio.astro';
+import { contatti } from '../data/site';
 import sala from '../assets/foto/sala-panoramica.png';
 ---
 <!doctype html>
@@ -16,7 +17,7 @@ import sala from '../assets/foto/sala-panoramica.png';
       <div class="velo"></div>
       <div class="centro">
         <div class="marchio"><Marchio completo /></div>
-        <p class="claim">Via Boncompagni 83, Roma</p>
+        <p class="claim">{contatti.via} {contatti.civico}, {contatti.citta}</p>
       </div>
       <div class="cornice"></div>
     </div>

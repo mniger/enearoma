@@ -4,8 +4,8 @@ Rigenera public/og-enea.jpg (anteprima social 1200x630).
 
 La sorgente è scripts/og.astro: viene montata in src/pages solo per il tempo
 dello scatto, così il sito pubblicato non contiene pagine di servizio.
-Usa i componenti veri (Logo, Pino) e i font self-hosted: l'anteprima non può
-divergere dal marchio del sito.
+Usa il componente vero (Marchio), i recapiti di src/data e i font self-hosted:
+l'anteprima non può divergere dal marchio e dai dati del sito.
 
     uv run --with playwright python scripts/genera-og.py
 """
@@ -52,7 +52,7 @@ def main() -> int:
             return 1
 
         with sync_playwright() as p:
-            b = p.chromium.launch()
+            b = p.chromium.launch(channel="chrome")  # il Chrome di sistema, come stampa/
             pg = b.new_page(viewport={"width": 1200, "height": 630}, device_scale_factor=1)
             pg.goto(url, wait_until="networkidle")
             pg.add_style_tag(content="astro-dev-toolbar{display:none!important}")

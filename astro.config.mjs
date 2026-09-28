@@ -2,7 +2,6 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-// Dominio definitivo da confermare col cliente (enearoma.it è libero).
 const SITE = 'https://enearoma.it';
 
 export default defineConfig({
