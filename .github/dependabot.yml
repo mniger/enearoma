@@ -1,0 +1,8 @@
+# Aggiornamenti delle azioni di GitHub fissate a SHA nel workflow di pubblicazione.
+# Le dipendenze npm hanno gli avvisi e le correzioni di sicurezza automatiche attivi sul repo.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
