@@ -234,11 +234,10 @@ const segniUsati = (Object.keys(segni) as Segno[]).filter((k) => usati.has(k));
     max-width: 52rem;
     display: flex; gap: clamp(1rem, 3vw, 2.25rem);
     overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x proximity;
   }
   .carta__indice-scorri::-webkit-scrollbar { display: none; }
   .carta__indice a {
-    flex: none; scroll-snap-align: start;
+    flex: none;
     font-family: var(--font-lapide); font-size: var(--fs-xs); letter-spacing: .22em;
     text-transform: uppercase; color: var(--fumo); text-decoration: none;
     padding: 1rem 0; border-bottom: 1px solid transparent; margin-bottom: -1px;
@@ -342,19 +341,30 @@ const segniUsati = (Object.keys(segni) as Segno[]).filter((k) => usati.has(k));
     if (!sezioni.length) return;
 
     const inVista = new Set<string>();
+    const segna = (corrente: string | null) => link.forEach((a, id) => {
+      const attivo = id === corrente;
+      a.toggleAttribute('data-qui', attivo);
+      if (attivo) a.setAttribute('aria-current', 'true');
+      else a.removeAttribute('aria-current');
+      // la voce attiva resta in vista, al centro, anche quando l'indice scorre di lato
+      if (attivo) a.scrollIntoView({ block: 'nearest', inline: 'center' });
+    });
+    // La voce toccata resta accesa finché chi legge non scorre di nuovo da sé: una sezione
+    // corta può non attraversare mai la fascia osservata, e si accenderebbe quella dopo.
+    let scelta: string | null = null;
     spia = new IntersectionObserver((voci) => {
       voci.forEach((v) => { if (v.isIntersecting) inVista.add(v.target.id); else inVista.delete(v.target.id); });
-      const corrente = [...inVista].at(-1) ?? null;
-      link.forEach((a, id) => {
-        const attivo = id === corrente;
-        a.toggleAttribute('data-qui', attivo);
-        if (attivo) a.setAttribute('aria-current', 'true');
-        else a.removeAttribute('aria-current');
-        // la voce attiva resta visibile anche quando l'indice scorre di lato
-        if (attivo) a.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-      });
+      if (!scelta) segna([...inVista].at(-1) ?? null);
     }, { rootMargin: '-30% 0px -60% 0px' });
     sezioni.forEach((s) => spia?.observe(s));
+    indice.addEventListener('click', (e) => {
+      const id = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[data-sezione]')?.dataset.sezione;
+      if (!id) return;
+      scelta = id;
+      segna(id);
+      const libera = () => { scelta = null; };
+      ['wheel', 'touchstart', 'keydown'].forEach((t) => addEventListener(t, libera, { once: true, passive: true }));
+    });
   }
 
   document.addEventListener('astro:page-load', avvia);
