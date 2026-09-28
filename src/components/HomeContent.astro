@@ -41,8 +41,8 @@ const L = locale === 'en'
       tBar: 'Come in just for a drink',
       pBar: 'The Italian aperitivo, the classic cocktails made properly, and a wine list chosen to follow the kitchen.',
       tDove: `${contatti.via}\u00a0${contatti.civico}, Rome`,
-      vediMenu: 'See the dinner menu', vediPranzo: 'The business lunch', vediAperitivo: 'The aperitivo menu',
-      barAttesa: 'The cocktail and wine list is on its way.',
+      vediMenu: 'The à la carte menu', vediPranzo: 'The business lunch', vediAperitivo: 'The aperitivo menu', vediCocktail: 'The cocktail list',
+      barAttesa: 'The wine list is on its way.',
       indirizzo: 'Address', telefono: 'Phone', orariL: 'Kitchen hours', scrivi: 'Email',
       inArrivo: 'coming soon', indicazioni: 'Open in Google Maps', nuovaScheda: 'opens in a new tab',
       prenotaTitolo: 'Book a table', chiama: 'Call', suWhatsapp: 'WhatsApp', suOpentable: 'Book on OpenTable',
@@ -67,8 +67,8 @@ const L = locale === 'en'
       tBar: 'Si entra anche solo per bere',
       pBar: "L’aperitivo italiano, i cocktail classici fatti come si deve e una carta dei vini scelta per seguire la cucina.",
       tDove: `${contatti.via}\u00a0${contatti.civico}, Roma`,
-      vediMenu: 'Vedi il menu della cena', vediPranzo: 'Il business lunch', vediAperitivo: 'Il menu dell’aperitivo',
-      barAttesa: 'La carta dei cocktail e dei vini è in arrivo.',
+      vediMenu: 'Il menu à la carte', vediPranzo: 'Il business lunch', vediAperitivo: 'Il menu dell’aperitivo', vediCocktail: 'La carta dei cocktail',
+      barAttesa: 'La carta dei vini è in arrivo.',
       indirizzo: 'Indirizzo', telefono: 'Telefono', orariL: 'Orario cucina', scrivi: 'Email',
       inArrivo: 'in arrivo', indicazioni: 'Apri in Google Maps', nuovaScheda: 'si apre in una nuova scheda',
       prenotaTitolo: 'Prenota un tavolo', chiama: 'Chiama', suWhatsapp: 'WhatsApp', suOpentable: 'Prenota su OpenTable',
@@ -164,6 +164,7 @@ const azioni = [
       <h2 data-reveal data-ritardo="1">{L.tBar}</h2>
       <p class="corpo" data-reveal data-ritardo="2">{L.pBar}</p>
       <a class="rimando" href={locale === 'en' ? '/en/menu/aperitivo/' : '/menu/aperitivo/'} data-reveal data-ritardo="3">{L.vediAperitivo} <Freccia /></a>
+      <a class="rimando" href={locale === 'en' ? '/en/menu/cocktails/' : '/menu/cocktail/'} data-reveal data-ritardo="3">{L.vediCocktail} <Freccia /></a>
       <p class="nota" data-reveal data-ritardo="3" data-attesa>{L.barAttesa}</p>
     </article>
   </div>

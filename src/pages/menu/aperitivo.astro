@@ -6,7 +6,7 @@ import { brand } from '../../data/site';
 
 const url = new URL(Astro.url.pathname, Astro.site).href;
 ---
-<Base title={`Menu dell’aperitivo — ${brand.nomeEsteso}`} description="L’aperitivo di ENEA Roma: piccoli piatti con prezzi e allergeni, in Via Boncompagni a due passi da Via Veneto.">
+<Base title={`Menu dell’aperitivo — ${brand.nomeEsteso}`} description="L’aperitivo di ENEA Roma: l’Aperitivo ENEA, gli sfizi da condividere e i taglieri, con prezzi e allergeni. In Via Boncompagni, a due passi da Via Veneto.">
   <Fragment slot="head">
     <script is:inline type="application/ld+json" set:html={JSON.stringify(datiStrutturatiMenu(menuAperitivo, 'it', url))} />
   </Fragment>

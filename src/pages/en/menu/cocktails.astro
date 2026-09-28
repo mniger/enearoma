@@ -1,0 +1,14 @@
+---
+import Base from '../../../layouts/Base.astro';
+import MenuContent from '../../../components/MenuContent.astro';
+import { menuCocktail, datiStrutturatiMenu } from '../../../data/menu';
+import { brand } from '../../../data/site';
+
+const url = new URL(Astro.url.pathname, Astro.site).href;
+---
+<Base title={`Cocktails — ${brand.nomeEsteso}`} description="ENEA Roma’s cocktail list, La Dolce Vita: the bar’s signature drinks, the great classics and alcohol-free cocktails, with prices. On Via Boncompagni, steps from Via Veneto.">
+  <Fragment slot="head">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(datiStrutturatiMenu(menuCocktail, 'en', url))} />
+  </Fragment>
+  <MenuContent menu={menuCocktail} variante="cocktail" />
+</Base>

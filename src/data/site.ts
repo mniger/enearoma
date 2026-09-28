@@ -211,17 +211,17 @@ export interface VoceNav {
 }
 
 /** Navigazione — percorsi assoluti dalla radice della lingua: le ancore puntano alla home, /menu/ è una pagina.
- *  I menu sono due: la voce "Menu" li elenca, così si vede da ogni pagina che esistono entrambi. */
+ *  I menu sono quattro: la voce "Menu" li elenca, così da ogni pagina si vede che esistono tutti. */
 export const nav: { readonly it: readonly VoceNav[]; readonly en: readonly VoceNav[] } = {
   it: [
     { href: '/#locale', label: 'Il ristorante' },
-    { href: '/menu/', label: 'Menu', sotto: [{ href: '/menu/pranzo/', label: 'Pranzo' }, { href: '/menu/aperitivo/', label: 'Aperitivo' }, { href: '/menu/', label: 'Cena' }] },
+    { href: '/menu/', label: 'Menu', sotto: [{ href: '/menu/', label: 'À la carte' }, { href: '/menu/pranzo/', label: 'Business lunch' }, { href: '/menu/aperitivo/', label: 'Aperitivo' }, { href: '/menu/cocktail/', label: 'Cocktail' }] },
     { href: '/#galleria', label: 'Immagini' },
     { href: '/#dove', label: 'Dove siamo' },
   ],
   en: [
     { href: '/#locale', label: 'The restaurant' },
-    { href: '/menu/', label: 'Menu', sotto: [{ href: '/menu/lunch/', label: 'Lunch' }, { href: '/menu/aperitivo/', label: 'Aperitivo' }, { href: '/menu/', label: 'Dinner' }] },
+    { href: '/menu/', label: 'Menu', sotto: [{ href: '/menu/', label: 'À la carte' }, { href: '/menu/lunch/', label: 'Business lunch' }, { href: '/menu/aperitivo/', label: 'Aperitivo' }, { href: '/menu/cocktails/', label: 'Cocktails' }] },
     { href: '/#galleria', label: 'Pictures' },
     { href: '/#dove', label: 'Visit us' },
   ],
@@ -235,6 +235,7 @@ export const traduzioni: ReadonlyArray<readonly [it: string, en: string]> = [
   ['/menu/', '/en/menu/'],
   ['/menu/pranzo/', '/en/menu/lunch/'],
   ['/menu/aperitivo/', '/en/menu/aperitivo/'],
+  ['/menu/cocktail/', '/en/menu/cocktails/'],
   ['/note-legali/', '/en/note-legali/'],
 ];
 

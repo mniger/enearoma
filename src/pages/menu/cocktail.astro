@@ -1,0 +1,14 @@
+---
+import Base from '../../layouts/Base.astro';
+import MenuContent from '../../components/MenuContent.astro';
+import { menuCocktail, datiStrutturatiMenu } from '../../data/menu';
+import { brand } from '../../data/site';
+
+const url = new URL(Astro.url.pathname, Astro.site).href;
+---
+<Base title={`Cocktail — ${brand.nomeEsteso}`} description="La carta dei cocktail di ENEA Roma, La Dolce Vita: i signature del bar, i grandi classici e i drink senza alcol, con i prezzi. In Via Boncompagni, a due passi da Via Veneto.">
+  <Fragment slot="head">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(datiStrutturatiMenu(menuCocktail, 'it', url))} />
+  </Fragment>
+  <MenuContent menu={menuCocktail} variante="cocktail" />
+</Base>

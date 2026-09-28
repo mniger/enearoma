@@ -1,14 +1,14 @@
 ---
 import Base from '../../layouts/Base.astro';
 import MenuContent from '../../components/MenuContent.astro';
-import { menuCena, datiStrutturatiMenu } from '../../data/menu';
+import { menuCarta, datiStrutturatiMenu } from '../../data/menu';
 import { brand } from '../../data/site';
 
 const url = new URL(Astro.url.pathname, Astro.site).href;
 ---
-<Base title={`Menu della cena — ${brand.nomeEsteso}`} description="Il menu della cena di ENEA Roma, autunno 2026: antipasti, primi, secondi e dolci con prezzi e allergeni. Cucina mediterranea in Via Boncompagni, a due passi da Via Veneto.">
+<Base title={`Menu à la carte — ${brand.nomeEsteso}`} description="Il menu à la carte di ENEA Roma, a pranzo e a cena: antipasti, primi, secondi e dolci con prezzi e allergeni. Cucina mediterranea in Via Boncompagni, a due passi da Via Veneto.">
   <Fragment slot="head">
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(datiStrutturatiMenu(menuCena, 'it', url))} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(datiStrutturatiMenu(menuCarta, 'it', url))} />
   </Fragment>
-  <MenuContent menu={menuCena} variante="cena" />
+  <MenuContent menu={menuCarta} variante="carta" />
 </Base>
