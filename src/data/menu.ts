@@ -6,10 +6,15 @@
  * titolare; il business lunch dal suo messaggio del 24/09. Regole:
  * - si pubblica solo il menu: il ricettario resta interno
  * - si pubblica solo il prezzo di vendita, mai il food cost
- * - allergeni come DICHIARATI dal titolare (numerazione Reg. UE 1169/2011)
+ * - allergeni: quelli DICHIARATI dal titolare (numerazione Reg. UE 1169/2011),
+ *   più quelli certi che mancavano, per un ingrediente scritto nel menu o nel
+ *   ricettario della cucina (commento «+n» sulla riga): da confermare col
+ *   titolare. Un allergene dichiarato non si toglie senza di lui
  * - inglese: le righe del titolare, corretti solo i refusi evidenti
  * - i segni sui prodotti congelati come sul menu stampato (obbligo di legge),
  *   con la stessa nota in fondo; il trattino davanti al nome diventa «°»
+ * - niente coperto: nel Lazio è vietato (L.R. 22/2019, art. 75) e il menu
+ *   definitivo non lo prevede
  */
 
 export interface Piatto {
@@ -18,6 +23,9 @@ export interface Piatto {
   readonly descrizione?: { readonly it: string; readonly en?: string };
   /** Numeri degli allergeni dichiarati dalla cucina (vuoto = nessuno dichiarato). */
   readonly allergeni: readonly number[];
+  /** Voce che cambia ogni volta (l'aperitivo dello chef, i classici del bar): al
+   *  posto dei numeri, «chiedere al personale». */
+  readonly allergeniVariabili?: boolean;
   /** Prezzo in euro, anche con decimali (2.5). Assente = non comunicato dal
    *  titolare: il piatto resta nei dati ma NON si pubblica finché non arriva. */
   readonly prezzo?: number;
@@ -37,10 +45,10 @@ export interface SezioneMenu {
 
 export interface Menu {
   readonly servizio: { readonly it: string; readonly en: string };
-  /** Stagione o nome della carta, se il menu li dichiara («Autunno 2026», «La Dolce Vita»). */
+  /** Nome della carta, se il menu lo dichiara («La Dolce Vita»). */
   readonly stagione?: { readonly it: string; readonly en: string };
   readonly sezioni: readonly SezioneMenu[];
-  /** Righe in coda al menu (coperto, pane). */
+  /** Righe in coda al menu (cosa comprende il prezzo, richieste particolari). */
   readonly note?: { readonly it: readonly string[]; readonly en: readonly string[] };
 }
 
@@ -73,15 +81,18 @@ const p = (it: string, desc: string, en: string, allergeni: number[], prezzo: nu
   ...(segno ? { segno } : {}),
 });
 
-const bevanda = (gruppo: Piatto['gruppo'], it: string, en: string, prezzo: number, prezzoDa = false): Piatto => ({
+const bevanda = (
+  gruppo: Piatto['gruppo'], it: string, en: string, prezzo: number,
+  { allergeni = [], prezzoDa = false }: { allergeni?: number[]; prezzoDa?: boolean } = {},
+): Piatto => ({
   nome: { it, en },
-  allergeni: [],
+  allergeni,
   prezzo,
   ...(prezzoDa ? { prezzoDa } : {}),
   ...(gruppo ? { gruppo } : {}),
 });
 
-const ACQUA = { it: 'Acqua e soft drinks', en: 'Water & soft drinks' };
+const ACQUA = { it: 'Acqua e soft drink', en: 'Water & soft drinks' };
 const BIRRE = { it: 'Birre', en: 'Beer' };
 const CAFFE = { it: 'Caffetteria', en: 'Coffee' };
 const DOPO = { it: 'Dopo pasto', en: 'Digestives' };
@@ -89,7 +100,6 @@ const DOPO = { it: 'Dopo pasto', en: 'Digestives' };
 /** Il menu à la carte, a pranzo e a cena: «MENU DECISIVO» del 28/09/2026. */
 export const menuCarta = {
   servizio: { it: 'À la carte', en: 'À la carte' },
-  stagione: { it: 'Autunno 2026', en: 'Autumn 2026' },
   sezioni: [
     {
       id: 'antipasti',
@@ -99,7 +109,7 @@ export const menuCarta = {
         // «sedano rapa» è il celeriac: l'inglese del titolare diceva «celery»
         p('Polpetta di coda alla vaccinara', 'Vellutata di sedano rapa', 'Oxtail croquette with celeriac velouté', [1, 3, 6, 7, 9, 10], 14, 'casa'),
         p('Uovo poché', 'Spuma di patate, cipolla bruciata e tartufo', 'Poached egg, potato foam, burnt onion and truffle', [3, 7], 18),
-        p('Polpo rosticciato', 'Galletti e frutti di bosco', 'Roasted octopus, chanterelles and wild berries', [14], 19, 'surgelato'),
+        p('Polpo rosticciato', 'Galletti e frutti di bosco', 'Roasted octopus, chanterelles and wild berries', [9, 14], 19, 'surgelato'), // +9: sedano nella cottura (ricettario)
         p('Tartare di ombrina', 'Mandorle, mela compressa e polvere di ’nduja', 'Croaker fish tartare, almonds, compressed apple and ’nduja powder', [4, 6, 8, 10], 16, 'crudo'),
       ],
     },
@@ -109,10 +119,10 @@ export const menuCarta = {
       piatti: [
         p('Bottoncini di pollo e manzo', 'Fondo d’arrosto', 'Chicken and beef filled pasta, roast jus', [1, 3, 6, 7, 9, 12], 20, 'casa'),
         p('Fettuccine al ragù bianco di cortile', 'Aglio nero ed erbe spontanee', 'Fettuccine, white poultry ragù, black garlic and wild herbs', [1, 3, 6, 7, 9, 12], 16, 'casa'),
-        p('Risotto alla zucca', 'Erborinato di capra, amaretti e nocciole', 'Pumpkin risotto, blue goat cheese, amaretti and hazelnuts', [1, 7, 8, 12], 18, 'casa'),
+        p('Risotto alla zucca', 'Erborinato di capra, amaretti e nocciole', 'Pumpkin risotto, blue goat cheese, amaretti and hazelnuts', [1, 3, 7, 8, 12], 18, 'casa'), // +3: albume negli amaretti
         p('Tagliolino burro e alici', 'Burro e alici', 'Tagliolini, whipped butter, anchovies and lemon', [1, 3, 4, 7], 18, 'casa'),
-        p('Minestra di mare tiepida', 'Pasta mista e frutti di mare', 'Warm seafood soup with mixed pasta', [1, 9, 12, 14], 22, 'casa'),
-        p('I primi classici romani', 'Chiedere al personale la proposta del giorno', 'Ask our team for today’s Roman pasta', [1, 9, 12], 14),
+        p('Minestra di mare tiepida', 'Pasta mista e frutti di mare', 'Warm seafood soup with mixed pasta', [1, 2, 4, 9, 12, 14], 22, 'casa'), // +2 +4: bisque di gamberi e pesce (ricettario)
+        p('I primi classici romani', 'Chiedere al personale la proposta del giorno', 'Ask our team for today’s Roman pasta', [1, 3, 7, 9, 12], 14), // +3 +7: pecorino in tutti, uovo nella carbonara
       ],
     },
     {
@@ -121,8 +131,8 @@ export const menuCarta = {
       piatti: [
         p('Coniglio porchettato', 'Parmentier e olio al prezzemolo', 'Porchetta-style rabbit, parmentier and parsley oil', [7, 9, 12], 24, 'casa'),
         p('Faraona', 'Cime di rapa e melograno', 'Guineafowl, turnip greens and pomegranate', [7, 9, 12], 26, 'casa'),
-        p('Assoluto di melanzana alla parmigiana', 'Pomodoro, basilico e Parmigiano Reggiano', 'A contemporary take on eggplant parmigiana', [1, 3, 7], 20, 'casa'),
-        p('Ombrina laccata al BBQ', 'Carciofo alla romana', 'BBQ-glazed croaker fish, Roman-style artichoke', [4, 7, 9, 12, 14], 26, 'casa'),
+        p('Assoluto di melanzana alla parmigiana', 'Pomodoro, basilico e Parmigiano Reggiano', 'A contemporary take on aubergine parmigiana', [1, 3, 7, 9], 20, 'casa'), // +9: sedano nel pomodoro (ricettario)
+        p('Ombrina laccata al BBQ', 'Carciofo alla romana', 'BBQ-glazed croaker fish, Roman-style artichoke', [4, 6, 7, 9, 10, 12, 14], 26, 'casa'), // +6 +10: soia e senape nella salsa (ricettario)
         p('Trancio di pescato del giorno alla piastra', 'Contorno di insalata mista', 'Grilled catch of the day with mixed salad', [4], 23, 'casa'),
       ],
     },
@@ -130,9 +140,9 @@ export const menuCarta = {
       id: 'dolci',
       titolo: { it: 'Dolci', en: 'Desserts' },
       piatti: [
-        p('Tartelletta noccioline e cioccolato', 'Popcorn, caramello salato e gelato alla crema', 'Peanut and chocolate tart, popcorn, salted caramel and vanilla gelato', [1, 3, 5, 7], 10),
+        p('Tartelletta noccioline e cioccolato', 'Popcorn, caramello salato e gelato alla crema', 'Peanut and chocolate tart, popcorn, salted caramel and vanilla ice cream', [1, 3, 5, 7], 10),
         p('Lemon pie', 'Gelato al limone', 'Lemon pie with lemon sorbet', [1, 3, 5, 7], 10),
-        p('Caffè, latte e biscotti', 'Gelato al cioccolato', 'Coffee, milk and biscuits with chocolate ice cream', [1, 3, 5, 7], 10),
+        p('Caffè, latte e biscotti', 'Gelato al cioccolato', 'Coffee, milk and biscuits with chocolate ice cream', [1, 3, 5, 7, 8], 10), // +8: farina di mandorle nella finanziera (ricettario)
         p('Mont Blanc', 'Gelato ai lamponi', 'Mont Blanc with raspberry ice cream', [1, 3, 5, 7], 10, 'casa'),
         p('Tiramisù classico', 'Mascarpone, caffè e cacao', 'Classic tiramisù with mascarpone, coffee and cocoa', [1, 3, 5, 7], 8),
       ],
@@ -149,27 +159,23 @@ export const menuCarta = {
         bevanda(ACQUA, 'Succhi di frutta', 'Fruit juices', 4),
         bevanda(ACQUA, 'Ginger beer', 'Ginger beer', 5),
         bevanda(ACQUA, 'Spremuta d’arancia', 'Fresh orange juice', 5),
-        bevanda(BIRRE, 'Peroni 33 cl', 'Peroni 33 cl', 4),
-        bevanda(BIRRE, 'Menabrea 33 cl', 'Menabrea 33 cl', 4),
-        bevanda(BIRRE, 'Menabrea Ambrata 33 cl', 'Menabrea Ambrata (amber) 33 cl', 5),
-        bevanda(BIRRE, 'Peroni analcolica', 'Peroni alcohol-free', 5),
+        // +1 sulle birre: malto d'orzo
+        bevanda(BIRRE, 'Peroni 33 cl', 'Peroni 33 cl', 4, { allergeni: [1] }),
+        bevanda(BIRRE, 'Menabrea 33 cl', 'Menabrea 33 cl', 4, { allergeni: [1] }),
+        bevanda(BIRRE, 'Menabrea Ambrata 33 cl', 'Menabrea Ambrata (amber) 33 cl', 5, { allergeni: [1] }),
+        bevanda(BIRRE, 'Peroni analcolica', 'Peroni alcohol-free', 5, { allergeni: [1] }),
         bevanda(CAFFE, 'Caffè espresso', 'Espresso', 2.5),
-        bevanda(CAFFE, 'Cappuccino', 'Cappuccino', 4),
+        bevanda(CAFFE, 'Cappuccino', 'Cappuccino', 4, { allergeni: [7] }), // +7: latte
         bevanda(CAFFE, 'Caffè corretto', 'Caffè corretto, espresso with a dash of liqueur', 5),
         bevanda(CAFFE, 'Tè e tisane', 'Teas & infusions', 4),
-        bevanda(DOPO, 'Amari', 'Amari, Italian herbal digestives', 4, true),
+        bevanda(DOPO, 'Amari', 'Amari, Italian herbal digestives', 4, { prezzoDa: true }),
         bevanda(DOPO, 'Limoncello', 'Limoncello', 4),
-        bevanda(DOPO, 'Grappa bianca', 'White grappa', 4, true),
-        bevanda(DOPO, 'Grappa barricata', 'Barrique grappa', 5, true),
+        bevanda(DOPO, 'Grappa bianca', 'White grappa', 4, { prezzoDa: true }),
+        bevanda(DOPO, 'Grappa barricata', 'Barrique grappa', 5, { prezzoDa: true }),
         bevanda(DOPO, 'Amaretto Disaronno', 'Amaretto Disaronno', 5),
       ],
     },
   ],
-  // Il coperto viene dal menu del 24/09: nel PDF definitivo non c'è, da confermare col titolare
-  note: {
-    it: ['Coperto 2,50 € a persona: comprende tre tipi di pane fatto in casa.', 'Refill del pane 4 €.'],
-    en: ['Cover charge €2.50 per person, including three types of homemade bread.', 'Bread refill €4.'],
-  },
 } as const satisfies Menu;
 
 /** L'aperitivo: «ENEA_Menu_Cocktail_Tapas_Aperitivo», pagina 2, del 28/09/2026. */
@@ -187,6 +193,7 @@ export const menuAperitivo = {
             en: 'One drink and a selection of three of the chef’s appetizers',
           },
           allergeni: [],
+          allergeniVariabili: true,
           prezzo: 15,
         },
       ],
@@ -247,8 +254,8 @@ export const menuAperitivo = {
 /**
  * La carta dei cocktail «La Dolce Vita»: stesso PDF, pagina 1. Gli ingredienti
  * il titolare li scrive in inglese anche sul menu italiano: in inglese restano
- * i suoi (corretti i refusi: «pinapple», «liquor», «Gin0%»), in italiano sono
- * tradotti parola per parola.
+ * i suoi (corretti i refusi evidenti, come «pinapple» e «Gin0%»), in italiano
+ * sono tradotti parola per parola. Solfiti (12) dove c'è vino: prosecco, vermouth.
  */
 const c = (nome: string, it: string, en: string, prezzo: number, allergeni: number[] = []): Piatto => ({
   nome: { it: nome, en: nome },
@@ -265,16 +272,16 @@ export const menuCocktail = {
       id: 'signature',
       titolo: { it: 'Signature', en: 'Signature' },
       piatti: [
-        c('Enea Spritz', 'Prosecco, bergamotto, cordiale mediterraneo fatto in casa', 'Prosecco, bergamot, homemade Mediterranean cordial', 14),
+        c('Enea Spritz', 'Prosecco, bergamotto, cordiale mediterraneo fatto in casa', 'Prosecco, bergamot, homemade Mediterranean cordial', 14, [12]), // +12
         c('Dolce Vita', 'Gin, Aperol, frutto della passione, succo d’ananas, ibisco, succo di limone', 'Gin, Aperol, passion fruit, pineapple juice, hibiscus, lemon juice', 13),
-        c('Negroni di Bosco', 'Gin, Campari, vermouth, chiarificato con yogurt ai frutti di bosco di stagione, sale', 'Gin, Campari, vermouth, clarified with seasonal mixed-berry yogurt, salt', 13, [7]),
+        c('Negroni di Bosco', 'Gin, Campari, vermouth, chiarificato con yogurt ai frutti di bosco di stagione, sale', 'Gin, Campari, vermouth, clarified with seasonal mixed-berry yogurt, salt', 13, [7, 12]), // +12
         c('Cubita', 'Rum, Campari, frutto della passione, succo di lime', 'Rum, Campari, passion fruit, lime juice', 13),
-        c('Ambasciatore', 'Campari, vermouth, amaro alle arance di Sicilia', 'Campari, vermouth, Sicilian orange amaro', 14),
+        c('Ambasciatore', 'Campari, vermouth, amaro alle arance di Sicilia', 'Campari, vermouth, Sicilian orange amaro', 14, [12]), // +12
         c('Spicy A-Roma', 'Tequila, liquore ai fiori di sambuco, agave, mango piccante, soda al mandarino e bergamotto, succo di lime', 'Tequila, elderflower liqueur, agave, spicy mango, mandarin-bergamot soda, lime juice', 13),
-        c('Espresso Martini', 'Vodka, Frangelico, Baileys, Kahlúa, espresso', 'Vodka, Frangelico, Baileys, Kahlúa, espresso', 13, [5]),
+        c('Espresso Martini', 'Vodka, Frangelico, Baileys, Kahlúa, espresso', 'Vodka, Frangelico, Baileys, Kahlúa, espresso', 13, [5, 7, 8]), // +7 Baileys, +8 Frangelico (nocciole)
         c('Smoked Old Fashioned Bourbon', 'Bourbon, agave aromatizzata, Angostura', 'Bourbon, infused agave, Angostura', 13),
         c('Smoked Old Fashioned Mezcal', 'Mezcal, agave aromatizzata, Angostura', 'Mezcal, infused agave, Angostura', 14),
-        c('Martini al Parmigiano', 'Gin o vodka, vermouth, Parmigiano 24 mesi, cordiale fatto in casa', 'Gin or vodka, vermouth, 24-month Parmigiano, homemade cordial', 14, [7]),
+        c('Martini al Parmigiano', 'Gin o vodka, vermouth, Parmigiano 24 mesi, cordiale fatto in casa', 'Gin or vodka, vermouth, 24-month Parmigiano, homemade cordial', 14, [7, 12]), // +12
       ],
     },
     {
@@ -284,6 +291,7 @@ export const menuCocktail = {
         {
           nome: { it: 'I grandi classici della miscelazione', en: 'All the great classic cocktails' },
           allergeni: [],
+          allergeniVariabili: true,
           prezzo: 12,
           prezzoDa: true,
         },
@@ -372,7 +380,7 @@ export const allergeni: ReadonlyArray<{ n: number; it: string; en: string }> = [
   { n: 9, it: 'Sedano', en: 'Celery' },
   { n: 10, it: 'Senape', en: 'Mustard' },
   { n: 11, it: 'Sesamo', en: 'Sesame' },
-  { n: 12, it: 'Solfiti', en: 'Sulphites' },
+  { n: 12, it: 'Anidride solforosa e solfiti', en: 'Sulphites' },
   { n: 13, it: 'Lupini', en: 'Lupin' },
   { n: 14, it: 'Molluschi', en: 'Molluscs' },
 ];

@@ -19,20 +19,20 @@ const base = locale === 'en' ? '/en' : '';
 
 const T = {
   pranzo: {
-    it: { titolo: 'Il business lunch', intro: 'A pranzo, un piatto del giorno a prezzo fisso. I piatti cambiano con la stagione: il personale di sala vi dirà quelli di oggi.' },
-    en: { titolo: 'The business lunch', intro: 'At lunchtime, a dish of the day at a set price. The dishes change with the season: our staff will tell you today’s.' },
+    it: { titolo: 'Il business lunch', intro: 'A pranzo, un piatto del giorno a prezzo fisso. I piatti cambiano spesso: il personale di sala vi dirà quelli di oggi.' },
+    en: { titolo: 'The business lunch', intro: 'At lunchtime, a dish of the day at a set price. The dishes change often: our staff will tell you today’s.' },
   },
   carta: {
-    it: { titolo: 'Il menu à la carte', intro: 'A pranzo e a cena. Cucina mediterranea di stagione, radici romane. I prezzi sono in euro; i numeri accanto ai piatti indicano gli allergeni contenuti.' },
-    en: { titolo: 'The à la carte menu', intro: 'For lunch and dinner. Seasonal Mediterranean cooking with Roman roots. Prices in euro; the small numbers next to each dish are the allergens it contains.' },
+    it: { titolo: 'Il menu à la carte', intro: 'A pranzo e a cena. Cucina mediterranea di stagione, radici romane. I prezzi sono in euro; i numeri accanto ai piatti indicano gli allergeni contenuti. Per eventuali allergie o intolleranze, avvisate il personale di sala.' },
+    en: { titolo: 'The à la carte menu', intro: 'For lunch and dinner. Seasonal Mediterranean cooking with Roman roots. Prices in euro; the small numbers next to each dish are the allergens it contains. Please inform our staff of any allergies or intolerances.' },
   },
   aperitivo: {
-    it: { titolo: 'L’aperitivo', intro: 'Piatti da condividere per l’ora dell’aperitivo. I prezzi sono in euro; i numeri accanto ai piatti indicano gli allergeni contenuti.' },
-    en: { titolo: 'The aperitivo', intro: 'Plates to share at aperitivo hour. Prices in euro; the small numbers next to each dish are the allergens it contains.' },
+    it: { titolo: 'L’aperitivo', intro: 'Piatti da condividere per l’ora dell’aperitivo. I prezzi sono in euro; i numeri accanto ai piatti indicano gli allergeni contenuti. Per eventuali allergie o intolleranze, avvisate il personale di sala.' },
+    en: { titolo: 'The aperitivo', intro: 'Plates to share at aperitivo hour. Prices in euro; the small numbers next to each dish are the allergens it contains. Please inform our staff of any allergies or intolerances.' },
   },
   cocktail: {
-    it: { titolo: 'I cocktail', intro: 'I signature del bar, i grandi classici della miscelazione e due drink senza alcol. I prezzi sono in euro.' },
-    en: { titolo: 'The cocktails', intro: 'The bar’s signature drinks, the great classics and two alcohol-free cocktails. Prices in euro.' },
+    it: { titolo: 'I cocktail', intro: 'I signature del bar, i grandi classici della miscelazione e due drink senza alcol. I prezzi sono in euro; i numeri accanto ai drink indicano gli allergeni contenuti. Per eventuali allergie o intolleranze, avvisate il personale di sala.' },
+    en: { titolo: 'The cocktails', intro: 'The bar’s signature drinks, the great classics and two alcohol-free cocktails. Prices in euro; the small numbers next to each drink are the allergens it contains. Please inform our staff of any allergies or intolerances.' },
   },
 }[variante][locale];
 
@@ -55,7 +55,8 @@ const L = locale === 'en'
       indice: 'Menu sections',
       allergeniTitolo: 'Allergens',
       allergeniNota: 'Allergen numbering follows EU Regulation 1169/2011. Our staff will gladly help with any question about ingredients and allergens.',
-      allergeniGiorno: 'The dishes of the day change: our staff will tell you their ingredients and allergens.',
+      allergeniGiorno: 'The dishes of the day change: please inform our staff of any allergies or intolerances, and they will tell you the ingredients and allergens.',
+      variabili: 'allergens: ask our staff',
       contiene: 'Contains',
       valuta: '€',
     }
@@ -65,7 +66,8 @@ const L = locale === 'en'
       indice: 'Sezioni del menu',
       allergeniTitolo: 'Allergeni',
       allergeniNota: 'La numerazione degli allergeni segue il Regolamento UE 1169/2011. Per qualsiasi informazione su ingredienti e allergeni il personale di sala è a disposizione.',
-      allergeniGiorno: 'I piatti del giorno cambiano: ingredienti e allergeni ve li indica il personale di sala.',
+      allergeniGiorno: 'I piatti del giorno cambiano: per eventuali allergie o intolleranze avvisate il personale di sala, che vi indicherà ingredienti e allergeni.',
+      variabili: 'allergeni: chiedere al personale',
       contiene: 'Contiene',
       valuta: '€',
     };
@@ -144,6 +146,7 @@ const segniUsati = (Object.keys(segni) as Segno[]).filter((k) => usati.has(k));
                           <span class="sr-only">{etichettaAllergeni(p.allergeni)}</span>
                         </small>
                       )}
+                      {p.allergeniVariabili && <small class="piatto__allergeni">{L.variabili}</small>}
                     </span>
                     {descrizione && <span class="piatto__descrizione">{descrizione}</span>}
                   </div>
