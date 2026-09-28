@@ -2,7 +2,7 @@
 /** Navigazione mobile a tendina. Il pulsante vive nell’header; la tenda è fixed. */
 import { altraLingua, nav, prenotazioni, type Locale } from '../data/site';
 const locale = (Astro.currentLocale ?? 'it') as Locale;
-// Nella tenda le sottovoci sono voci piene: "Menu · Cena", "Menu · Aperitivo".
+// Nella tenda le sottovoci sono voci piene: "Menu · À la carte", "Menu · Aperitivo"….
 const voci = nav[locale].flatMap((v) =>
   v.sotto ? v.sotto.map((s) => ({ href: s.href, label: `${v.label} · ${s.label}` })) : [{ href: v.href, label: v.label }],
 );

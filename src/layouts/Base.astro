@@ -124,7 +124,8 @@ const datiStrutturati = {
       <>
         <link rel="alternate" hreflang="it" href={new URL(coppia[0], Astro.site)} />
         <link rel="alternate" hreflang="en" href={new URL(coppia[1], Astro.site)} />
-        <link rel="alternate" hreflang="x-default" href={new URL(coppia[0], Astro.site)} />
+        {/* chi non legge né italiano né inglese (i turisti) trova la pagina inglese, come dal QR */}
+        <link rel="alternate" hreflang="x-default" href={new URL(coppia[1], Astro.site)} />
       </>
     )}
     <slot name="head" />

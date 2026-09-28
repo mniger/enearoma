@@ -312,7 +312,7 @@ const segniUsati = (Object.keys(segni) as Segno[]).filter((k) => usati.has(k));
   /* ── stampa: il menu su carta, nero su bianco, senza cornice del sito ── */
   @media print {
     .carta { padding: 0; }
-    .carta__indice, .selettore, .carta__rimandi { display: none; }
+    .carta__indice, .selettore, .carta__rimandi, .carta__lingua { display: none; }
     .carta__corpo { max-width: none; gap: 2rem; }
     .piatto { break-inside: avoid; }
     .portata-lista h2 { break-after: avoid; }
