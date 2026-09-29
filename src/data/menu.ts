@@ -6,9 +6,8 @@
  * titolare; il business lunch dal suo messaggio del 24/09. Regole:
  * - si pubblica solo il menu: il ricettario resta interno
  * - si pubblica solo il prezzo di vendita, mai il food cost
- * - allergeni: quelli del titolare (numerazione Reg. UE 1169/2011); quelli
- *   aggiunti nella revisione del 28/09 li ha confermati il 29/09, tranne il
- *   glutine delle birre, che non vuole indicato
+ * - allergeni: quelli del titolare (numerazione Reg. UE 1169/2011) più quelli
+ *   aggiunti nella revisione del 28/09, confermati il 29/09
  * - inglese: le righe del titolare, corretti solo i refusi evidenti
  * - i segni sui prodotti congelati come sul menu stampato (obbligo di legge),
  *   con la stessa nota in fondo; il trattino davanti al nome diventa «°»
@@ -165,11 +164,11 @@ export const menuCarta = {
         bevanda(ACQUA, 'Succhi di frutta', 'Fruit juices', 4),
         bevanda(ACQUA, 'Ginger beer', 'Ginger beer', 5),
         bevanda(ACQUA, 'Spremuta d’arancia', 'Fresh orange juice', 5),
-        // il titolare non vuole il glutine sulle birre (29/09), anche se sono d'orzo: scelta sua
-        bevanda(BIRRE, 'Peroni 33 cl', 'Peroni 33 cl', 4),
-        bevanda(BIRRE, 'Menabrea 33 cl', 'Menabrea 33 cl', 4),
-        bevanda(BIRRE, 'Menabrea Ambrata 33 cl', 'Menabrea Ambrata (amber) 33 cl', 5),
-        bevanda(BIRRE, 'Peroni analcolica', 'Peroni alcohol-free', 5),
+        // malto d'orzo: il glutine va indicato
+        bevanda(BIRRE, 'Peroni 33 cl', 'Peroni 33 cl', 4, { allergeni: [1] }),
+        bevanda(BIRRE, 'Menabrea 33 cl', 'Menabrea 33 cl', 4, { allergeni: [1] }),
+        bevanda(BIRRE, 'Menabrea Ambrata 33 cl', 'Menabrea Ambrata (amber) 33 cl', 5, { allergeni: [1] }),
+        bevanda(BIRRE, 'Peroni analcolica', 'Peroni alcohol-free', 5, { allergeni: [1] }),
         bevanda(CAFFE, 'Caffè espresso', 'Espresso', 2.5),
         bevanda(CAFFE, 'Cappuccino', 'Cappuccino', 4, { allergeni: [7] }),
         bevanda(CAFFE, 'Caffè corretto', 'Caffè corretto, espresso with a dash of liqueur', 5),
