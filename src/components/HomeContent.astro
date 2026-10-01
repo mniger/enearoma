@@ -19,12 +19,10 @@ import Freccia from './Freccia.astro';
 import MappaDove from './MappaDove.astro';
 import salaPanoramica from '../assets/foto/sala-panoramica.png';
 import salaVerticale from '../assets/foto/sala-verticale.jpeg';
-import facciataIngresso from '../assets/foto/facciata-ingresso.jpeg';
-import facciataMarciapiede from '../assets/foto/facciata-marciapiede.jpeg';
-import tavola from '../assets/foto/tavola-dettaglio.jpeg';
-import barDettaglio from '../assets/foto/bar-dettaglio.jpeg';
-import cocktail from '../assets/dettagli/cocktail.jpg';
-import targa from '../assets/dettagli/targa.jpg';
+// le tre foto vere mandate dal titolare il 01/10: sostituiscono i render IA e i ritagli a bassa risoluzione
+import facciata from '../assets/foto/facciata.jpeg';
+import salaAngolo from '../assets/foto/sala-angolo.jpeg';
+import tavola from '../assets/foto/tavola-apparecchiata.jpeg';
 
 const locale = (Astro.currentLocale ?? 'it') as Locale;
 const t = testi[locale];
@@ -34,7 +32,7 @@ const L = locale === 'en'
   ? {
       prenota: prenotazioni.aperte ? 'Book a table' : 'Bookings', scopri: 'The menu', scorri: 'Scroll',
       etLocale: 'The restaurant', etCucina: 'The kitchen', etBar: 'The bar',
-      etGalleria: 'ENEA in pictures', etDove: 'Visit us',
+      etDove: 'Visit us',
       tLocale: 'A dining room under brick vaults, a few steps from Via Veneto',
       pLocale: 'Vaulted ceilings, green velvet, candlelight and a wall of bottles. Roman in character, Mediterranean in spirit, open for lunch, aperitivo and dinner.',
       tCucina: 'Mediterranean cooking, Roman roots',
@@ -50,17 +48,14 @@ const L = locale === 'en'
       comePrenotare: 'Bookings will open when the restaurant does. The telephone number and booking email will appear on this page as soon as they are live.',
       altPanoramica: 'The ENEA dining room under its brick vaults',
       altSala: 'Tables laid for the evening at ENEA',
-      altIngresso: 'The ENEA entrance on Via Boncompagni at night',
-      altMarciapiede: 'The ENEA windows seen from the pavement',
-      altCocktail: 'A coupe glass on a marble bar top',
-      altBar: 'The bottle wall and glass-globe lamps at ENEA',
-      altTarga: 'The Via Boncompagni street sign',
-      altTavola: 'A table laid at ENEA: brass charger, glasses, candlelight',
+      altIngresso: 'The ENEA entrance on Via Boncompagni at dusk: the lit sign and the open door',
+      altAngolo: 'A corner of the ENEA dining room: glass-globe lamps, a painting, two laid tables',
+      altTavola: 'A table laid at ENEA: leather place mat with the name, glasses and cutlery',
     }
   : {
       prenota: prenotazioni.aperte ? 'Prenota un tavolo' : 'Prenotazioni', scopri: 'Il menu', scorri: 'Scorri',
       etLocale: 'Il ristorante', etCucina: 'La cucina', etBar: 'Il bar',
-      etGalleria: 'ENEA in immagini', etDove: 'Dove siamo',
+      etDove: 'Dove siamo',
       tLocale: 'Una sala sotto volte di mattoni, a due passi da Via Veneto',
       pLocale: 'Soffitti a volta, velluto verde, luce di candela e una parete di bottiglie. Romano nel carattere, mediterraneo nello spirito, aperto a pranzo, all’aperitivo e a cena.',
       tCucina: 'Cucina mediterranea, radici romane',
@@ -76,12 +71,9 @@ const L = locale === 'en'
       comePrenotare: 'Le prenotazioni aprono insieme al ristorante. Numero di telefono ed email per prenotare compariranno qui appena saranno attivi.',
       altPanoramica: 'La sala di ENEA sotto le volte in mattoni',
       altSala: 'Tavoli apparecchiati per la sera da ENEA',
-      altIngresso: "L’ingresso di ENEA su Via Boncompagni di sera",
-      altMarciapiede: 'Le vetrine di ENEA viste dal marciapiede',
-      altCocktail: 'Una coppa su un banco di marmo',
-      altBar: 'La vetrina delle bottiglie e le lampade a sfera di ENEA',
-      altTarga: 'La targa di Via Boncompagni',
-      altTavola: 'Una tavola apparecchiata da ENEA: sottopiatto in ottone, calici, candela',
+      altIngresso: "L’ingresso di ENEA su Via Boncompagni al tramonto: l’insegna illuminata e la porta aperta",
+      altAngolo: 'Un angolo della sala di ENEA: lampade a sfera, un quadro, due tavoli apparecchiati',
+      altTavola: 'Una tavola apparecchiata da ENEA: la tovaglietta in cuoio col nome, calici e posate',
     };
 
 const dato = (v: string) => (v === ATTESA ? L.inArrivo : v);
@@ -148,7 +140,7 @@ const azioni = [
   <div class="wrap portate__griglia">
     <article class="portata">
       <figure class="quadro portata__foto" data-reveal>
-        <Image src={tavola} alt={L.altTavola} widths={[480, 786]} sizes="(min-width: 58rem) 44vw, 92vw" loading="lazy" />
+        <Image src={tavola} alt={L.altTavola} widths={[480, 800, 1086]} sizes="(min-width: 58rem) 44vw, 92vw" loading="lazy" class="foto-tavola" />
       </figure>
       <p class="eyebrow" data-reveal>{L.etCucina}</p>
       <h2 data-reveal data-ritardo="1">{L.tCucina}</h2>
@@ -161,7 +153,7 @@ const azioni = [
 
     <article class="portata">
       <figure class="quadro portata__foto" data-reveal>
-        <Image src={barDettaglio} alt={L.altBar} widths={[420, 540]} sizes="(min-width: 58rem) 44vw, 92vw" loading="lazy" />
+        <Image src={salaAngolo} alt={L.altAngolo} widths={[480, 800, 1086]} sizes="(min-width: 58rem) 44vw, 92vw" loading="lazy" class="foto-angolo" />
       </figure>
       <p class="eyebrow" data-reveal>{L.etBar}</p>
       <h2 data-reveal data-ritardo="1">{L.tBar}</h2>
@@ -172,24 +164,6 @@ const azioni = [
       </div>
       <p class="nota" data-reveal data-ritardo="3" data-attesa>{L.barAttesa}</p>
     </article>
-  </div>
-</section>
-
-<!-- ═════════ GALLERIA ═════════ -->
-<section id="galleria" class="galleria">
-  <div class="wrap">
-    <h2 class="eyebrow galleria__et" data-reveal>{L.etGalleria}</h2>
-    <div class="galleria__griglia">
-      <figure class="quadro" data-reveal>
-        <Image src={facciataMarciapiede} alt={L.altMarciapiede} widths={[520, 700, 1086]} sizes="(min-width: 58rem) 662px, 92vw" loading="lazy" />
-      </figure>
-      <figure class="quadro quadro--fermo" data-reveal data-ritardo="1">
-        <Image src={targa} alt={L.altTarga} widths={[294]} sizes="(min-width: 58rem) 294px, 46vw" loading="lazy" />
-      </figure>
-      <figure class="quadro quadro--fermo" data-reveal data-ritardo="2">
-        <Image src={cocktail} alt={L.altCocktail} widths={[244]} sizes="(min-width: 58rem) 244px, 46vw" loading="lazy" />
-      </figure>
-    </div>
   </div>
 </section>
 
@@ -233,7 +207,7 @@ const azioni = [
       </div>
     </div>
     <figure class="quadro dove__foto" data-reveal data-ritardo="1">
-      <Image src={facciataIngresso} alt={L.altIngresso} widths={[520, 800, 1086]} sizes="(min-width: 64rem) 38vw, 92vw" loading="lazy" />
+      <Image src={facciata} alt={L.altIngresso} widths={[520, 800, 1200, 1600]} sizes="(min-width: 64rem) 38vw, 92vw" loading="lazy" />
     </figure>
     <div class="dove__mappa"><MappaDove /></div>
   </div>
@@ -332,27 +306,14 @@ const azioni = [
   .portata__foto { margin-bottom: .6rem; }
   .portata__rimandi { display: grid; gap: 1.15rem; }
   .portata__foto :global(img) { aspect-ratio: 4 / 3; object-fit: cover; }
+  /* foto verticali nel riquadro 4:3: si tengono in vista il nome sulla tovaglietta e lampade e quadro */
+  .portata__foto :global(.foto-tavola) { object-position: 50% 62%; }
+  .portata__foto :global(.foto-angolo) { object-position: 50% 30%; }
   @media (min-width: 58rem) {
     /* le righe delle due schede si allineano (foto, occhiello, titolo, testo, rimandi, nota):
        sei figli per scheda, uno per riga; un figlio in più finirebbe sovrapposto all'ultimo */
     .portate__griglia { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(6, auto); }
     .portata { grid-template-rows: subgrid; grid-row: span 6; }
-  }
-
-  /* ── galleria ── */
-  .galleria__et { margin-bottom: clamp(1.5rem, 3vw, 2.5rem); }
-  /* la colonna larga va alla fotografia ad alta risoluzione; i due ritagli
-     del moodboard (≈290px nativi) restano alla loro misura, mai upscalati */
-  .galleria__griglia { display: grid; gap: clamp(.75rem, 1.6vw, 1.25rem); grid-template-columns: 1fr 1fr; }
-  .galleria__griglia :global(img) { width: 100%; height: 100%; object-fit: cover; }
-  .galleria__griglia figure { margin: 0; height: clamp(16rem, 60vw, 26rem); }
-  .galleria__griglia figure:first-child { grid-column: 1 / -1; height: clamp(14rem, 52vw, 22rem); }
-  @media (min-width: 58rem) {
-    /* i due ritagli alla loro larghezza nativa: la foto grande prende il resto */
-    .galleria__griglia { grid-template-columns: minmax(0, 1fr) 294px 244px; }
-    /* un’unica altezza di riga: le tre cornici chiudono sullo stesso filo */
-    .galleria__griglia figure,
-    .galleria__griglia figure:first-child { grid-column: auto; height: clamp(24rem, 34vw, 30rem); }
   }
 
   /* ── commiato ── */

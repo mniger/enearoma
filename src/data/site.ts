@@ -86,16 +86,14 @@ export const orari = {
 } as const;
 
 /**
- * Apertura: lunedì 5 ottobre 2026, confermata dal titolare il 01/10. Solo date
- * confermate: una data sbagliata in rete produce clienti davanti a una porta
- * chiusa. Dal 6/10 il testo «Apriamo…» va sostituito con l'orario di apertura.
+ * Apertura: lunedì 5 ottobre 2026, confermata dal titolare il 01/10. «Aperti dal…»
+ * si legge giusto sia prima sia dopo la data.
  */
 export const apertura = {
-  // [TITOLARE] 01/10/2026: si apre lunedì 5 ottobre
-  periodo: { it: 'Apriamo lunedì 5 ottobre', en: 'Opening Monday 5 October' },
+  periodo: { it: 'Aperti dal 5 ottobre', en: 'Open from 5 October' },
   dettaglio: {
-    it: 'Si prenota già per telefono.',
-    en: 'Bookings are already open by phone.',
+    it: 'Vi aspettiamo a pranzo e a cena.',
+    en: 'We look forward to seeing you for lunch and dinner.',
   },
 } as const;
 
@@ -221,13 +219,11 @@ export const nav: { readonly it: readonly VoceNav[]; readonly en: readonly VoceN
   it: [
     { href: '/#locale', label: 'Il ristorante' },
     { href: '/menu/', label: 'Menu', sotto: [{ href: '/menu/', label: 'À la carte' }, { href: '/menu/pranzo/', label: 'Business lunch' }, { href: '/menu/aperitivo/', label: 'Aperitivo' }, { href: '/menu/cocktail/', label: 'Cocktail' }] },
-    { href: '/#galleria', label: 'Immagini' },
     { href: '/#dove', label: 'Dove siamo' },
   ],
   en: [
     { href: '/#locale', label: 'The restaurant' },
     { href: '/menu/', label: 'Menu', sotto: [{ href: '/menu/', label: 'À la carte' }, { href: '/menu/lunch/', label: 'Business lunch' }, { href: '/menu/aperitivo/', label: 'Aperitivo' }, { href: '/menu/cocktails/', label: 'Cocktails' }] },
-    { href: '/#galleria', label: 'Pictures' },
     { href: '/#dove', label: 'Visit us' },
   ],
 };

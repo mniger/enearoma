@@ -228,12 +228,6 @@ p {
   transform: scale(1.028);
   filter: brightness(1.06);
 }
-/* i ritagli a bassa risoluzione non si ingrandiscono: lo zoom ne mostrerebbe la grana */
-.quadro--fermo:hover img {
-  transform: none;
-  filter: none;
-}
-
 /* segnaposto onesto: marca i contenuti in attesa dal cliente senza farli
    sembrare campi di un modulo — filo tratteggiato sotto, niente riquadro */
 [data-attesa] {
