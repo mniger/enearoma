@@ -86,22 +86,22 @@ export const orari = {
 } as const;
 
 /**
- * Apertura: la data non è ancora fissata dal titolare («metà settembre» è
- * passato senza conferma, 22/09). Si comunica solo che è imminente, mai una
- * data non confermata: una data sbagliata in rete produce clienti davanti a
- * una porta chiusa. Alla conferma: qui il periodo/data, e i canali in `contatti`.
+ * Apertura: lunedì 5 ottobre 2026, confermata dal titolare il 01/10. Solo date
+ * confermate: una data sbagliata in rete produce clienti davanti a una porta
+ * chiusa. Dal 6/10 il testo «Apriamo…» va sostituito con l'orario di apertura.
  */
 export const apertura = {
-  periodo: { it: 'Prossima apertura', en: 'Opening soon' },
+  // [TITOLARE] 01/10/2026: si apre lunedì 5 ottobre
+  periodo: { it: 'Apriamo lunedì 5 ottobre', en: 'Opening Monday 5 October' },
   dettaglio: {
-    it: 'La data sarà annunciata qui.',
-    en: 'The date will be announced here.',
+    it: 'Si prenota già per telefono.',
+    en: 'Bookings are already open by phone.',
   },
 } as const;
 
 /** Il giorno di apertura (AAAA-MM-GG), quando il titolare lo conferma: da quel giorno gli
  *  orari entrano nei dati strutturati. Prima no: motori e mappe li leggerebbero come «aperto». */
-export const dataApertura: string | null = null;
+export const dataApertura: string | null = '2026-10-05';
 
 /**
  * Dati legali — CONFERMATI (anagrafica Aruba dell’account aziendale,
