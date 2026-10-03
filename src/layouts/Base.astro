@@ -47,6 +47,7 @@ const datiStrutturati = {
   url: new URL(locale === 'en' ? '/en/' : '/', Astro.site).href,
   image: ogImage.href,
   telephone: contatti.telefono,
+  email: contatti.email,
   acceptsReservations: prenotazioni.aperte,
   hasMap: contatti.mapsUrl,
   hasMenu: menuDelSito.map((u) => ({ '@type': 'Menu', '@id': `${u}#menu`, url: u })),

@@ -24,7 +24,7 @@ export const brand = {
 /**
  * Recapiti. Civico «83/85» e telefono come li scrive il titolare sul suo menu
  * stampato (Canva, 24/09/2026) e sul biglietto da visita di riferimento.
- * WhatsApp ed email restano ATTESA.
+ * WhatsApp resta ATTESA.
  */
 export const contatti = {
   via: 'Via Boncompagni', // [MANUALE] footer e foto della facciata
@@ -33,7 +33,9 @@ export const contatti = {
   citta: 'Roma',
   telefono: '+39 06 7227 2403', // [TITOLARE] 24/09/2026
   whatsapp: ATTESA,
-  email: ATTESA,
+  // unica mail pubblica: dal 03/10/2026 Aruba la inoltra alla Gmail del ristorante
+  // (anche prenotazioni@, che passa da qui) e ne tiene una copia
+  email: 'info@enearoma.it',
   /** Link stabile alla scheda Google (CID della scheda "Enea Ristorante", verificato 08/09/2026). */
   mapsUrl: 'https://maps.google.com/?cid=9374966341506913280',
   /** Il segnaposto della scheda Google (24/09/2026); lo stesso centra la mappa di scripts/genera-mappa.py. */

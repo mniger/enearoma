@@ -6,7 +6,8 @@ import '../styles/global.css';
 import { Image } from 'astro:assets';
 import Marchio from '../components/Marchio.astro';
 import { contatti } from '../data/site';
-import sala from '../assets/foto/sala-panoramica.png';
+// la facciata vera (panchina, porta, zerbino): la vecchia sala era un'immagine generata con l'IA
+import sala from '../assets/foto/facciata-apertura-larga.jpeg';
 ---
 <!doctype html>
 <html lang="it">
@@ -23,7 +24,7 @@ import sala from '../assets/foto/sala-panoramica.png';
     </div>
     <style is:global>
       .tela { position: relative; width: 1200px; height: 630px; overflow: hidden; background: var(--pece); }
-      .tela img.sfondo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 45%; filter: saturate(.92) contrast(1.05); }
+      .tela img.sfondo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 40% 50%; filter: saturate(.92) contrast(1.05); }
       .velo { position: absolute; inset: 0; background: radial-gradient(110% 80% at 50% 46%, rgba(10,8,6,.82), rgba(10,8,6,.95) 62%, #0A0806 100%); }
       .centro { position: absolute; inset: 0; display: grid; align-content: center; justify-items: center; gap: .4rem; text-align: center; }
       .marchio { position: relative; --marchio-larghezza: 400px; color: var(--oro-luce); }
