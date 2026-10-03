@@ -11,26 +11,24 @@
  * Le informazioni non ancora confermate dal cliente sono marcate `data-attesa`:
  * si dichiara l’assenza, non la si maschera.
  */
-import { Image, getImage } from 'astro:assets';
+import { Image } from 'astro:assets';
 import { brand, testi, contatti, orari, apertura, prenotazioni, piattaforme, ATTESA, type Locale } from '../data/site';
 import Marchio from './Marchio.astro';
 import Pino from './Pino.astro';
 import Freccia from './Freccia.astro';
 import MappaDove from './MappaDove.astro';
+// sala-panoramica è generata con gpt-image (C2PA di OpenAI): resta in apertura per scelta di
+// Marco (03/10), perché sotto il velo è la più scenica. Le foto del titolare (01/10): scatto non
+// ritoccato è solo la facciata; sala-angolo, tavola e sala-verticale sono foto della sala
+// ripassate con ChatGPT (1086×1448, il formato di gpt-image). Da sostituire con scatti veri.
+import salaPanoramica from '../assets/foto/sala-panoramica.png';
 import salaVerticale from '../assets/foto/sala-verticale.jpeg';
-// Le foto del titolare (01/10). Scatto non ritoccato è solo la facciata, che apre anche la
-// pagina (la porta in verticale, panchina e zerbino sugli schermi larghi: l'insegna farebbe
-// da doppione al marchio); sala-angolo, tavola e sala-verticale sono foto della sala
-// ripassate con ChatGPT (1086×1448, il formato di gpt-image): da sostituire con gli originali.
-import facciataApertura from '../assets/foto/facciata-apertura.jpeg';
-import facciataAperturaLarga from '../assets/foto/facciata-apertura-larga.jpeg';
 import facciata from '../assets/foto/facciata.jpeg';
 import salaAngolo from '../assets/foto/sala-angolo.jpeg';
 import tavola from '../assets/foto/tavola-apparecchiata.jpeg';
 
 const locale = (Astro.currentLocale ?? 'it') as Locale;
 const t = testi[locale];
-const aperturaLarga = await getImage({ src: facciataAperturaLarga, widths: [1200, 1800, 2400], format: 'webp' });
 const titoloPagina = locale === 'en' ? `${brand.nomeEsteso} — restaurant and cocktail bar` : `${brand.nomeEsteso} — ristorante e cocktail bar`;
 
 const L = locale === 'en'
@@ -51,6 +49,7 @@ const L = locale === 'en'
       inArrivo: 'coming soon', indicazioni: 'Open in Google Maps', nuovaScheda: 'opens in a new tab',
       prenotaTitolo: 'Book a table', chiama: 'Call', suWhatsapp: 'WhatsApp', suOpentable: 'Book on OpenTable',
       comePrenotare: 'Bookings will open when the restaurant does. The telephone number and booking email will appear on this page as soon as they are live.',
+      altPanoramica: 'The ENEA dining room under its brick vaults',
       altSala: 'Tables laid for the evening at ENEA',
       altIngresso: 'The ENEA entrance on Via Boncompagni at dusk: the lit sign and the open door',
       altAngolo: 'A corner of the ENEA dining room: glass-globe lamps, a painting, two laid tables',
@@ -73,6 +72,7 @@ const L = locale === 'en'
       inArrivo: 'in arrivo', indicazioni: 'Apri in Google Maps', nuovaScheda: 'si apre in una nuova scheda',
       prenotaTitolo: 'Prenota un tavolo', chiama: 'Chiama', suWhatsapp: 'WhatsApp', suOpentable: 'Prenota su OpenTable',
       comePrenotare: 'Le prenotazioni aprono insieme al ristorante. Numero di telefono ed email per prenotare compariranno qui appena saranno attivi.',
+      altPanoramica: 'La sala di ENEA sotto le volte in mattoni',
       altSala: 'Tavoli apparecchiati per la sera da ENEA',
       altIngresso: "L’ingresso di ENEA su Via Boncompagni al tramonto: l’insegna illuminata e la porta aperta",
       altAngolo: 'Un angolo della sala di ENEA: lampade a sfera, un quadro, due tavoli apparecchiati',
@@ -105,10 +105,7 @@ const azioni = [
 <!-- ═════════ APERTURA ═════════ -->
 <section class="apertura">
   <div class="apertura__foto" data-parallasse>
-    <picture>
-      <source media="(min-aspect-ratio: 1/1)" srcset={aperturaLarga.srcSet.attribute} sizes="100vw" type="image/webp" />
-      <Image src={facciataApertura} alt="" widths={[600, 900, 1500]} sizes="100vw" loading="eager" fetchpriority="high" />
-    </picture>
+    <Image src={salaPanoramica} alt={L.altPanoramica} widths={[900, 1448]} sizes="100vw" loading="eager" fetchpriority="high" />
   </div>
   <div class="apertura__velo" aria-hidden="true"></div>
 
@@ -237,12 +234,10 @@ const azioni = [
   }
   /* riserva sopra ≥ dello spostamento massimo del parallasse (14svh) */
   .apertura__foto { position: absolute; inset: -16% 0 -4%; z-index: -2; will-change: transform; }
-  .apertura__foto :global(picture) { display: contents; }
   .apertura__foto :global(img) {
     width: 100%; height: 100%; object-fit: cover; object-position: center 46%;
     filter: saturate(.95) contrast(1.03);
   }
-  @media (min-aspect-ratio: 1/1) { .apertura__foto :global(img) { object-position: 40% 50%; } }
   .apertura__velo {
     position: absolute; inset: 0; z-index: -1;
     background:
