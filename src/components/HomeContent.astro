@@ -88,7 +88,7 @@ const canali = prenotazioni.aperte
   ? [
       c(contatti.telefono) && { href: `tel:${soloCifre(contatti.telefono)}`, testo: `${L.chiama} ${contatti.telefono}`, pieno: true },
       c(contatti.whatsapp) && { href: `https://wa.me/${soloCifre(contatti.whatsapp).replace('+', '')}`, testo: L.suWhatsapp, pieno: false },
-      prenotazioni.conOpenTable && { href: piattaforme.opentablePrenota, testo: L.suOpentable, pieno: false },
+      prenotazioni.conOpenTable && { href: piattaforme.opentablePrenota[locale], testo: L.suOpentable, pieno: false },
     ].filter((x): x is { href: string; testo: string; pieno: boolean } => Boolean(x))
   : [];
 // Il pulsante pieno è l'azione possibile oggi: prenotare quando le prenotazioni

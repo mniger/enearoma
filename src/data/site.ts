@@ -53,8 +53,11 @@ export const piattaforme = {
   // gli indirizzi definitivi delle schede (28/09/2026): i vecchi passavano da un redirect
   tripadvisor: 'https://www.tripadvisor.it/Restaurant_Review-g187791-d26790911-Reviews-Enea_Ristorante-Rome_Lazio.html',
   opentable: 'https://www.opentable.it/r/enea-ristorante-roma',
-  opentablePrenota:
-    'https://www.opentable.it/r/enea-ristorante-reservations-roma?restref=363708&lang=it-IT&ot_source=Restaurant%20website',
+  // il modulo di prenotazione nella lingua della pagina (en-GB provato il 03/10/2026)
+  opentablePrenota: {
+    it: 'https://www.opentable.it/r/enea-ristorante-reservations-roma?restref=363708&lang=it-IT&ot_source=Restaurant%20website',
+    en: 'https://www.opentable.it/r/enea-ristorante-reservations-roma?restref=363708&lang=en-GB&ot_source=Restaurant%20website',
+  },
 } as const;
 
 /**
@@ -62,16 +65,15 @@ export const piattaforme = {
  * Con `aperte: false` la sezione Dove siamo mostra l'avviso onesto di attesa.
  * Al lancio: portare a true e compilare telefono/whatsapp qui sopra — i
  * pulsanti (chiama, WhatsApp, OpenTable) compaiono da soli, e solo quelli
- * con un dato reale. Il canale OpenTable si attiva aprendo il registro dal
- * pannello (guestcenter, ID 363708), non da qui.
+ * con un dato reale. Il canale OpenTable vuole due cose: il registro
+ * pubblicato dal pannello (guestcenter, ID 363708) e `conOpenTable` qui.
  */
 export const prenotazioni = {
   // Aperte per telefono dal 24/09/2026: il titolare ha dato il numero e il suo
   // biglietto dice «Prenota ora».
   aperte: true,
-  /** Mostrare il canale OpenTable quando il registro del ristorante è aperto
-   *  (verifica dell'identità ancora in corso: finché no, niente link morti). */
-  conOpenTable: false,
+  /** Registro OpenTable pubblicato il 03/10/2026: pranzo e cena dal 5 ottobre. */
+  conOpenTable: true,
 } as const;
 
 /**
