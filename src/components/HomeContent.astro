@@ -183,7 +183,7 @@ const azioni = [
           <dt>{L.indirizzo}</dt>
           <dd>{indirizzo}<br /><a class="indicazioni" href={contatti.mapsUrl} target="_blank" rel="noopener">{L.indicazioni}<span class="sr-only"> ({L.nuovaScheda})</span></a></dd>
         </div>
-        <div><dt>{L.orariL}</dt><dd>{orari.cucina.map((f, i) => <>{i > 0 && <br />}{f.apre}–{f.chiude}</>)}</dd></div>
+        <div><dt>{L.orariL}</dt><dd>{orari.testoGiorni[locale]}{orari.cucina.map((f) => <><br />{f.apre}–{f.chiude}</>)}<br />{orari.chiusura[locale]}</dd></div>
         <div><dt>{L.telefono}</dt>{c(contatti.telefono)
           ? <dd><a class="indicazioni tel" href={`tel:${soloCifre(contatti.telefono)}`}>{contatti.telefono}</a></dd>
           : <dd data-attesa>{dato(contatti.telefono)}</dd>}</div>

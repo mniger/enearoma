@@ -77,10 +77,13 @@ export const prenotazioni = {
 } as const;
 
 /**
- * Orario della cucina — dal biglietto da visita del titolare (24/09/2026), che
- * non indica giorni di chiusura: vale per tutti i giorni.
+ * Orario della cucina — dal biglietto da visita del titolare (24/09/2026).
+ * Chiuso la domenica: confermato dal titolare il 03/10/2026.
  */
 export const orari = {
+  giorni: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+  testoGiorni: { it: 'Da lunedì a sabato', en: 'Monday to Saturday' },
+  chiusura: { it: 'Chiuso la domenica', en: 'Closed on Sundays' },
   cucina: [
     { apre: '12:00', chiude: '15:00' },
     { apre: '18:30', chiude: '23:00' },

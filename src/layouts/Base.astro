@@ -63,7 +63,7 @@ const datiStrutturati = {
   ...(dataApertura && {
     openingHoursSpecification: orari.cucina.map((f) => ({
       '@type': 'OpeningHoursSpecification',
-      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+      dayOfWeek: orari.giorni,
       opens: f.apre,
       closes: f.chiude,
       validFrom: dataApertura,
