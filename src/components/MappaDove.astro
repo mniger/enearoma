@@ -6,43 +6,79 @@
  * banner, e le note legali dichiarano che il sito non ne usa). È la mappa di
  * OpenStreetMap disegnata nei colori del sito (scripts/genera-mappa.py) e un
  * tocco apre la scheda vera in Google Maps, dove ci sono indicazioni e
- * recensioni. Sul telefono il riquadro è più alto e taglia i lati: il
- * segnaposto sta al centro, quindi resta sempre in vista.
+ * recensioni. Due disegni: la striscia larga per lo schermo grande e uno più
+ * stretto per il telefono, dove i nomi restano leggibili. Il punto di forza è
+ * Via Veneto in fondo a Via Boncompagni; sotto, come arrivare in testo semplice.
  */
-import mappa from '../assets/mappa-dove.svg?raw';
+import mappaLarga from '../assets/mappa-dove.svg?raw';
+import mappaTelefono from '../assets/mappa-dove-telefono.svg?raw';
 import { contatti, type Locale } from '../data/site';
 import Freccia from './Freccia.astro';
 
 const locale = (Astro.currentLocale ?? 'it') as Locale;
+// tempi a piedi da ENEA verificati su Google Maps il 05/10/2026
 const L = locale === 'en'
-  ? { apri: 'Open in Google Maps', nuovaScheda: 'opens in a new tab', dati: 'Map data' }
-  : { apri: 'Apri in Google Maps', nuovaScheda: 'si apre in una nuova scheda', dati: 'Dati della mappa' };
+  ? {
+      apri: 'Open in Google Maps', nuovaScheda: 'opens in a new tab', dati: 'Map data', arrivare: 'Getting here',
+      tappe: [
+        ['Via Veneto', 'a 10-minute walk, at the end of Via Boncompagni'],
+        ['Metro line A', 'Barberini 12 minutes on foot, Repubblica 14'],
+        ['Bus', 'Piemonte/Boncompagni stop 2 minutes away, Piazza Fiume 5'],
+      ],
+    }
+  : {
+      apri: 'Apri in Google Maps', nuovaScheda: 'si apre in una nuova scheda', dati: 'Dati della mappa', arrivare: 'Come arrivare',
+      tappe: [
+        ['Via Veneto', 'a 10 minuti a piedi, in fondo a Via Boncompagni'],
+        ['Metro A', 'Barberini a 12 minuti a piedi, Repubblica a 14'],
+        ['Bus', 'fermata Piemonte/Boncompagni a 2 minuti, Piazza Fiume a 5'],
+      ],
+    };
 ---
 <figure class="mappa" data-reveal>
   <a class="mappa__quadro" href={contatti.mapsUrl} target="_blank" rel="noopener" aria-label={`${L.apri} (${L.nuovaScheda})`}>
-    <Fragment set:html={mappa} />
+    <Fragment set:html={mappaLarga} />
+    <Fragment set:html={mappaTelefono} />
   </a>
   <figcaption class="mappa__piede">
-    <a class="rimando" href={contatti.mapsUrl} target="_blank" rel="noopener">{L.apri}<span class="sr-only"> ({L.nuovaScheda})</span> <Freccia /></a>
-    <small>{L.dati} © <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a></small>
+    <div class="mappa__arrivare">
+      <p class="eyebrow">{L.arrivare}</p>
+      <ul>
+        {L.tappe.map(([dove, come]) => <li><strong>{dove}</strong> {come}</li>)}
+      </ul>
+    </div>
+    <div class="mappa__riga">
+      <a class="rimando" href={contatti.mapsUrl} target="_blank" rel="noopener">{L.apri}<span class="sr-only"> ({L.nuovaScheda})</span> <Freccia /></a>
+      <small>{L.dati} © <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a></small>
+    </div>
   </figcaption>
 </figure>
 
 <style>
-  .mappa { display: grid; gap: .9rem; margin: 0; }
+  .mappa { display: grid; gap: 1.1rem; margin: 0; }
   .mappa__quadro {
-    display: block; overflow: hidden; aspect-ratio: 4 / 3;
+    display: block; overflow: hidden; aspect-ratio: 9 / 7;
     border: 1px solid var(--bordo); background: var(--notte);
     transition: border-color .3s ease;
   }
   .mappa__quadro:hover, .mappa__quadro:focus-visible { border-color: rgba(194, 146, 78, .55); }
   @media (min-width: 40rem) { .mappa__quadro { aspect-ratio: 5 / 2; } }
-  .mappa__piede { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: .5rem 1.5rem; }
-  .mappa__piede small { font-size: var(--fs-xs); color: var(--fumo); }
-  .mappa__piede small a { color: inherit; }
+  .mappa__piede { display: grid; gap: 1.1rem; }
+  .mappa__arrivare .eyebrow { margin: 0 0 .5rem; }
+  .mappa__arrivare ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .35rem; color: var(--travertino); }
+  .mappa__arrivare strong { font-weight: 400; color: var(--oro-chiaro); margin-right: .35em; }
+  @media (min-width: 48rem) { .mappa__arrivare ul { grid-template-columns: repeat(3, auto); justify-content: start; gap: .35rem 2.5rem; } }
+  .mappa__riga { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: .5rem 1.5rem; }
+  .mappa__riga small { font-size: var(--fs-xs); color: var(--fumo); }
+  .mappa__riga small a { color: inherit; }
 
   /* il disegno: le classi le scrive scripts/genera-mappa.py */
   .mappa__quadro :global(svg) { display: block; width: 100%; height: 100%; }
+  .mappa__quadro :global(.carta--larga) { display: none; }
+  @media (min-width: 40rem) {
+    .mappa__quadro :global(.carta--larga) { display: block; }
+    .mappa__quadro :global(.carta--telefono) { display: none; }
+  }
   .mappa :global(.fondo) { fill: var(--notte); }
   .mappa :global(.verde) { fill: var(--muschio); fill-opacity: .32; }
   .mappa :global(.strada) { fill: none; stroke-linecap: round; stroke-linejoin: round; }
@@ -52,20 +88,32 @@ const L = locale === 'en'
   .mappa :global(.s2) { stroke: #463a2b; stroke-width: 6; }
   .mappa :global(.s1) { stroke: #564734; stroke-width: 8; }
   .mappa :global(.evidenza) { stroke: var(--oro); stroke-opacity: .6; stroke-width: 5; }
+  .mappa :global(.evidenza-veneto) { stroke: var(--oro); stroke-opacity: .34; stroke-width: 6; }
   .mappa :global(.mura) { fill: none; stroke: #7a6a52; stroke-opacity: .55; stroke-width: 3; stroke-dasharray: 1 7; stroke-linecap: round; }
-  .mappa :global(.nome), .mappa :global(.insegna) {
+  .mappa :global(.nome), .mappa :global(.insegna), .mappa :global(.luogo), .mappa :global(.metro-nome) {
     font-family: var(--font-lapide); text-transform: uppercase;
     paint-order: stroke; stroke: var(--notte); stroke-width: 6px; stroke-linejoin: round;
   }
   .mappa :global(.nome) { font-size: 15px; letter-spacing: .28em; fill: var(--fumo); }
+  .mappa :global(.nome.forte) { font-size: 17px; fill: var(--oro-chiaro); }
+  .mappa :global(.luogo) { font-size: 13px; letter-spacing: .3em; fill: #9a8f7c; }
   .mappa :global(.insegna) { font-size: 22px; letter-spacing: .32em; fill: var(--oro-chiaro); }
   .mappa :global(.alone) { fill: var(--oro); fill-opacity: .14; }
   .mappa :global(.anello) { fill: none; stroke: var(--oro); stroke-width: 2; }
   .mappa :global(.punto) { fill: var(--oro-chiaro); }
-  /* sul telefono la mappa scala a un quarto: i nomi delle vie diventerebbero di 6 px e
-     tagliati dai lati; resta il segnaposto, ingrandito attorno al suo centro (800, 320) */
-  @media (max-width: 39.99rem) {
-    .mappa :global(.nome) { display: none; }
-    .mappa :global(.segnaposto) { transform-origin: 800px 320px; transform: scale(1.9); }
-  }
+  /* la «M» rossa della metro di Roma, in tono con la pagina */
+  .mappa :global(.metro rect) { fill: #a8352a; }
+  .mappa :global(.metro-m) { font-family: var(--font-ui); font-weight: 500; font-size: 17px; fill: #f3ece0; }
+  .mappa :global(.metro-nome) { font-size: 13px; letter-spacing: .16em; fill: var(--travertino); }
+
+  /* sul telefono il disegno ha unità più grandi: corpi e tratti in proporzione */
+  .mappa :global(.carta--telefono .nome) { font-size: 30px; stroke-width: 10px; }
+  .mappa :global(.carta--telefono .nome.forte) { font-size: 32px; }
+  .mappa :global(.carta--telefono .luogo) { font-size: 25px; stroke-width: 10px; }
+  .mappa :global(.carta--telefono .insegna) { font-size: 40px; stroke-width: 10px; }
+  .mappa :global(.carta--telefono .metro-m) { font-size: 30px; }
+  .mappa :global(.carta--telefono .metro-nome) { font-size: 24px; stroke-width: 10px; letter-spacing: .1em; }
+  .mappa :global(.carta--telefono .evidenza) { stroke-width: 8; }
+  .mappa :global(.carta--telefono .evidenza-veneto) { stroke-width: 9; }
+  .mappa :global(.carta--telefono .anello) { stroke-width: 3; }
 </style>

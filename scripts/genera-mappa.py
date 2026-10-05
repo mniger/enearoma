@@ -1,22 +1,26 @@
 """La mappa di «Dove siamo»: strade e verde di OpenStreetMap, disegnati nello stile del sito.
 
 Si rigenera solo se serve (`pnpm mappa`): scarica i dati una volta da Overpass e
-scrive src/assets/mappa-dove.svg. Nessun servizio di mappe nel browser: niente
-cookie di terzi né richieste esterne, come dichiarano le note legali.
+scrive due SVG in src/assets, uno largo per lo schermo grande e uno per il
+telefono, dove i nomi devono restare leggibili. Nessun servizio di mappe nel
+browser: niente cookie di terzi né richieste esterne, come dichiarano le note legali.
 Dati © OpenStreetMap contributors (ODbL): l'attribuzione sta sotto la mappa.
+
+Il punto di forza da far vedere è Via Veneto in fondo a Via Boncompagni: l'inquadratura
+è spostata a ovest per tenerla dentro, con Villa Borghese; le fermate della metro,
+fuori quadro, sono segnate sul bordo nella loro direzione.
 """
 
 import json
 import math
 import urllib.parse
 import urllib.request
+from dataclasses import dataclass
 from pathlib import Path
 
 # il segnaposto della scheda Google «Enea Roma», Via Boncompagni 83/85
-CENTRO = (41.9091979, 12.496061)
-W, H = 1600, 640  # striscia 5:2; sul telefono il riquadro è più alto e taglia i lati
-M_PER_PX = 0.95  # circa 1,5 km di larghezza
-USCITA = Path(__file__).resolve().parents[1] / "src/assets/mappa-dove.svg"
+ENEA = (41.9091979, 12.496061)
+ASSETS = Path(__file__).resolve().parents[1] / "src/assets"
 SERVER_OVERPASS = (
     "https://overpass-api.de/api/interpreter",
     "https://overpass.kumi.systems/api/interpreter",
@@ -25,6 +29,54 @@ SERVER_OVERPASS = (
 )
 # i dati scaricati restano qui: i ritocchi al disegno non riscaricano (--aggiorna per rifarlo)
 CACHE = Path(__file__).resolve().parents[1] / "node_modules/.cache/mappa-dove-osm.json"
+
+
+@dataclass(frozen=True)
+class Quadro:
+    """Un'inquadratura: dimensioni in unità SVG, scala e centro rispetto a ENEA (metri)."""
+
+    file: str
+    W: int
+    H: int
+    m_per_px: float
+    est: float
+    sud: float
+    variante: str
+    vie: tuple[tuple[str, str], ...]  # nome in OpenStreetMap, testo sulla mappa
+    luoghi: tuple[str, ...]
+
+
+QUADRI = (
+    # striscia 5:2 di circa 1,6 km: da Villa Borghese a Porta Pia
+    Quadro(
+        "mappa-dove.svg",
+        1600,
+        640,
+        1.0,
+        -150,
+        60,
+        "larga",
+        (
+            ("Via Boncompagni", "Via Boncompagni"),
+            # a piedi da ENEA, verificato su Google Maps il 05/10/2026
+            ("Via Vittorio Veneto", "Via Veneto · 10 min"),
+            ("Corso d'Italia", "Corso d’Italia"),
+        ),
+        ("Villa Borghese", "Piazza Fiume", "Porta Pia"),
+    ),
+    # 9:7 per il telefono: meno strade, nomi grandi
+    Quadro(
+        "mappa-dove-telefono.svg",
+        900,
+        700,
+        1.1,
+        -260,
+        80,
+        "telefono",
+        (("Via Boncompagni", "Via Boncompagni"), ("Via Vittorio Veneto", "Via Veneto")),
+        ("Piazza Fiume",),
+    ),
+)
 
 CLASSI = {
     "trunk": "s1",
@@ -37,20 +89,46 @@ CLASSI = {
     "pedestrian": "s4",
     "service": "s5",
 }
-# etichette: nome in OpenStreetMap → testo sulla mappa
-ETICHETTE = {
-    "Via Boncompagni": "Via Boncompagni",
-    "Via Vittorio Veneto": "Via Veneto",
-    "Corso d'Italia": "Corso d’Italia",
+# le vie di cui servono il tracciato (nomi ed evidenze)
+VIE_CON_NOME = {nome for q in QUADRI for nome, _ in q.vie}
+# punti di riferimento: un punto dentro il luogo, dove scriverne il nome
+LUOGHI = {
+    "Villa Borghese": (41.910645, 12.486166),
+    "Piazza Fiume": (41.910742, 12.498153),
+    "Porta Pia": (41.909316, 12.501321),
 }
+# metro: stazione (OpenStreetMap) e minuti a piedi da ENEA (Google Maps, 05/10/2026)
+METRO = (
+    ("Barberini", "A", (41.90381, 12.488617), 12),
+    ("Repubblica", "A", (41.902828, 12.496054), 14),
+)
+
+
+def metri(lat: float, lon: float) -> tuple[float, float]:
+    """Posizione rispetto a ENEA in metri: x verso est, y verso sud."""
+    x = (lon - ENEA[1]) * math.cos(math.radians(ENEA[0])) * 111320
+    y = (ENEA[0] - lat) * 110540
+    return x, y
+
+
+def proiettore(q: Quadro):
+    def p(lat: float, lon: float) -> tuple[float, float]:
+        x, y = metri(lat, lon)
+        return q.W / 2 + (x - q.est) / q.m_per_px, q.H / 2 + (y - q.sud) / q.m_per_px
+
+    return p
 
 
 def scarica() -> dict:
-    m = 700  # margine attorno all'inquadratura, in metri: le linee escono pulite dai bordi
-    dlat = (H / 2 * M_PER_PX + m) / 110540
-    dlon = (W / 2 * M_PER_PX + m) / (111320 * math.cos(math.radians(CENTRO[0])))
+    m = 700  # margine attorno alle inquadrature, in metri: le linee escono pulite dai bordi
+    ovest = min(q.est - q.W / 2 * q.m_per_px for q in QUADRI) - m
+    est = max(q.est + q.W / 2 * q.m_per_px for q in QUADRI) + m
+    nord = min(q.sud - q.H / 2 * q.m_per_px for q in QUADRI) - m
+    sud = max(q.sud + q.H / 2 * q.m_per_px for q in QUADRI) + m
+    gradi_lon = 111320 * math.cos(math.radians(ENEA[0]))
     bbox = (
-        f"{CENTRO[0] - dlat},{CENTRO[1] - dlon},{CENTRO[0] + dlat},{CENTRO[1] + dlon}"
+        f"{ENEA[0] - sud / 110540},{ENEA[1] + ovest / gradi_lon},"
+        f"{ENEA[0] - nord / 110540},{ENEA[1] + est / gradi_lon}"
     )
     q = f"""[out:json][timeout:90];
 (
@@ -78,12 +156,6 @@ out geom;"""
     raise RuntimeError("nessun server Overpass disponibile") from ultimo
 
 
-def proietta(lat: float, lon: float) -> tuple[float, float]:
-    x = (lon - CENTRO[1]) * math.cos(math.radians(CENTRO[0])) * 111320
-    y = (CENTRO[0] - lat) * 110540
-    return W / 2 + x / M_PER_PX, H / 2 + y / M_PER_PX
-
-
 def semplifica(
     punti: list[tuple[float, float]], tolleranza: float = 0.6
 ) -> list[tuple[float, float]]:
@@ -102,9 +174,10 @@ def semplifica(
     )
 
 
-def visibile(punti: list[tuple[float, float]], margine: float = 40) -> bool:
+def visibile(q: Quadro, punti: list[tuple[float, float]], margine: float = 40) -> bool:
     return any(
-        -margine <= x <= W + margine and -margine <= y <= H + margine for x, y in punti
+        -margine <= x <= q.W + margine and -margine <= y <= q.H + margine
+        for x, y in punti
     )
 
 
@@ -163,8 +236,8 @@ def dritti(
     return tratti + [corrente]
 
 
-def lontano_dal_segnaposto(
-    punti: list[tuple[float, float]], raggio: float = 90
+def lontano_da(
+    punti: list[tuple[float, float]], centro: tuple[float, float], raggio: float
 ) -> list[list[tuple[float, float]]]:
     """Toglie il pezzo di via sotto il segnaposto e la scritta ENEA."""
     fitti = [punti[0]]
@@ -176,7 +249,7 @@ def lontano_dal_segnaposto(
         ]
     parti, corrente = [], []
     for p in fitti:
-        if math.dist(p, (W / 2, H / 2)) < raggio:
+        if math.dist(p, centro) < raggio:
             if len(corrente) > 1:
                 parti.append(corrente)
             corrente = []
@@ -186,45 +259,118 @@ def lontano_dal_segnaposto(
 
 
 def posto_per_il_nome(
-    tratti: list[list[tuple[float, float]]], serve: float
+    q: Quadro,
+    tratti: list[list[tuple[float, float]]],
+    serve: float,
+    segnaposto: tuple[float, float],
 ) -> list[tuple[float, float]] | None:
-    """Il tratto dritto più lungo della via, lontano dal segnaposto e dai bordi; al centro se c'è posto,
-    perché sul telefono il riquadro taglia i lati."""
+    """Il tratto dritto più lungo della via, lontano dal segnaposto e dai bordi."""
+    raggio = 110 if q.variante == "larga" else 140
     candidati = [
         parte
         for via in catena(tratti)
         for dritto in dritti(semplifica(via, 1))
-        for parte in lontano_dal_segnaposto(dritto)
+        for parte in lontano_da(dritto, segnaposto, raggio)
         if lunghezza(parte) >= serve + 30
     ]
+    margine = 30 if q.variante == "larga" else 24
     dentro = [
         c
         for c in candidati
-        if all(60 <= x <= W - 60 and 40 <= y <= H - 40 for x, y in c)
+        if all(
+            margine <= x <= q.W - margine and margine <= y <= q.H - margine
+            for x, y in c
+        )
     ]
     if not dentro:
         return None
-    centrali = [c for c in dentro if abs(c[len(c) // 2][0] - W / 2) < 380]
-    via = max(centrali or dentro, key=lunghezza)
-    via = semplifica(via, 1)
-    return (
-        via[::-1] if via[-1][0] < via[0][0] else via
-    )  # il testo si legge da sinistra a destra
+    via = semplifica(max(dentro, key=lunghezza), 1)
+    # il testo si legge da sinistra a destra, o dal basso in alto se la via è verticale
+    if abs(via[-1][0] - via[0][0]) > abs(via[-1][1] - via[0][1]) * 0.3:
+        return via[::-1] if via[-1][0] < via[0][0] else via
+    return via[::-1] if via[-1][1] > via[0][1] else via
 
 
-def genera(dati: dict) -> str:
+def nome_dritto(
+    q: Quadro,
+    tratti: list[list[tuple[float, float]]],
+    serve: float,
+    segnaposto: tuple[float, float],
+) -> tuple[float, float, float] | None:
+    """Quando la via non ha un tratto dritto abbastanza lungo (sul telefono): il nome dritto,
+    centrato sul tratto rettilineo più lungo e inclinato come lui, anche se ne sborda un po'."""
+    parti = [
+        [pt for pt in parte if 0 <= pt[0] <= q.W and 0 <= pt[1] <= q.H]
+        for via in catena(tratti)
+        for dritto in dritti(semplifica(via, 1))
+        for parte in lontano_da(dritto, segnaposto, 120)
+    ]
+    parti = [pp for pp in parti if len(pp) > 1 and lunghezza(pp) >= 120]
+    if not parti:
+        return None
+    parte = max(parti, key=lunghezza)
+    a, b = sorted((parte[0], parte[-1]))
+    # a e b ordinati per x: il testo si legge sempre da sinistra a destra
+    angolo = math.degrees(math.atan2(b[1] - a[1], b[0] - a[0]))
+    mx, my = (a[0] + b[0]) / 2, (a[1] + b[1]) / 2
+    # se il tratto arriva al segnaposto, il nome gli sta accanto: lontano dall'altro capo,
+    # dove di solito c'è un incrocio con un altro nome
+    vicino, lontano = sorted((a, b), key=lambda pt: math.dist(pt, segnaposto))
+    lung = math.dist(a, b)
+    if math.dist(vicino, segnaposto) < 200:
+        # il nome comincia poco dopo l'incrocio e corre verso il segnaposto
+        ux, uy = (vicino[0] - lontano[0]) / lung, (vicino[1] - lontano[1]) / lung
+        mx = lontano[0] + ux * (serve / 2 + 40)
+        my = lontano[1] + uy * (serve / 2 + 40)
+    mezzo_x = abs(math.cos(math.radians(angolo))) * serve / 2 + 20
+    mezzo_y = abs(math.sin(math.radians(angolo))) * serve / 2 + 20
+    mx = min(max(mx, mezzo_x), q.W - mezzo_x)
+    my = min(max(my, mezzo_y), q.H - mezzo_y)
+    return mx, my, angolo
+
+
+def segnale_metro(
+    q: Quadro, da: tuple[float, float], a: tuple[float, float]
+) -> tuple[float, float]:
+    """Dove mettere il segnale della stazione: sulla stazione, o sul bordo nella sua direzione."""
+    m = 34 if q.variante == "larga" else 46
+    if m <= a[0] <= q.W - m and m <= a[1] <= q.H - m:
+        return a
+    dx, dy = a[0] - da[0], a[1] - da[1]
+    passi = [
+        t
+        for t in (
+            (m - da[0]) / dx
+            if dx < 0
+            else (q.W - m - da[0]) / dx
+            if dx > 0
+            else math.inf,
+            (m - da[1]) / dy
+            if dy < 0
+            else (q.H - m - da[1]) / dy
+            if dy > 0
+            else math.inf,
+        )
+        if t > 0
+    ]
+    t = min(passi)
+    return da[0] + dx * t, da[1] + dy * t
+
+
+def genera(q: Quadro, dati: dict) -> str:
+    p = proiettore(q)
     strade: dict[str, list[str]] = {c: [] for c in set(CLASSI.values())}
     per_nome: dict[str, list[list[tuple[float, float]]]] = {}
     verde, mura = [], []
     for el in dati["elements"]:
         t = el.get("tags", {})
         if el["type"] == "way" and "geometry" in el:
-            punti = [proietta(p["lat"], p["lon"]) for p in el["geometry"]]
-            if not visibile(punti):
+            punti = [p(g["lat"], g["lon"]) for g in el["geometry"]]
+            if not visibile(q, punti):
                 continue
             if t.get("highway") in CLASSI:
                 strade[CLASSI[t["highway"]]].append(d(semplifica(punti)))
-                if t.get("name") in ETICHETTE:
+                if t.get("name") in VIE_CON_NOME:
                     per_nome.setdefault(t["name"], []).append(punti)
             elif t.get("leisure") == "park" and punti[0] == punti[-1]:
                 verde.append(d(semplifica(punti), chiuso=True))
@@ -232,46 +378,93 @@ def genera(dati: dict) -> str:
                 mura.append(d(semplifica(punti)))
         elif el["type"] == "relation" and t.get("leisure") == "park":
             esterni = [
-                [proietta(p["lat"], p["lon"]) for p in m["geometry"]]
+                [p(g["lat"], g["lon"]) for g in m["geometry"]]
                 for m in el.get("members", [])
                 if m.get("role") == "outer" and "geometry" in m
             ]
             for anello in catena(esterni):
-                if visibile(anello):
+                if visibile(q, anello):
                     verde.append(d(semplifica(anello), chiuso=True))
 
+    cx, cy = p(*ENEA)
+    k = 1 if q.variante == "larga" else 1.7  # il segnaposto, in proporzione al riquadro
+    corpo_nome = 15 if q.variante == "larga" else 30
     definizioni, testi = [], []
-    for nome, testo in ETICHETTE.items():
-        via = posto_per_il_nome(per_nome.get(nome, []), len(testo) * 13.5)
+    for nome, testo in q.vie:
+        forte = nome == "Via Vittorio Veneto"
+        serve = len(testo) * corpo_nome * (1.05 if forte else 0.9)
+        via = posto_per_il_nome(q, per_nome.get(nome, []), serve, (cx, cy))
+        classe = "nome forte" if forte else "nome"
         if via is None:
+            dritto = nome_dritto(q, per_nome.get(nome, []), serve, (cx, cy))
+            if dritto is None:
+                print(f"  {q.file}: nessun posto per «{testo}»")
+                continue
+            x, y, angolo = dritto
+            testi.append(
+                f'<text class="{classe}" transform="translate({x:.0f} {y:.0f}) rotate({angolo:.1f})" '
+                f'dy="-{corpo_nome * 0.6:.0f}" text-anchor="middle">{testo}</text>'
+            )
             continue
-        ident = "e-" + nome.split()[-1].lower().replace("'", "")
+        ident = f"{q.variante}-" + nome.split()[-1].lower().replace("'", "")
         definizioni.append(f'<path id="{ident}" d="{d(via)}"/>')
         testi.append(
-            f'<text class="nome" dy="-9"><textPath href="#{ident}" startOffset="50%" '
-            f'text-anchor="middle">{testo}</textPath></text>'
+            f'<text class="{classe}" dy="-{corpo_nome * 0.6:.0f}"><textPath href="#{ident}" '
+            f'startOffset="50%" text-anchor="middle">{testo}</textPath></text>'
         )
 
-    cx, cy = W / 2, H / 2
+    luoghi = []
+    for nome in q.luoghi:
+        x, y = p(*LUOGHI[nome])
+        if not (0 <= x <= q.W and 0 <= y <= q.H):
+            continue
+        # il nome resta dentro il riquadro anche se il luogo è vicino al bordo
+        largo = len(nome) * corpo_nome * 0.95
+        x = min(max(x, largo / 2 + 16), q.W - largo / 2 - 16)
+        luoghi.append(
+            f'<text class="luogo" x="{x:.0f}" y="{y:.0f}" text-anchor="middle">{nome}</text>'
+        )
+
+    metro = []
+    for nome, linea, posto, minuti in METRO:
+        sx, sy = segnale_metro(q, (cx, cy), p(*posto))
+        lato = 26 if q.variante == "larga" else 44
+        if q.variante == "larga":
+            a_destra = sx < q.W * 0.62
+            tx, ty, ancora = sx + (lato * 0.75 if a_destra else -lato * 0.75), sy, "start" if a_destra else "end"
+            scritta = f"{nome} · {linea} · {minuti} min"
+        else:  # sopra il segnale: due stazioni vicine sul bordo non si sovrappongono
+            tx, ty, ancora = sx, sy - lato * 1.05, "middle"
+            scritta = f"{nome} · {minuti} min"
+        metro.append(
+            f'<g class="metro"><rect x="{sx - lato / 2:.0f}" y="{sy - lato / 2:.0f}" width="{lato}" height="{lato}" rx="{lato * 0.18:.0f}"/>'
+            f'<text class="metro-m" x="{sx:.0f}" y="{sy:.0f}" text-anchor="middle" dominant-baseline="central">M</text>'
+            f'<text class="metro-nome" x="{tx:.0f}" y="{ty:.0f}" text-anchor="{ancora}" '
+            f'dominant-baseline="central">{scritta}</text></g>'
+        )
+
     corpo = [
         f"<defs>{''.join(definizioni)}</defs>",
-        f'<rect class="fondo" width="{W}" height="{H}"/>',
+        f'<rect class="fondo" width="{q.W}" height="{q.H}"/>',
         f'<path class="verde" d="{"".join(verde)}"/>',
         *(
-            f'<path class="strada {c}" d="{"".join(p)}"/>'
-            for c, p in sorted(strade.items(), reverse=True)
-            if p
+            f'<path class="strada {c}" d="{"".join(s)}"/>'
+            for c, s in sorted(strade.items(), reverse=True)
+            if s
         ),
         f'<path class="mura" d="{"".join(mura)}"/>' if mura else "",
+        f'<path class="strada evidenza-veneto" d="{"".join(d(semplifica(t)) for t in per_nome.get("Via Vittorio Veneto", []))}"/>',
         f'<path class="strada evidenza" d="{"".join(d(semplifica(t)) for t in per_nome.get("Via Boncompagni", []))}"/>',
+        *luoghi,
         *testi,
-        f'<g class="segnaposto"><circle class="alone" cx="{cx}" cy="{cy}" r="30"/>'
-        f'<circle class="anello" cx="{cx}" cy="{cy}" r="15"/><circle class="punto" cx="{cx}" cy="{cy}" r="6"/>'
-        f'<text class="insegna" x="{cx}" y="{cy - 38}" text-anchor="middle">ENEA</text></g>',
+        *metro,
+        f'<g class="segnaposto"><circle class="alone" cx="{cx:.0f}" cy="{cy:.0f}" r="{30 * k:.0f}"/>'
+        f'<circle class="anello" cx="{cx:.0f}" cy="{cy:.0f}" r="{15 * k:.0f}"/><circle class="punto" cx="{cx:.0f}" cy="{cy:.0f}" r="{6 * k:.0f}"/>'
+        f'<text class="insegna" x="{cx:.0f}" y="{cy - 38 * k:.0f}" text-anchor="middle">ENEA</text></g>',
     ]
     return (
-        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" preserveAspectRatio="xMidYMid slice" '
-        f'aria-hidden="true" focusable="false">{"".join(corpo)}</svg>\n'
+        f'<svg xmlns="http://www.w3.org/2000/svg" class="carta carta--{q.variante}" viewBox="0 0 {q.W} {q.H}" '
+        f'preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">{"".join(corpo)}</svg>\n'
     )
 
 
@@ -281,6 +474,9 @@ if __name__ == "__main__":
     if "--aggiorna" in sys.argv or not CACHE.exists():
         CACHE.parent.mkdir(parents=True, exist_ok=True)
         CACHE.write_text(json.dumps(scarica()))
-    svg = genera(json.loads(CACHE.read_text()))
-    USCITA.write_text(svg)
-    print(f"{USCITA.relative_to(USCITA.parents[2])}: {len(svg) / 1024:.1f} KB")
+    dati = json.loads(CACHE.read_text())
+    for q in QUADRI:
+        svg = genera(q, dati)
+        uscita = ASSETS / q.file
+        uscita.write_text(svg)
+        print(f"{uscita.relative_to(ASSETS.parents[1])}: {len(svg) / 1024:.1f} KB")
