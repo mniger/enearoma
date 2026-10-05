@@ -9,7 +9,7 @@
  * come Menu nei dati strutturati).
  */
 import { allergeni, pubblicabili, segni, type Menu, type Segno } from '../data/menu';
-import { altraLingua, type Locale } from '../data/site';
+import { altraLingua, arcoGiorni, orari, type Locale } from '../data/site';
 import Freccia from './Freccia.astro';
 
 interface Props { menu: Menu; variante: 'carta' | 'pranzo' | 'aperitivo' | 'cocktail' }
@@ -17,18 +17,25 @@ const { menu, variante } = Astro.props;
 const locale = (Astro.currentLocale ?? 'it') as Locale;
 const base = locale === 'en' ? '/en' : '';
 
+// pranzo e aperitivo dicono giorni e ore: il sabato a pranzo il locale è chiuso
+const [pranzo] = orari.cucina;
+const { aperitivo } = orari;
+const quando = (f: typeof pranzo | typeof aperitivo) => locale === 'en'
+  ? `${arcoGiorni(f.giorni, locale, 'frase')}, ${f.apre} to ${f.chiude}`
+  : `${arcoGiorni(f.giorni, locale, 'frase')}, dalle ${f.apre} alle ${f.chiude}`;
+
 const T = {
   pranzo: {
-    it: { titolo: 'Il business lunch', intro: 'A pranzo, un piatto del giorno a prezzo fisso. I piatti cambiano spesso: il personale di sala vi dirà quelli di oggi.' },
-    en: { titolo: 'The business lunch', intro: 'At lunchtime, a dish of the day at a set price. The dishes change often: our staff will tell you today’s.' },
+    it: { titolo: 'Il business lunch', intro: `A pranzo ${quando(pranzo)}: un piatto del giorno a prezzo fisso. I piatti cambiano spesso: il personale di sala vi dirà quelli di oggi.` },
+    en: { titolo: 'The business lunch', intro: `At lunchtime, ${quando(pranzo)}: a dish of the day at a set price. The dishes change often: our staff will tell you today’s.` },
   },
   carta: {
     it: { titolo: 'Il menu à la carte', intro: 'A pranzo e a cena. Cucina mediterranea di stagione, radici romane. I prezzi sono in euro; i numeri accanto ai piatti indicano gli allergeni contenuti. Per eventuali allergie o intolleranze, avvisate il personale di sala.' },
     en: { titolo: 'The à la carte menu', intro: 'For lunch and dinner. Seasonal Mediterranean cooking with Roman roots. Prices in euro; the small numbers next to each dish are the allergens it contains. Please inform our staff of any allergies or intolerances.' },
   },
   aperitivo: {
-    it: { titolo: 'L’aperitivo', intro: 'Piatti da condividere per l’ora dell’aperitivo. I prezzi sono in euro; i numeri accanto ai piatti indicano gli allergeni contenuti. Per eventuali allergie o intolleranze, avvisate il personale di sala.' },
-    en: { titolo: 'The aperitivo', intro: 'Plates to share at aperitivo hour. Prices in euro; the small numbers next to each dish are the allergens it contains. Please inform our staff of any allergies or intolerances.' },
+    it: { titolo: 'L’aperitivo', intro: `Piatti da condividere per l’ora dell’aperitivo, ${quando(aperitivo)}. I prezzi sono in euro; i numeri accanto ai piatti indicano gli allergeni contenuti. Per eventuali allergie o intolleranze, avvisate il personale di sala.` },
+    en: { titolo: 'The aperitivo', intro: `Plates to share at aperitivo hour, ${quando(aperitivo)}. Prices in euro; the small numbers next to each dish are the allergens it contains. Please inform our staff of any allergies or intolerances.` },
   },
   cocktail: {
     it: { titolo: 'I cocktail', intro: 'I signature del bar, i grandi classici della miscelazione e due drink senza alcol. I prezzi sono in euro; i numeri accanto ai drink indicano gli allergeni contenuti. Per eventuali allergie o intolleranze, avvisate il personale di sala.' },

@@ -79,18 +79,47 @@ export const prenotazioni = {
 } as const;
 
 /**
- * Orario della cucina — dal biglietto da visita del titolare (24/09/2026).
- * Chiuso la domenica: confermato dal titolare il 03/10/2026.
+ * Orari — come li ha messi la proprietà sul profilo Google, confermati dal titolare il
+ * 05/10/2026: il locale è aperto di fila, la cucina ha due fasce (dal suo biglietto da
+ * visita) e l'aperitivo sta in mezzo. Il sabato si apre alle 16, la domenica è chiuso.
+ * I giorni sono quelli di schema.org: i dati strutturati prendono gli orari del locale.
  */
+const LUN_VEN = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'] as const;
+const LUN_SAB = [...LUN_VEN, 'Saturday'] as const;
 export const orari = {
-  giorni: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-  testoGiorni: { it: 'Da lunedì a sabato', en: 'Monday to Saturday' },
-  chiusura: { it: 'Chiuso la domenica', en: 'Closed on Sundays' },
-  cucina: [
-    { apre: '12:00', chiude: '15:00' },
-    { apre: '18:30', chiude: '23:00' },
+  locale: [
+    { giorni: LUN_VEN, apre: '12:00', chiude: '23:00' },
+    { giorni: ['Saturday'], apre: '16:00', chiude: '23:00' },
   ],
+  cucina: [
+    { nome: { it: 'Pranzo', en: 'Lunch' }, giorni: LUN_VEN, apre: '12:00', chiude: '15:00' },
+    { nome: { it: 'Cena', en: 'Dinner' }, giorni: LUN_SAB, apre: '18:30', chiude: '23:00' },
+  ],
+  aperitivo: { giorni: LUN_SAB, apre: '17:00', chiude: '20:00' },
+  chiuso: ['Sunday'],
 } as const;
+
+type Giorno = (typeof LUN_SAB)[number] | 'Sunday';
+const NOMI_GIORNI: Record<Locale, Record<Giorno, string>> = {
+  it: { Monday: 'lunedì', Tuesday: 'martedì', Wednesday: 'mercoledì', Thursday: 'giovedì', Friday: 'venerdì', Saturday: 'sabato', Sunday: 'domenica' },
+  en: { Monday: 'Monday', Tuesday: 'Tuesday', Wednesday: 'Wednesday', Thursday: 'Thursday', Friday: 'Friday', Saturday: 'Saturday', Sunday: 'Sunday' },
+};
+/** I giorni di una fascia: «Lunedì–venerdì» a inizio riga, «lun–ven» accanto a un nome,
+ *  «dal lunedì al venerdì» dentro una frase. */
+export const arcoGiorni = (
+  giorni: readonly [Giorno, ...Giorno[]], locale: Locale, forma: 'riga' | 'breve' | 'frase',
+): string => {
+  const nome = (g: Giorno) => {
+    const n = NOMI_GIORNI[locale][g];
+    return forma === 'breve' ? n.slice(0, 3) : n;
+  };
+  const primo = nome(giorni[0]);
+  const ultimo = nome(giorni.at(-1) ?? giorni[0]);
+  const testo = giorni.length === 1 ? primo
+    : forma === 'frase' ? (locale === 'en' ? `${primo} to ${ultimo}` : `dal ${primo} al ${ultimo}`)
+    : `${primo}–${ultimo}`;
+  return forma === 'riga' ? testo.charAt(0).toUpperCase() + testo.slice(1) : testo;
+};
 
 /**
  * Apertura: lunedì 5 ottobre 2026, confermata dal titolare il 01/10. «Aperti dal…»
@@ -99,8 +128,8 @@ export const orari = {
 export const apertura = {
   periodo: { it: 'Aperti dal 5 ottobre', en: 'Open from 5 October' },
   dettaglio: {
-    it: 'Vi aspettiamo a pranzo e a cena.',
-    en: 'We look forward to seeing you for lunch and dinner.',
+    it: 'Vi aspettiamo a pranzo, all’aperitivo e a cena.',
+    en: 'We look forward to seeing you for lunch, aperitivo and dinner.',
   },
 } as const;
 

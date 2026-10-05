@@ -62,9 +62,9 @@ const datiStrutturati = {
   geo: { '@type': 'GeoCoordinates', latitude: contatti.geo.lat, longitude: contatti.geo.lon },
   // gli orari solo con la data di apertura: prima risulterebbe «aperto» un locale ancora chiuso
   ...(dataApertura && {
-    openingHoursSpecification: orari.cucina.map((f) => ({
+    openingHoursSpecification: orari.locale.map((f) => ({
       '@type': 'OpeningHoursSpecification',
-      dayOfWeek: orari.giorni,
+      dayOfWeek: f.giorni,
       opens: f.apre,
       closes: f.chiude,
       validFrom: dataApertura,
