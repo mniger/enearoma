@@ -17,9 +17,8 @@ const { menu, variante } = Astro.props;
 const locale = (Astro.currentLocale ?? 'it') as Locale;
 const base = locale === 'en' ? '/en' : '';
 
-// pranzo e aperitivo dicono giorni e ore: il sabato a pranzo il locale è chiuso
-const [pranzo] = orari.cucina;
-const { aperitivo } = orari;
+// pranzo e aperitivo dicono giorni e ore in testa al menu
+const [pranzo, aperitivo] = orari.servizi;
 const quando = (f: typeof pranzo | typeof aperitivo) => locale === 'en'
   ? `${arcoGiorni(f.giorni, locale, 'frase')}, ${f.apre} to ${f.chiude}`
   : `${arcoGiorni(f.giorni, locale, 'frase')}, dalle ${f.apre} alle ${f.chiude}`;

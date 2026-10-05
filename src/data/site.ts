@@ -79,23 +79,20 @@ export const prenotazioni = {
 } as const;
 
 /**
- * Orari — come li ha messi la proprietà sul profilo Google, confermati dal titolare il
- * 05/10/2026: il locale è aperto di fila, la cucina ha due fasce (dal suo biglietto da
- * visita) e l'aperitivo sta in mezzo. Il sabato si apre alle 16, la domenica è chiuso.
+ * Orari — confermati dal titolare il 05/10/2026: dal lunedì al sabato sempre gli stessi (il
+ * sabato dalle 16 sul profilo Google era un errore), la domenica chiuso. Il locale è aperto di
+ * fila; la cucina ha due fasce (dal suo biglietto da visita) e l'aperitivo sta in mezzo.
  * I giorni sono quelli di schema.org: i dati strutturati prendono gli orari del locale.
  */
-const LUN_VEN = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'] as const;
-const LUN_SAB = [...LUN_VEN, 'Saturday'] as const;
+const LUN_SAB = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as const;
 export const orari = {
-  locale: [
-    { giorni: LUN_VEN, apre: '12:00', chiude: '23:00' },
-    { giorni: ['Saturday'], apre: '16:00', chiude: '23:00' },
-  ],
-  cucina: [
-    { nome: { it: 'Pranzo', en: 'Lunch' }, giorni: LUN_VEN, apre: '12:00', chiude: '15:00' },
+  locale: [{ giorni: LUN_SAB, apre: '12:00', chiude: '23:00' }],
+  // in ordine di ora: MenuContent prende il pranzo e l'aperitivo per posizione
+  servizi: [
+    { nome: { it: 'Pranzo', en: 'Lunch' }, giorni: LUN_SAB, apre: '12:00', chiude: '15:00' },
+    { nome: { it: 'Aperitivo', en: 'Aperitivo' }, giorni: LUN_SAB, apre: '17:00', chiude: '20:00' },
     { nome: { it: 'Cena', en: 'Dinner' }, giorni: LUN_SAB, apre: '18:30', chiude: '23:00' },
   ],
-  aperitivo: { giorni: LUN_SAB, apre: '17:00', chiude: '20:00' },
   chiuso: ['Sunday'],
 } as const;
 

@@ -45,7 +45,7 @@ const L = locale === 'en'
       tDove: `${contatti.via}\u00a0${contatti.civico}, Rome`,
       vediMenu: 'The à la carte menu', vediPranzo: 'The business lunch', vediAperitivo: 'The aperitivo menu', vediCocktail: 'The cocktail list',
       barAttesa: 'The wine list is on its way.',
-      indirizzo: 'Address', telefono: 'Phone', orariL: 'Opening hours', cucinaL: 'Kitchen', aperitivoL: 'Aperitivo', chiuso: 'closed', scrivi: 'Email',
+      indirizzo: 'Address', telefono: 'Phone', orariL: 'Opening hours', serviziL: 'Kitchen & bar', chiuso: 'closed', scrivi: 'Email',
       inArrivo: 'coming soon', indicazioni: 'Open in Google Maps', nuovaScheda: 'opens in a new tab',
       prenotaTitolo: 'Book a table', chiama: 'Call', suWhatsapp: 'WhatsApp', suOpentable: 'Book on OpenTable',
       comePrenotare: 'Bookings will open when the restaurant does. The telephone number and booking email will appear on this page as soon as they are live.',
@@ -68,7 +68,7 @@ const L = locale === 'en'
       tDove: `${contatti.via}\u00a0${contatti.civico}, Roma`,
       vediMenu: 'Il menu à la carte', vediPranzo: 'Il business lunch', vediAperitivo: 'Il menu dell’aperitivo', vediCocktail: 'La carta dei cocktail',
       barAttesa: 'La carta dei vini è in arrivo.',
-      indirizzo: 'Indirizzo', telefono: 'Telefono', orariL: 'Orari', cucinaL: 'Cucina', aperitivoL: 'Aperitivo', chiuso: 'chiuso', scrivi: 'Email',
+      indirizzo: 'Indirizzo', telefono: 'Telefono', orariL: 'Orari', serviziL: 'Cucina e bar', chiuso: 'chiuso', scrivi: 'Email',
       inArrivo: 'in arrivo', indicazioni: 'Apri in Google Maps', nuovaScheda: 'si apre in una nuova scheda',
       prenotaTitolo: 'Prenota un tavolo', chiama: 'Chiama', suWhatsapp: 'WhatsApp', suOpentable: 'Prenota su OpenTable',
       comePrenotare: 'Le prenotazioni aprono insieme al ristorante. Numero di telefono ed email per prenotare compariranno qui appena saranno attivi.',
@@ -84,10 +84,14 @@ const dato = (v: string) => (v === ATTESA ? L.inArrivo : v);
 const citta = locale === 'en' ? 'Rome' : contatti.citta;
 const indirizzo = `${contatti.via}\u00a0${contatti.civico}, ${contatti.cap}\u00a0${citta}`;
 
-// Tre blocchi di orari: il locale, la cucina (pranzo e cena) e l'aperitivo che sta fra le due.
+// Due blocchi di orari: i giorni di apertura, poi pranzo, aperitivo e cena in ordine di ora.
+// I giorni di un servizio si dicono solo se non sono quelli di apertura.
 const ore = (f: { apre: string; chiude: string }) => `${f.apre}–${f.chiude}`;
-const blocchiOrari: { titolo: string; righe: { quando: string; giorni?: string; ore: string; chiuso?: boolean }[] }[] = [
+const aperto: readonly string[] = orari.locale.flatMap((f) => f.giorni);
+const altriGiorni = (g: readonly string[]) => g.length !== aperto.length || g.some((x) => !aperto.includes(x));
+const blocchiOrari: { area: string; titolo: string; righe: { quando: string; giorni?: string; ore: string; chiuso?: boolean }[] }[] = [
   {
+    area: 'orari',
     titolo: L.orariL,
     righe: [
       ...orari.locale.map((f) => ({ quando: arcoGiorni(f.giorni, locale, 'riga'), ore: ore(f) })),
@@ -95,10 +99,14 @@ const blocchiOrari: { titolo: string; righe: { quando: string; giorni?: string; 
     ],
   },
   {
-    titolo: L.cucinaL,
-    righe: orari.cucina.map((f) => ({ quando: f.nome[locale], giorni: arcoGiorni(f.giorni, locale, 'breve'), ore: ore(f) })),
+    area: 'servizi',
+    titolo: L.serviziL,
+    righe: orari.servizi.map((f) => ({
+      quando: f.nome[locale],
+      ...(altriGiorni(f.giorni) && { giorni: arcoGiorni(f.giorni, locale, 'breve') }),
+      ore: ore(f),
+    })),
   },
-  { titolo: L.aperitivoL, righe: [{ quando: arcoGiorni(orari.aperitivo.giorni, locale, 'riga'), ore: ore(orari.aperitivo) }] },
 ];
 
 // Canali di prenotazione: compaiono al lancio, e solo quelli con un dato reale.
@@ -199,12 +207,12 @@ const azioni = [
       <p class="eyebrow" data-reveal>{L.etDove}</p>
       <h2 data-reveal data-ritardo="1">{L.tDove}</h2>
       <dl class="recapiti" data-reveal data-ritardo="2">
-        <div>
+        <div class="recapiti__indirizzo">
           <dt>{L.indirizzo}</dt>
           <dd>{indirizzo}<br /><a class="indicazioni" href={contatti.mapsUrl} target="_blank" rel="noopener">{L.indicazioni}<span class="sr-only"> ({L.nuovaScheda})</span></a></dd>
         </div>
         {blocchiOrari.map((b) => (
-          <div><dt>{b.titolo}</dt><dd>
+          <div class={`recapiti__${b.area}`}><dt>{b.titolo}</dt><dd>
             <dl class="fasce">
               {b.righe.map((r) => (
                 <div><dt>{r.quando}{r.giorni && <span class="fasce__giorni"> {r.giorni}</span>}</dt><dd class:list={[r.chiuso && 'fasce__chiuso']}>{r.ore}</dd></div>
@@ -212,10 +220,10 @@ const azioni = [
             </dl>
           </dd></div>
         ))}
-        <div><dt>{L.telefono}</dt>{c(contatti.telefono)
+        <div class="recapiti__telefono"><dt>{L.telefono}</dt>{c(contatti.telefono)
           ? <dd><a class="indicazioni recapito" href={`tel:${soloCifre(contatti.telefono)}`}>{contatti.telefono}</a></dd>
           : <dd data-attesa>{dato(contatti.telefono)}</dd>}</div>
-        <div><dt>{L.scrivi}</dt>{c(contatti.email)
+        <div class="recapiti__email"><dt>{L.scrivi}</dt>{c(contatti.email)
           ? <dd><a class="indicazioni recapito" href={`mailto:${contatti.email}`}>{contatti.email}</a></dd>
           : <dd data-attesa>{dato(contatti.email)}</dd>}</div>
       </dl>
@@ -388,7 +396,18 @@ const azioni = [
   .prenota-canali__azioni { display: flex; flex-wrap: wrap; gap: .8rem; }
   .dove__foto :global(img) { max-height: 64vh; object-fit: cover; }
   .dove__mappa { grid-column: 1 / -1; }
-  @media (min-width: 40rem) { .recapiti { grid-template-columns: repeat(2, 1fr); } }
+  /* a due colonne: a sinistra dove e come contattarci, a destra quando */
+  @media (min-width: 40rem) {
+    .recapiti {
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-areas: "indirizzo orari" "telefono servizi" "email servizi";
+    }
+    .recapiti__indirizzo { grid-area: indirizzo; }
+    .recapiti__orari { grid-area: orari; }
+    .recapiti__servizi { grid-area: servizi; }
+    .recapiti__telefono { grid-area: telefono; }
+    .recapiti__email { grid-area: email; }
+  }
   @media (min-width: 64rem) { .dove { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); } }
 
   @media (prefers-reduced-motion: reduce) {
