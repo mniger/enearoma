@@ -44,7 +44,7 @@ const L = locale === 'en'
       </div>
       <div>
         <dt>{L.contatti}</dt>
-        <dd><a href="mailto:info@enearoma.it">info@enearoma.it</a></dd>
+        <dd><a href={`mailto:${contatti.email}`}>{contatti.email}</a></dd>
       </div>
       <div><dt>{L.cookieT}</dt><dd>{L.cookie}</dd></div>
       <div><dt>{L.hostingT}</dt><dd>{L.hosting}</dd></div>
