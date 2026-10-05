@@ -9,7 +9,7 @@
     "preview": "astro preview",
     "check": "astro check",
     "og": "uv run --with playwright python scripts/genera-og.py",
-    "mappa": "uv run python scripts/genera-mappa.py"
+    "mappa": "uv run --with fonttools --with brotli python scripts/genera-mappa.py"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.3.0",
