@@ -17,12 +17,11 @@ import Marchio from './Marchio.astro';
 import Pino from './Pino.astro';
 import Freccia from './Freccia.astro';
 import MappaDove from './MappaDove.astro';
-// Solo scatti veri della sala, dallo stesso servizio (1086×1448). In apertura la sala intera
-// com'è oggi (scelta del titolare, 07/10). L'unica immagine generata, sala-panoramica (C2PA di
-// OpenAI), mostrava una sala inventata: è in brand/foto/, fuori dal sito. sala-verticale ha le
-// tovaglie della sera; le altre i tavoli nudi con le tovagliette in cuoio.
+// Solo le foto della sala com'è oggi, scelte dal titolare (06–07/10): tavoli bianchi o in legno,
+// tovagliette in cuoio, niente tovaglie. Fuori dal sito, in brand/foto/, le due che il titolare
+// indica come fatte con l'IA: sala-panoramica (C2PA di OpenAI) e sala-verticale.
 import salaIntera from '../assets/foto/sala-intera.png';
-import salaVerticale from '../assets/foto/sala-verticale.jpeg';
+import salaVolte from '../assets/foto/sala-volte.png';
 import facciata from '../assets/foto/facciata.jpeg';
 import salaAngolo from '../assets/foto/sala-angolo.jpeg';
 import barBancone from '../assets/foto/bar-bancone.png';
@@ -55,7 +54,7 @@ const L = locale === 'en'
       prenotaTitolo: 'Book a table', chiama: 'Call', suWhatsapp: 'WhatsApp', suOpentable: 'Book on OpenTable',
       comePrenotare: 'Bookings will open when the restaurant does. The telephone number and booking email will appear on this page as soon as they are live.',
       altPanoramica: 'The ENEA dining room under its brick vaults: laid tables, the long wooden table and the lit wall of bottles behind the bar',
-      altSala: 'The dining room laid for the evening, with the ENEA sign on the wall',
+      altSala: 'The ENEA dining room under its brick vaults: globe lamps, the velvet banquette and tables laid with leather place mats',
       altIngresso: 'The ENEA entrance on Via Boncompagni at dusk: the lit sign and the open door',
       altAngolo: 'A corner of the ENEA dining room: glass-globe lamps, a painting, two laid tables',
       altTavola: 'A table laid at ENEA: leather place mat with the name, glasses and cutlery',
@@ -84,7 +83,7 @@ const L = locale === 'en'
       prenotaTitolo: 'Prenota un tavolo', chiama: 'Chiama', suWhatsapp: 'WhatsApp', suOpentable: 'Prenota su OpenTable',
       comePrenotare: 'Le prenotazioni aprono insieme al ristorante. Numero di telefono ed email per prenotare compariranno qui appena saranno attivi.',
       altPanoramica: 'La sala di ENEA sotto le volte in mattoni: i tavoli apparecchiati, il tavolo lungo in legno e la parete di bottiglie illuminata dietro al bar',
-      altSala: 'La sala apparecchiata per la sera, con l’insegna ENEA sulla parete',
+      altSala: 'La sala di ENEA sotto le volte in mattoni: lampade a sfera, il divanetto in velluto e i tavoli con le tovagliette in cuoio',
       altIngresso: "L’ingresso di ENEA su Via Boncompagni al tramonto: l’insegna illuminata e la porta aperta",
       altAngolo: 'Un angolo della sala di ENEA: lampade a sfera, un quadro, due tavoli apparecchiati',
       altTavola: 'Una tavola apparecchiata da ENEA: la tovaglietta in cuoio col nome, calici e posate',
@@ -166,7 +165,7 @@ const azioni = [
 <section id="locale">
   <div class="wrap duetto">
     <figure class="quadro duetto__foto" data-reveal>
-      <Image src={salaTavoloLungo} alt={L.altTavoloLungo} widths={[560, 800, 1086]} sizes="(min-width: 64rem) 46vw, 92vw" loading="lazy" />
+      <Image src={salaVolte} alt={L.altSala} widths={[560, 800, 1086]} sizes="(min-width: 64rem) 46vw, 92vw" loading="lazy" />
     </figure>
     <div class="duetto__testo">
       <p class="eyebrow" data-reveal>{L.etLocale}</p>
@@ -217,7 +216,7 @@ const azioni = [
     <div class="sala__striscia">
       {[
         { src: salaVelluto, alt: L.altVelluto, classe: 'foto-velluto' },
-        { src: salaVerticale, alt: L.altSala, classe: 'foto-sera' },
+        { src: salaTavoloLungo, alt: L.altTavoloLungo, classe: 'foto-tavolo-lungo' },
         { src: salaAngolo, alt: L.altAngolo, classe: 'foto-angolo' },
       ].map((f, i) => (
         <figure class="quadro sala__foto" data-reveal data-ritardo={String(i + 1)}>
