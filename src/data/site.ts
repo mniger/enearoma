@@ -119,11 +119,16 @@ export const arcoGiorni = (
 };
 
 /**
- * Apertura: lunedì 5 ottobre 2026, confermata dal titolare il 01/10. «Aperti dal…»
- * si legge giusto sia prima sia dopo la data.
+ * Il locale è aperto dal 5 ottobre 2026: al posto di «Aperti dal…» la riga dice quando
+ * si viene, dagli orari qui sopra («Dal lunedì al sabato, 12:00–23:00»).
  */
+const [fasciaLocale] = orari.locale;
+const quandoAperti = (locale: Locale) => {
+  const giorni = arcoGiorni(fasciaLocale.giorni, locale, 'frase');
+  return `${giorni.charAt(0).toUpperCase()}${giorni.slice(1)}, ${fasciaLocale.apre}–${fasciaLocale.chiude}`;
+};
 export const apertura = {
-  periodo: { it: 'Aperti dal 5 ottobre', en: 'Open from 5 October' },
+  periodo: { it: quandoAperti('it'), en: quandoAperti('en') },
   dettaglio: {
     it: 'Vi aspettiamo a pranzo, all’aperitivo e a cena.',
     en: 'We look forward to seeing you for lunch, aperitivo and dinner.',
