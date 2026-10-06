@@ -17,12 +17,10 @@ import Marchio from './Marchio.astro';
 import Pino from './Pino.astro';
 import Freccia from './Freccia.astro';
 import MappaDove from './MappaDove.astro';
-// sala-panoramica è generata con gpt-image (C2PA di OpenAI): resta in apertura per scelta di
-// Marco (03/10), perché sotto il velo è la più scenica. Le foto del titolare (01/10 e 06/10):
-// scatto non ritoccato è solo la facciata; le altre sono foto della sala ripassate con ChatGPT
-// (1086×1448, il formato di gpt-image). Bancone, velluto e tavolo lungo (06/10) mostrano la
-// sala com'è oggi: tavoli bianchi, tovagliette in cuoio, niente tovaglie.
-import salaPanoramica from '../assets/foto/sala-panoramica.png';
+// Dal 06/10 tutte le foto del sito sono scatti della sala: le tre del 01/10 e le tre nuove del
+// titolare escono dallo stesso servizio (1086×1448). L'unica immagine generata (sala-panoramica,
+// con C2PA di OpenAI) era in apertura e mostrava una sala inventata: l'ha sostituita sala-verticale,
+// dove si riconoscono l'insegna e le volte vere. Il file resta in brand/foto/, fuori dal sito.
 import salaVerticale from '../assets/foto/sala-verticale.jpeg';
 import facciata from '../assets/foto/facciata.jpeg';
 import salaAngolo from '../assets/foto/sala-angolo.jpeg';
@@ -55,7 +53,7 @@ const L = locale === 'en'
       inArrivo: 'coming soon', indicazioni: 'Open in Google Maps', nuovaScheda: 'opens in a new tab',
       prenotaTitolo: 'Book a table', chiama: 'Call', suWhatsapp: 'WhatsApp', suOpentable: 'Book on OpenTable',
       comePrenotare: 'Bookings will open when the restaurant does. The telephone number and booking email will appear on this page as soon as they are live.',
-      altPanoramica: 'The ENEA dining room under its brick vaults',
+      altPanoramica: 'The ENEA dining room under its brick vaults, tables laid and the sign on the wall',
       altSala: 'Tables laid for the evening at ENEA',
       altIngresso: 'The ENEA entrance on Via Boncompagni at dusk: the lit sign and the open door',
       altAngolo: 'A corner of the ENEA dining room: glass-globe lamps, a painting, two laid tables',
@@ -84,7 +82,7 @@ const L = locale === 'en'
       inArrivo: 'in arrivo', indicazioni: 'Apri in Google Maps', nuovaScheda: 'si apre in una nuova scheda',
       prenotaTitolo: 'Prenota un tavolo', chiama: 'Chiama', suWhatsapp: 'WhatsApp', suOpentable: 'Prenota su OpenTable',
       comePrenotare: 'Le prenotazioni aprono insieme al ristorante. Numero di telefono ed email per prenotare compariranno qui appena saranno attivi.',
-      altPanoramica: 'La sala di ENEA sotto le volte in mattoni',
+      altPanoramica: 'La sala di ENEA sotto le volte in mattoni, i tavoli apparecchiati e l’insegna sulla parete',
       altSala: 'Tavoli apparecchiati per la sera da ENEA',
       altIngresso: "L’ingresso di ENEA su Via Boncompagni al tramonto: l’insegna illuminata e la porta aperta",
       altAngolo: 'Un angolo della sala di ENEA: lampade a sfera, un quadro, due tavoli apparecchiati',
@@ -146,7 +144,7 @@ const azioni = [
 <!-- ═════════ APERTURA ═════════ -->
 <section class="apertura">
   <div class="apertura__foto" data-parallasse>
-    <Image src={salaPanoramica} alt={L.altPanoramica} widths={[900, 1448]} sizes="100vw" loading="eager" fetchpriority="high" />
+    <Image src={salaVerticale} alt={L.altPanoramica} widths={[900, 1086]} sizes="100vw" loading="eager" fetchpriority="high" />
   </div>
   <div class="apertura__velo" aria-hidden="true"></div>
 
@@ -167,7 +165,7 @@ const azioni = [
 <section id="locale">
   <div class="wrap duetto">
     <figure class="quadro duetto__foto" data-reveal>
-      <Image src={salaVerticale} alt={L.altSala} widths={[560, 800, 1086]} sizes="(min-width: 64rem) 46vw, 92vw" loading="lazy" />
+      <Image src={salaTavoloLungo} alt={L.altTavoloLungo} widths={[560, 800, 1086]} sizes="(min-width: 64rem) 46vw, 92vw" loading="lazy" />
     </figure>
     <div class="duetto__testo">
       <p class="eyebrow" data-reveal>{L.etLocale}</p>
@@ -217,7 +215,6 @@ const azioni = [
     <p class="eyebrow" data-reveal>{L.etSala}</p>
     <div class="sala__striscia">
       {[
-        { src: salaTavoloLungo, alt: L.altTavoloLungo, classe: 'foto-tavolo-lungo' },
         { src: salaVelluto, alt: L.altVelluto, classe: 'foto-velluto' },
         { src: salaAngolo, alt: L.altAngolo, classe: 'foto-angolo' },
       ].map((f, i) => (
@@ -396,7 +393,8 @@ const azioni = [
   .sala__foto :global(.foto-tavolo-lungo) { object-position: 50% 70%; }
   .sala__foto :global(.foto-angolo) { object-position: 50% 30%; }
   @media (min-width: 58rem) {
-    .sala__striscia { grid-auto-flow: row; grid-template-columns: repeat(3, 1fr); overflow: visible; margin-inline: 0; padding-inline: 0; gap: clamp(1rem, 2vw, 1.75rem); }
+    /* contenute: con due foto a tutta larghezza i ritratti diventano altissimi */
+    .sala__striscia { grid-auto-flow: row; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); overflow: visible; margin-inline: auto; padding-inline: 0; gap: clamp(1rem, 2vw, 1.75rem); max-width: 54rem; }
   }
   @media (min-width: 58rem) {
     /* le righe delle due schede si allineano (foto, occhiello, titolo, testo, rimandi, nota):
