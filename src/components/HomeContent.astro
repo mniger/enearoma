@@ -18,13 +18,17 @@ import Pino from './Pino.astro';
 import Freccia from './Freccia.astro';
 import MappaDove from './MappaDove.astro';
 // sala-panoramica è generata con gpt-image (C2PA di OpenAI): resta in apertura per scelta di
-// Marco (03/10), perché sotto il velo è la più scenica. Le foto del titolare (01/10): scatto non
-// ritoccato è solo la facciata; sala-angolo, tavola e sala-verticale sono foto della sala
-// ripassate con ChatGPT (1086×1448, il formato di gpt-image). Da sostituire con scatti veri.
+// Marco (03/10), perché sotto il velo è la più scenica. Le foto del titolare (01/10 e 06/10):
+// scatto non ritoccato è solo la facciata; le altre sono foto della sala ripassate con ChatGPT
+// (1086×1448, il formato di gpt-image). Bancone, velluto e tavolo lungo (06/10) mostrano la
+// sala com'è oggi: tavoli bianchi, tovagliette in cuoio, niente tovaglie.
 import salaPanoramica from '../assets/foto/sala-panoramica.png';
 import salaVerticale from '../assets/foto/sala-verticale.jpeg';
 import facciata from '../assets/foto/facciata.jpeg';
 import salaAngolo from '../assets/foto/sala-angolo.jpeg';
+import barBancone from '../assets/foto/bar-bancone.png';
+import salaVelluto from '../assets/foto/sala-velluto.png';
+import salaTavoloLungo from '../assets/foto/sala-tavolo-lungo.png';
 import tavola from '../assets/foto/tavola-apparecchiata.jpeg';
 
 const locale = (Astro.currentLocale ?? 'it') as Locale;
@@ -54,6 +58,10 @@ const L = locale === 'en'
       altIngresso: 'The ENEA entrance on Via Boncompagni at dusk: the lit sign and the open door',
       altAngolo: 'A corner of the ENEA dining room: glass-globe lamps, a painting, two laid tables',
       altTavola: 'A table laid at ENEA: leather place mat with the name, glasses and cutlery',
+      altBancone: 'The ENEA bar: marble counter, globe lamps and the wall of bottles under the brick arch',
+      etSala: 'The dining room',
+      altVelluto: 'Red velvet chairs at two laid tables, beside the bar',
+      altTavoloLungo: 'The long wooden table with leather place mats bearing the ENEA name',
     }
   : {
       prenota: prenotazioni.aperte ? 'Prenota un tavolo' : 'Prenotazioni', scopri: 'Il menu', scorri: 'Scorri',
@@ -77,6 +85,10 @@ const L = locale === 'en'
       altIngresso: "L’ingresso di ENEA su Via Boncompagni al tramonto: l’insegna illuminata e la porta aperta",
       altAngolo: 'Un angolo della sala di ENEA: lampade a sfera, un quadro, due tavoli apparecchiati',
       altTavola: 'Una tavola apparecchiata da ENEA: la tovaglietta in cuoio col nome, calici e posate',
+      altBancone: 'Il bar di ENEA: il bancone in marmo, le lampade a sfera e la parete di bottiglie sotto l’arco in mattoni',
+      etSala: 'La sala',
+      altVelluto: 'Sedie in velluto rosso a due tavoli apparecchiati, accanto al bar',
+      altTavoloLungo: 'Il tavolo lungo in legno con le tovagliette in cuoio col nome ENEA',
     };
 
 const dato = (v: string) => (v === ATTESA ? L.inArrivo : v);
@@ -136,7 +148,7 @@ const azioni = [
 
   <div class="wrap apertura__corpo">
     <h1 class="apertura__marchio"><Marchio completo /><span class="sr-only">{titoloPagina}</span></h1>
-    <p class="apertura__claim">{t.claim}</p>
+    <p class="apertura__claim">{t.claimLancio}</p>
     <p class="apertura__riga">
       <a href="#dove">{indirizzo}</a><i aria-hidden="true"></i><span><span class="sr-only">— </span>{apertura.periodo[locale]}</span>
     </p>
@@ -181,7 +193,7 @@ const azioni = [
 
     <article class="portata">
       <figure class="quadro portata__foto" data-reveal>
-        <Image src={salaAngolo} alt={L.altAngolo} widths={[480, 800, 1086]} sizes="(min-width: 58rem) 44vw, 92vw" loading="lazy" class="foto-angolo" />
+        <Image src={barBancone} alt={L.altBancone} widths={[480, 800, 1086]} sizes="(min-width: 58rem) 44vw, 92vw" loading="lazy" class="foto-bancone" />
       </figure>
       <p class="eyebrow" data-reveal>{L.etBar}</p>
       <h2 data-reveal data-ritardo="1">{L.tBar}</h2>
@@ -192,6 +204,24 @@ const azioni = [
       </div>
       <p class="nota" data-reveal data-ritardo="3" data-attesa>{L.barAttesa}</p>
     </article>
+  </div>
+</section>
+
+<!-- ═════════ LA SALA ═════════ -->
+<section class="sala" aria-label={L.etSala}>
+  <div class="wrap">
+    <p class="eyebrow" data-reveal>{L.etSala}</p>
+    <div class="sala__striscia">
+      {[
+        { src: salaTavoloLungo, alt: L.altTavoloLungo, classe: 'foto-tavolo-lungo' },
+        { src: salaVelluto, alt: L.altVelluto, classe: 'foto-velluto' },
+        { src: salaAngolo, alt: L.altAngolo, classe: 'foto-angolo' },
+      ].map((f, i) => (
+        <figure class="quadro sala__foto" data-reveal data-ritardo={String(i + 1)}>
+          <Image src={f.src} alt={f.alt} widths={[400, 700, 1086]} sizes="(min-width: 58rem) 30vw, 78vw" loading="lazy" class={f.classe} />
+        </figure>
+      ))}
+    </div>
   </div>
 </section>
 
@@ -346,7 +376,24 @@ const azioni = [
   .portata__foto :global(img) { aspect-ratio: 4 / 3; object-fit: cover; }
   /* foto verticali nel riquadro 4:3: si tengono in vista il nome sulla tovaglietta e lampade e quadro */
   .portata__foto :global(.foto-tavola) { object-position: 50% 62%; }
-  .portata__foto :global(.foto-angolo) { object-position: 50% 30%; }
+  .portata__foto :global(.foto-bancone) { object-position: 50% 45%; }
+
+  /* ── la sala: tre foto in fila, sul telefono si scorrono di lato ── */
+  .sala { padding-top: 0; }
+  .sala .eyebrow { margin-bottom: 1.4rem; }
+  .sala__striscia {
+    display: grid; grid-auto-flow: column; grid-auto-columns: 78%; gap: 1rem;
+    overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+    margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); scroll-padding-inline: var(--gutter);
+  }
+  .sala__striscia::-webkit-scrollbar { display: none; }
+  .sala__foto { margin: 0; scroll-snap-align: start; }
+  .sala__foto :global(img) { aspect-ratio: 4 / 5; object-fit: cover; }
+  .sala__foto :global(.foto-tavolo-lungo) { object-position: 50% 70%; }
+  .sala__foto :global(.foto-angolo) { object-position: 50% 30%; }
+  @media (min-width: 58rem) {
+    .sala__striscia { grid-auto-flow: row; grid-template-columns: repeat(3, 1fr); overflow: visible; margin-inline: 0; padding-inline: 0; gap: clamp(1rem, 2vw, 1.75rem); }
+  }
   @media (min-width: 58rem) {
     /* le righe delle due schede si allineano (foto, occhiello, titolo, testo, rimandi, nota):
        sei figli per scheda, uno per riga; un figlio in più finirebbe sovrapposto all'ultimo */

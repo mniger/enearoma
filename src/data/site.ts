@@ -155,9 +155,8 @@ export const legale = {
  */
 export const testi = {
   it: {
-    // dall'apertura (06/10/2026) al posto del claim di lancio delle tavole del brand,
-    // «La Dolce Vita sta per ricominciare.»: ora la Dolce Vita è a tavola
-    claim: 'La Dolce Vita è servita.',
+    // [MOODBOARD] claim di lancio, usato sulle tavole ufficiali del brand
+    claimLancio: 'La Dolce Vita ricomincia da qui.',
     // [MANUALE] sottotitolo di copertina
     claimApertura:
       'Un’esperienza di ospitalità romana contemporanea, ispirata all’eleganza, all’energia e al fascino senza tempo della Dolce Vita.',
@@ -206,8 +205,8 @@ export const testi = {
     ],
   },
   en: {
-    // dall'apertura, al posto di «La Dolce Vita, reimagined.» delle tavole del brand
-    claim: 'La Dolce Vita is served.',
+    // [MOODBOARD] claim di lancio nella versione inglese, dalle tavole ufficiali
+    claimLancio: 'La Dolce Vita starts again, right here.',
     claimApertura:
       'A contemporary Roman hospitality experience, inspired by the elegance, energy and timeless charm of La Dolce Vita.',
     concept:
