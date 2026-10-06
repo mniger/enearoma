@@ -22,7 +22,7 @@ import MappaDove from './MappaDove.astro';
 // indica come fatte con l'IA: sala-panoramica (C2PA di OpenAI) e sala-verticale.
 import salaIntera from '../assets/foto/sala-intera.png';
 import salaVolte from '../assets/foto/sala-volte.png';
-import facciata from '../assets/foto/facciata.jpeg';
+import ingresso from '../assets/foto/ingresso.jpg';
 import salaAngolo from '../assets/foto/sala-angolo.jpeg';
 import barBancone from '../assets/foto/bar-bancone.png';
 import salaVelluto from '../assets/foto/sala-velluto.png';
@@ -55,7 +55,7 @@ const L = locale === 'en'
       comePrenotare: 'Bookings will open when the restaurant does. The telephone number and booking email will appear on this page as soon as they are live.',
       altPanoramica: 'The ENEA dining room under its brick vaults: laid tables, the long wooden table and the lit wall of bottles behind the bar',
       altSala: 'The ENEA dining room under its brick vaults: globe lamps, the velvet banquette and tables laid with leather place mats',
-      altIngresso: 'The ENEA entrance on Via Boncompagni at dusk: the lit sign and the open door',
+      altIngresso: 'The ENEA entrance on Via Boncompagni at dusk: the lit sign, the arched windows and the open doors onto the dining room',
       altAngolo: 'A corner of the ENEA dining room: glass-globe lamps, a painting, two laid tables',
       altTavola: 'A table laid at ENEA: leather place mat with the name, glasses and cutlery',
       altBancone: 'The ENEA bar: marble counter, globe lamps and the wall of bottles under the brick arch',
@@ -84,7 +84,7 @@ const L = locale === 'en'
       comePrenotare: 'Le prenotazioni aprono insieme al ristorante. Numero di telefono ed email per prenotare compariranno qui appena saranno attivi.',
       altPanoramica: 'La sala di ENEA sotto le volte in mattoni: i tavoli apparecchiati, il tavolo lungo in legno e la parete di bottiglie illuminata dietro al bar',
       altSala: 'La sala di ENEA sotto le volte in mattoni: lampade a sfera, il divanetto in velluto e i tavoli con le tovagliette in cuoio',
-      altIngresso: "L’ingresso di ENEA su Via Boncompagni al tramonto: l’insegna illuminata e la porta aperta",
+      altIngresso: "L’ingresso di ENEA su Via Boncompagni al tramonto: l’insegna illuminata, le finestre ad arco e le porte aperte sulla sala",
       altAngolo: 'Un angolo della sala di ENEA: lampade a sfera, un quadro, due tavoli apparecchiati',
       altTavola: 'Una tavola apparecchiata da ENEA: la tovaglietta in cuoio col nome, calici e posate',
       altBancone: 'Il bar di ENEA: il bancone in marmo, le lampade a sfera e la parete di bottiglie sotto l’arco in mattoni',
@@ -277,7 +277,7 @@ const azioni = [
       </div>
     </div>
     <figure class="quadro dove__foto" data-reveal data-ritardo="1">
-      <Image src={facciata} alt={L.altIngresso} widths={[520, 800, 1200, 1600]} sizes="(min-width: 64rem) 38vw, 92vw" loading="lazy" />
+      <Image src={ingresso} alt={L.altIngresso} widths={[520, 800, 1086]} sizes="(min-width: 64rem) 38vw, 92vw" loading="lazy" />
     </figure>
     <div class="dove__mappa"><MappaDove /></div>
   </div>
