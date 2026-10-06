@@ -40,12 +40,14 @@ const L = locale === 'en'
       prenota: prenotazioni.aperte ? 'Book a table' : 'Bookings', scopri: 'The menu', scorri: 'Scroll',
       etLocale: 'The restaurant', etCucina: 'The kitchen', etBar: 'The bar',
       etDove: 'Visit us',
-      tLocale: 'A dining room under brick vaults, a few steps from Via Veneto',
-      pLocale: 'Vaulted ceilings, green velvet, candlelight and a wall of bottles. Roman in character, Mediterranean in spirit, open for lunch, aperitivo and dinner.',
+      tLocale: 'Beneath brick vaults, steps from Via Veneto',
+      pLocale: 'Exposed brick, velvet, warm light and a wall of glowing bottles. An elegant room where you feel at ease from the moment you sit down, for lunch, aperitivo and dinner.',
+      pCarattere: 'The character of 1960s Rome, the pace of today.',
+      commiato: 'You come for a dish. You come back for how it made you feel.',
       tCucina: 'Mediterranean cooking, Roman roots',
-      pCucina: 'Seasonal ingredients and clear flavours, plated with care but never precious. The dishes are the ones you want to order again.',
+      pCucina: 'Seasonal produce, clean flavours and dishes finished with care. Generous cooking that brings you back.',
       tBar: 'Come in just for a drink',
-      pBar: 'The Italian aperitivo, the classic cocktails made properly, and a wine list chosen to follow the kitchen.',
+      pBar: 'The Italian aperitivo, the great classics mixed with precision and a wine list chosen to go with the food.',
       tDove: `${contatti.via}\u00a0${contatti.civico}, Rome`,
       vediMenu: 'The à la carte menu', vediPranzo: 'The business lunch', vediAperitivo: 'The aperitivo menu', vediCocktail: 'The cocktail list',
       barAttesa: 'The wine list is on its way.',
@@ -67,12 +69,14 @@ const L = locale === 'en'
       prenota: prenotazioni.aperte ? 'Prenota un tavolo' : 'Prenotazioni', scopri: 'Il menu', scorri: 'Scorri',
       etLocale: 'Il ristorante', etCucina: 'La cucina', etBar: 'Il bar',
       etDove: 'Dove siamo',
-      tLocale: 'Una sala sotto volte di mattoni, a due passi da Via Veneto',
-      pLocale: 'Soffitti a volta, velluto verde, luce di candela e una parete di bottiglie. Romano nel carattere, mediterraneo nello spirito, aperto a pranzo, all’aperitivo e a cena.',
+      tLocale: 'Sotto le volte in mattoni, a due passi da Via Veneto',
+      pLocale: 'Mattoni a vista, velluti, luci calde e una parete di bottiglie che accende la sala. Un posto elegante dove ci si sente subito a proprio agio, a pranzo, all’aperitivo e a cena.',
+      pCarattere: 'Il carattere della Roma degli anni ’60, il ritmo di oggi.',
+      commiato: 'Si viene per un piatto. Si torna per come ci si sente.',
       tCucina: 'Cucina mediterranea, radici romane',
-      pCucina: 'Ingredienti di stagione e sapori netti, impiattati con cura ma senza sussiego. Piatti che viene voglia di ordinare di nuovo.',
+      pCucina: 'Materie prime di stagione, sapori puliti e piatti curati in ogni dettaglio. Una cucina generosa, che invita a tornare.',
       tBar: 'Si entra anche solo per bere',
-      pBar: "L’aperitivo italiano, i cocktail classici fatti come si deve e una carta dei vini scelta per seguire la cucina.",
+      pBar: 'L’aperitivo all’italiana, i grandi classici miscelati con precisione e una carta dei vini scelta per accompagnare la cucina.',
       tDove: `${contatti.via}\u00a0${contatti.civico}, Roma`,
       vediMenu: 'Il menu à la carte', vediPranzo: 'Il business lunch', vediAperitivo: 'Il menu dell’aperitivo', vediCocktail: 'La carta dei cocktail',
       barAttesa: 'La carta dei vini è in arrivo.',
@@ -170,7 +174,7 @@ const azioni = [
       <h2 data-reveal data-ritardo="1">{L.tLocale}</h2>
       <p class="corpo" data-reveal data-ritardo="2">{L.pLocale}</p>
       <div class="fregio fregio--sinistra" data-reveal data-ritardo="3" aria-hidden="true"><Pino /></div>
-      <p class="corpo corpo--tenue" data-reveal data-ritardo="3">{t.origine}</p>
+      <p class="corpo corpo--tenue" data-reveal data-ritardo="3">{L.pCarattere}</p>
     </div>
   </div>
 </section>
@@ -227,7 +231,7 @@ const azioni = [
 
 <!-- ═════════ COMMIATO ═════════ -->
 <section class="commiato">
-  <p class="commiato__frase" data-reveal>{t.claimApertura}</p>
+  <p class="commiato__frase" data-reveal>{L.commiato.split(/(?<=\.) /).map((f) => <span>{f}</span>)}</p>
 </section>
 
 <!-- ═════════ DOVE SIAMO ═════════ -->
@@ -403,6 +407,8 @@ const azioni = [
 
   /* ── commiato ── */
   .commiato { border-block: 1px solid var(--bordo); text-align: center; }
+  /* una frase per riga: «Si viene per un piatto. / Si torna per come ci si sente.» */
+  .commiato__frase :global(span), .commiato__frase span { display: block; }
   .commiato__frase {
     font-family: var(--font-display); font-size: var(--fs-triade); line-height: 1.35;
     color: var(--travertino); text-wrap: balance;
