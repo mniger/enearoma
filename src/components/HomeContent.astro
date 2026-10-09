@@ -47,8 +47,7 @@ const L = locale === 'en'
       tBar: 'Or just for a drink',
       pBar: 'The Italian aperitivo, the great classics made properly, our signature cocktails and a wine list built around the kitchen.',
       tDove: `${contatti.via}\u00a0${contatti.civico}, Rome`,
-      vediMenu: 'The à la carte menu', vediPranzo: 'The business lunch', vediAperitivo: 'The aperitivo menu', vediCocktail: 'The cocktail list',
-      barAttesa: 'The wine list is on its way.',
+      vediMenu: 'The à la carte menu', vediPranzo: 'The business lunch', vediAperitivo: 'The aperitivo menu', vediCocktail: 'The cocktail list', vediVini: 'The wine list',
       indirizzo: 'Address', telefono: 'Phone', orariL: 'Opening hours', serviziL: 'Kitchen & bar', chiuso: 'closed', scrivi: 'Email',
       inArrivo: 'coming soon', indicazioni: 'Open in Google Maps', nuovaScheda: 'opens in a new tab',
       prenotaTitolo: 'Book a table', chiama: 'Call', suWhatsapp: 'WhatsApp', suOpentable: 'Book on OpenTable',
@@ -76,8 +75,7 @@ const L = locale === 'en'
       tBar: 'Anche solo per un drink',
       pBar: "L’aperitivo all’italiana, i grandi classici fatti come si deve, i nostri signature e una carta dei vini pensata per la cucina.",
       tDove: `${contatti.via}\u00a0${contatti.civico}, Roma`,
-      vediMenu: 'Il menu à la carte', vediPranzo: 'Il business lunch', vediAperitivo: 'Il menu dell’aperitivo', vediCocktail: 'La carta dei cocktail',
-      barAttesa: 'La carta dei vini è in arrivo.',
+      vediMenu: 'Il menu à la carte', vediPranzo: 'Il business lunch', vediAperitivo: 'Il menu dell’aperitivo', vediCocktail: 'La carta dei cocktail', vediVini: 'La carta dei vini',
       indirizzo: 'Indirizzo', telefono: 'Telefono', orariL: 'Orari', serviziL: 'Cucina e bar', chiuso: 'chiuso', scrivi: 'Email',
       inArrivo: 'in arrivo', indicazioni: 'Apri in Google Maps', nuovaScheda: 'si apre in una nuova scheda',
       prenotaTitolo: 'Prenota un tavolo', chiama: 'Chiama', suWhatsapp: 'WhatsApp', suOpentable: 'Prenota su OpenTable',
@@ -203,8 +201,8 @@ const azioni = [
       <div class="portata__rimandi">
         <a class="rimando" href={locale === 'en' ? '/en/menu/aperitivo/' : '/menu/aperitivo/'} data-reveal data-ritardo="3">{L.vediAperitivo} <Freccia /></a>
         <a class="rimando" href={locale === 'en' ? '/en/menu/cocktails/' : '/menu/cocktail/'} data-reveal data-ritardo="3">{L.vediCocktail} <Freccia /></a>
+        <a class="rimando" href={locale === 'en' ? '/en/menu/wines/' : '/menu/vini/'} data-reveal data-ritardo="3">{L.vediVini} <Freccia /></a>
       </div>
-      <p class="nota" data-reveal data-ritardo="3" data-attesa>{L.barAttesa}</p>
     </article>
   </div>
 </section>

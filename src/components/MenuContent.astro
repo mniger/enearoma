@@ -12,7 +12,7 @@ import { allergeni, pubblicabili, segni, type Menu, type Segno } from '../data/m
 import { altraLingua, arcoGiorni, orari, type Locale } from '../data/site';
 import Freccia from './Freccia.astro';
 
-interface Props { menu: Menu; variante: 'carta' | 'pranzo' | 'aperitivo' | 'cocktail' }
+interface Props { menu: Menu; variante: 'carta' | 'pranzo' | 'aperitivo' | 'cocktail' | 'vini' }
 const { menu, variante } = Astro.props;
 const locale = (Astro.currentLocale ?? 'it') as Locale;
 const base = locale === 'en' ? '/en' : '';
@@ -36,18 +36,23 @@ const T = {
     it: { titolo: 'L’aperitivo', intro: `Piatti da condividere per l’ora dell’aperitivo, ${quando(aperitivo)}. I prezzi sono in euro; i numeri accanto ai piatti indicano gli allergeni contenuti. Per eventuali allergie o intolleranze, avvisate il personale di sala.` },
     en: { titolo: 'The aperitivo', intro: `Plates to share at aperitivo hour, ${quando(aperitivo)}. Prices in euro; the small numbers next to each dish are the allergens it contains. Please inform our staff of any allergies or intolerances.` },
   },
+  vini: {
+    it: { titolo: 'La carta dei vini', intro: 'Bollicine, bianchi, rosati e rossi, regione per regione: l’Italia da nord a sud, con lo Champagne e qualche etichetta d’oltralpe. Per ogni vino il produttore, le uve e la gradazione. I prezzi sono in euro, a bottiglia.' },
+    en: { titolo: 'The wine list', intro: 'Sparkling, white, rosé and red, region by region: Italy from north to south, with Champagne and a few labels from across the Alps. For each wine, the producer, the grapes and the alcohol content. Prices in euro, per bottle.' },
+  },
   cocktail: {
     it: { titolo: 'I cocktail', intro: 'I signature del bar, i grandi classici della miscelazione e due drink senza alcol. I prezzi sono in euro; i numeri accanto ai drink indicano gli allergeni contenuti. Per eventuali allergie o intolleranze, avvisate il personale di sala.' },
     en: { titolo: 'The cocktails', intro: 'The bar’s signature drinks, the great classics and two alcohol-free cocktails. Prices in euro; the small numbers next to each drink are the allergens it contains. Please inform our staff of any allergies or intolerances.' },
   },
 }[variante][locale];
 
-// Selettore fra i menu: quattro pagine, nessuno script. Prima la carta, che vale a pranzo e a cena.
+// Selettore fra i menu: cinque pagine, nessuno script. Prima la carta, che vale a pranzo e a cena.
 const menuDisponibili = [
   { id: 'carta', href: `${base}/menu/`, etichetta: 'À la carte' },
   { id: 'pranzo', href: locale === 'en' ? '/en/menu/lunch/' : '/menu/pranzo/', etichetta: 'Business lunch' },
   { id: 'aperitivo', href: `${base}/menu/aperitivo/`, etichetta: 'Aperitivo' },
   { id: 'cocktail', href: locale === 'en' ? '/en/menu/cocktails/' : '/menu/cocktail/', etichetta: locale === 'en' ? 'Cocktails' : 'Cocktail' },
+  { id: 'vini', href: locale === 'en' ? '/en/menu/wines/' : '/menu/vini/', etichetta: locale === 'en' ? 'Wines' : 'Vini' },
 ] as const;
 
 // La stessa pagina nell'altra lingua, in vista: chi arriva dal QR al tavolo la cerca lì, non nella testata.
@@ -80,8 +85,8 @@ const L = locale === 'en'
 
 // In fondo al menu: gli altri menu e la strada per il ristorante.
 const nomeMenu = locale === 'en'
-  ? { carta: 'The à la carte menu', pranzo: 'The business lunch', aperitivo: 'The aperitivo menu', cocktail: 'The cocktail list' }
-  : { carta: 'Il menu à la carte', pranzo: 'Il business lunch', aperitivo: 'Il menu dell’aperitivo', cocktail: 'La carta dei cocktail' };
+  ? { carta: 'The à la carte menu', pranzo: 'The business lunch', aperitivo: 'The aperitivo menu', cocktail: 'The cocktail list', vini: 'The wine list' }
+  : { carta: 'Il menu à la carte', pranzo: 'Il business lunch', aperitivo: 'Il menu dell’aperitivo', cocktail: 'La carta dei cocktail', vini: 'La carta dei vini' };
 const altri = menuDisponibili.filter((m) => m.id !== variante);
 const R = locale === 'en'
   ? { titolo: 'Continue', dove: 'Visit us and book' }

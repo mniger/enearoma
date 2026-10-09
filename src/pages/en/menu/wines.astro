@@ -1,0 +1,14 @@
+---
+import Base from '../../../layouts/Base.astro';
+import MenuContent from '../../../components/MenuContent.astro';
+import { menuVini, datiStrutturatiMenu } from '../../../data/menu';
+import { brand } from '../../../data/site';
+
+const url = new URL(Astro.url.pathname, Astro.site).href;
+---
+<Base title={`Wine list — ${brand.nomeEsteso}`} description="ENEA Roma’s wine list: sparkling, white, rosé and red wines from across Italy, with Champagne and a few French and German labels, with prices. On Via Boncompagni, near Via Veneto.">
+  <Fragment slot="head">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(datiStrutturatiMenu(menuVini, 'en', url))} />
+  </Fragment>
+  <MenuContent menu={menuVini} variante="vini" />
+</Base>

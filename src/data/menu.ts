@@ -327,6 +327,151 @@ export const menuCocktail = {
 } as const satisfies Menu;
 
 /**
+ * La carta dei vini — «Carta dei vini ENEA», PDF del titolare del 09/10/2026 (brand/menu/).
+ * Prezzi a bottiglia. Sezioni e regioni come sulla carta; nella descrizione produttore, uve e
+ * gradazione. Corretti solo i refusi evidenti (spazi mancanti, «Cuvèe», «Rosè»). Due etichette
+ * non hanno il prezzo nella carta: restano nei dati senza prezzo e quindi non si pubblicano.
+ * Il Bellavista ha la gradazione «da verificare»: esce senza. Il vino contiene sempre solfiti:
+ * una nota sola in fondo invece del 12 ripetuto su 92 righe.
+ */
+const R = (it: string, en: string) => ({ it, en });
+const vino = (gruppo: Piatto['gruppo'], nome: string, it: string, en: string, prezzo: number | undefined): Piatto => ({
+  nome: { it: nome, en: nome },
+  descrizione: { it, en },
+  allergeni: [],
+  ...(prezzo === undefined ? {} : { prezzo }),
+  ...(gruppo ? { gruppo } : {}),
+});
+
+export const menuVini = {
+  servizio: { it: 'Vini', en: 'Wines' },
+  sezioni: [
+    {
+      id: 'bollicine',
+      titolo: { it: 'Bollicine', en: 'Sparkling' },
+      piatti: [
+        vino(R('Lombardia', 'Lombardy'), 'Franciacorta Essence Rosé Millesimato', 'Antica Fratta · Chardonnay, Pinot Nero · 12,5%', 'Antica Fratta · Chardonnay, Pinot Nero · 12.5%', 60),
+        vino(R('Lombardia', 'Lombardy'), 'Franciacorta Cuvée Real Brut', 'Antica Fratta · Chardonnay, Pinot Nero · 12%', 'Antica Fratta · Chardonnay, Pinot Nero · 12%', 58),
+        vino(R('Lombardia', 'Lombardy'), 'Franciacorta Extra Brut Alma Assemblage', 'Bellavista · Chardonnay, Pinot Nero', 'Bellavista · Chardonnay, Pinot Nero', 85),
+        vino(R('Trentino', 'Trentino'), 'Trento DOC Millesimato Brut 2022', 'Altemasi · Chardonnay · 12,5%', 'Altemasi · Chardonnay · 12.5%', 42),
+        vino(R('Champagne', 'Champagne'), 'Brut R.018', 'Lallier · Pinot Nero, Pinot Meunier · 12,5%', 'Lallier · Pinot Nero, Pinot Meunier · 12.5%', 75),
+        vino(R('Champagne', 'Champagne'), 'Extra Brut Grand Cru Blanc de Noir S.A.', 'Georges Vesselle · Pinot Nero · 12%', 'Georges Vesselle · Pinot Nero · 12%', 125),
+        vino(R('Champagne', 'Champagne'), 'Extra Brut Grand Cru Blanc de Blanc S.A.', 'Georges Vesselle · Chardonnay · 12%', 'Georges Vesselle · Chardonnay · 12%', 136),
+        vino(R('Veneto', 'Veneto'), 'Valdobbiadene Prosecco Superiore DOCG Extra Dry S.A.', 'Gemin · Glera · 11%', 'Gemin · Glera · 11%', 28),
+      ],
+    },
+    {
+      id: 'bianchi',
+      titolo: { it: 'Vini bianchi', en: 'White wines' },
+      piatti: [
+        vino(R('Lazio', 'Lazio'), 'Tellenae 2025', 'Manfredi Stramacci · Malvasia Puntinata · 13%', 'Manfredi Stramacci · Malvasia Puntinata · 13%', 29),
+        vino(R('Lazio', 'Lazio'), 'Tellenae 2023', 'Manfredi Stramacci · Malvasia Puntinata · 13%', 'Manfredi Stramacci · Malvasia Puntinata · 13%', 36),
+        vino(R('Lazio', 'Lazio'), 'Tellenae 2021', 'Manfredi Stramacci · Malvasia Puntinata · 13%', 'Manfredi Stramacci · Malvasia Puntinata · 13%', 45),
+        vino(R('Lazio', 'Lazio'), 'Breza Marina Vivace', 'Casa Divina Provvidenza · Trebbiano Giallo, Chardonnay · 12,5%', 'Casa Divina Provvidenza · Trebbiano Giallo, Chardonnay · 12.5%', 25),
+        vino(R('Lazio', 'Lazio'), 'Donnaluce', 'Poggio le Volpi · Chardonnay, Greco, Malvasia del Lazio · 13%', 'Poggio le Volpi · Chardonnay, Greco, Malvasia del Lazio · 13%', 45),
+        vino(R('Lazio', 'Lazio'), 'Neroniano', 'Casa Divina Provvidenza · Cacchione · 14%', 'Casa Divina Provvidenza · Cacchione · 14%', 29),
+        vino(R('Lazio', 'Lazio'), 'Poggio della Costa 2024', 'Sergio Mottura · Grechetto · 14%', 'Sergio Mottura · Grechetto · 14%', 34),
+        vino(R('Lazio', 'Lazio'), 'La Torre a Civitella 2023', 'Sergio Mottura · Grechetto · 13,5%', 'Sergio Mottura · Grechetto · 13.5%', 48),
+        vino(R('Lazio', 'Lazio'), 'Frascati Superiore', 'Ferri · Malvasia del Lazio, Bombino · 13,5%', 'Ferri · Malvasia del Lazio, Bombino · 13.5%', 25),
+        vino(R('Valle d’Aosta', 'Aosta Valley'), 'Chambave Muscat 2016', 'Le Vrille · Moscato bianco (Muscat petit grain) · 13,5%', 'Le Vrille · Moscato bianco (Muscat petit grain) · 13.5%', 38),
+        vino(R('Valle d’Aosta', 'Aosta Valley'), 'Petit Arvine 2016', 'Le Vrille · Petite Arvine · 13,5%', 'Le Vrille · Petite Arvine · 13.5%', 38),
+        vino(R('Piemonte', 'Piedmont'), 'Gavi di Gavi', 'Marrone · Cortese · 13%', 'Marrone · Cortese · 13%', 40),
+        vino(R('Piemonte', 'Piedmont'), 'Arneis «Tre Fie»', 'Marrone · Arneis · 13%', 'Marrone · Arneis · 13%', 36),
+        vino(R('Piemonte', 'Piedmont'), 'Derthona Timorasso', 'Cantina di Tortona · Timorasso · 14%', 'Cantina di Tortona · Timorasso · 14%', 38),
+        vino(R('Trentino-Alto Adige', 'Trentino-Alto Adige'), 'Gewürztraminer', 'Elena Walch · Gewürztraminer · 14%', 'Elena Walch · Gewürztraminer · 14%', 52),
+        vino(R('Trentino-Alto Adige', 'Trentino-Alto Adige'), 'Müller-Thurgau', 'Ritterhof · Müller-Thurgau · 12%', 'Ritterhof · Müller-Thurgau · 12%', 29),
+        vino(R('Trentino-Alto Adige', 'Trentino-Alto Adige'), 'Pinot Grigio Trentino DOC', 'Cantina D’Isera · Pinot Grigio · 12,5%', 'Cantina D’Isera · Pinot Grigio · 12.5%', 35),
+        vino(R('Trentino-Alto Adige', 'Trentino-Alto Adige'), 'Chardonnay Selezione Cadalora 2023', 'La Cadalora · Chardonnay · 13,5%', 'La Cadalora · Chardonnay · 13.5%', 39),
+        vino(R('Trentino-Alto Adige', 'Trentino-Alto Adige'), 'Sauvignon 2024', 'La Cadalora · Sauvignon · 13,5%', 'La Cadalora · Sauvignon · 13.5%', 31),
+        vino(R('Liguria', 'Liguria'), 'Pigato Riviera Ligure di Ponente 2025', 'Maixei · Pigato · 12,5%', 'Maixei · Pigato · 12.5%', 32),
+        vino(R('Friuli-Venezia Giulia', 'Friuli-Venezia Giulia'), 'Sauvignon', 'Tiare · Sauvignon · 13,5%', 'Tiare · Sauvignon · 13.5%', 49),
+        vino(R('Friuli-Venezia Giulia', 'Friuli-Venezia Giulia'), 'Ribolla Gialla', 'Tiare · Ribolla Gialla · 13%', 'Tiare · Ribolla Gialla · 13%', 45),
+        vino(R('Friuli-Venezia Giulia', 'Friuli-Venezia Giulia'), 'Pinot Grigio Masseré Ramato', 'Tiare · Pinot Grigio · 13%', 'Tiare · Pinot Grigio · 13%', 45),
+        vino(R('Toscana', 'Tuscany'), 'Ansonica Costa Argentario DOC', 'Poggio Maestrino · Ansonica · 12%', 'Poggio Maestrino · Ansonica · 12%', 28),
+        vino(R('Toscana', 'Tuscany'), 'Chardonnay Molino delle Balze', 'Rocca di Castagnoli · Chardonnay · 13%', 'Rocca di Castagnoli · Chardonnay · 13%', 40),
+        vino(R('Umbria', 'Umbria'), 'Malafemmena Bianco Frizzante Ancestrale', 'Di Filippo · Grechetto · 12,5%', 'Di Filippo · Grechetto · 12.5%', 29),
+        vino(R('Umbria', 'Umbria'), 'Farandola Trebbiano Spoletino', 'Di Filippo · Trebbiano Spoletino · 13,5%', 'Di Filippo · Trebbiano Spoletino · 13.5%', 34),
+        vino(R('Marche', 'Marche'), 'Verdicchio di Matelica Vigneto Fogliano 2022', 'Bisci · Verdicchio · 13,5%', 'Bisci · Verdicchio · 13.5%', 45),
+        vino(R('Marche', 'Marche'), 'Campodarchi Argento, Bianchello del Metauro DOC Superiore', 'Terracruda · Bianchello del Metauro · 14%', 'Terracruda · Bianchello del Metauro · 14%', 29),
+        vino(R('Abruzzo', 'Abruzzo'), 'Pecorino d\'Abruzzo Bianchi Grilli 2023', 'Torre dei Beati · Pecorino · 14%', 'Torre dei Beati · Pecorino · 14%', 35),
+        vino(R('Abruzzo', 'Abruzzo'), 'Trebbiano d\'Abruzzo Bianchi Grilli 2023', 'Torre dei Beati · Trebbiano Abruzzese · 13%', 'Torre dei Beati · Trebbiano Abruzzese · 13%', 36),
+        vino(R('Campania', 'Campania'), 'Velluto Bianco Irpinia Falanghina DOC', 'Nativ · Falanghina · 13%', 'Nativ · Falanghina · 13%', 28),
+        vino(R('Campania', 'Campania'), 'Fiano di Avellino Sequenzha 2024', 'Benito Ferrara · Fiano · 13,5%', 'Benito Ferrara · Fiano · 13.5%', 35),
+        vino(R('Campania', 'Campania'), 'Greco di Tufo Vigna Cicogna 2024', 'Benito Ferrara · Greco · 14%', 'Benito Ferrara · Greco · 14%', 45),
+        vino(R('Sicilia', 'Sicily'), 'Etna Bianco DOC Terre dei Miti', 'Tenute Nicosia · Carricante, Catarratto · 12,5%', 'Tenute Nicosia · Carricante, Catarratto · 12.5%', 35),
+        vino(R('Sicilia', 'Sicily'), 'Grillo DOP HYBLA', 'Tenute Nicosia · Grillo · 13,5%', 'Tenute Nicosia · Grillo · 13.5%', 26),
+        vino(R('Sicilia', 'Sicily'), 'Zibibbo Secco Bio DOC Sicilia', 'Tenute Mokarta · Zibibbo · 12,5%', 'Tenute Mokarta · Zibibbo · 12.5%', 28),
+        vino(R('Sardegna', 'Sardinia'), 'Vermentino di Sardegna Cala Silente 2024', 'Santadi · Vermentino · 13,5%', 'Santadi · Vermentino · 13.5%', 27),
+        vino(R('Sardegna', 'Sardinia'), 'Villa di Chiesa 2024', 'Santadi · Vermentino, Chardonnay · 14%', 'Santadi · Vermentino, Chardonnay · 14%', 47),
+        vino(R('Francia', 'France'), 'Chablis', 'Thierry Mothe · Chardonnay · 12,5%', 'Thierry Mothe · Chardonnay · 12.5%', 70),
+        vino(R('Germania', 'Germany'), 'Riesling Gutswein', 'Georg Fußer · Riesling · 12%', 'Georg Fußer · Riesling · 12%', 48),
+      ],
+    },
+    {
+      id: 'rosati',
+      titolo: { it: 'Vini rosati', en: 'Rosé wines' },
+      piatti: [
+        vino(R('Lazio', 'Lazio'), 'Divina Aeris', 'Divina Provvidenza · Pinot Nero · 13%', 'Divina Provvidenza · Pinot Nero · 13%', 32),
+        vino(R('Piemonte', 'Piedmont'), 'Dolcevita Rosato', 'Marrone · Nebbiolo, Barbera · 14,5%', 'Marrone · Nebbiolo, Barbera · 14.5%', 32),
+        vino(R('Trentino-Alto Adige', 'Trentino-Alto Adige'), 'Pinot Nero Rosé Buontempo', 'La Cadalora · Pinot Nero · 13%', 'La Cadalora · Pinot Nero · 13%', 28),
+        vino(R('Abruzzo', 'Abruzzo'), 'Cerasuolo Rosa-ae 2022', 'Torre dei Beati · Pecorino · 12,5%', 'Torre dei Beati · Pecorino · 12.5%', 27),
+        vino(R('Sicilia', 'Sicily'), 'Vinudilice 2024', 'I Vigneti Salvo Foti · Grenache, Minnella Nera, Grecanico, Minnella Bianca e altre uve · 12%', 'I Vigneti Salvo Foti · Grenache, Minnella Nera, Grecanico, Minnella Bianca e altre uve · 12%', 70),
+      ],
+    },
+    {
+      id: 'rossi',
+      titolo: { it: 'Vini rossi', en: 'Red wines' },
+      piatti: [
+        vino(R('Lazio', 'Lazio'), 'Baccarossa 2019', 'Poggio Le Volpi · Nero Buono · 13,5%', 'Poggio Le Volpi · Nero Buono · 13.5%', 58),
+        vino(R('Lazio', 'Lazio'), 'Roma Rosso', 'La Rasenna · Montepulciano, Sangiovese · 14%', 'La Rasenna · Montepulciano, Sangiovese · 14%', 29),
+        vino(R('Lazio', 'Lazio'), 'Cesanese', 'Casa Divina Provvidenza · Cesanese · 13,5%', 'Casa Divina Provvidenza · Cesanese · 13.5%', 29),
+        vino(R('Lazio', 'Lazio'), 'Cesanese del Piglio Superiore Riserva Lepanto 2021', 'Alberto Giacobbe · Cesanese · 14,5%', 'Alberto Giacobbe · Cesanese · 14.5%', 45),
+        vino(R('Lazio', 'Lazio'), 'Magone 2019', 'Sergio Mottura · Pinot Nero · 13%', 'Sergio Mottura · Pinot Nero · 13%', 60),
+        vino(R('Piemonte', 'Piedmont'), 'Vessillo Barbera', 'Cantina di Tortona · Barbera · 14,5%', 'Cantina di Tortona · Barbera · 14.5%', 75),
+        vino(R('Piemonte', 'Piedmont'), 'Barbera d’Asti Superiore «Ad Libitvm» DOCG', 'Carlin de Paolo · Barbera · 14,5%', 'Carlin de Paolo · Barbera · 14.5%', 27),
+        vino(R('Piemonte', 'Piedmont'), 'Barolo 2021', 'Diego Conterno · Nebbiolo · 14,5%', 'Diego Conterno · Nebbiolo · 14.5%', 70),
+        vino(R('Piemonte', 'Piedmont'), 'Barolo Le Coste di Monforte 2020', 'Diego Conterno · Nebbiolo · 14,5%', 'Diego Conterno · Nebbiolo · 14.5%', 110),
+        vino(R('Piemonte', 'Piedmont'), 'Nebbiolo Langhe IL 2024', 'Virna Borgogno · Nebbiolo · 14,5%', 'Virna Borgogno · Nebbiolo · 14.5%', 34),
+        vino(R('Trentino-Alto Adige', 'Trentino-Alto Adige'), 'Lagrein', 'Tramin · Lagrein · 12,5%', 'Tramin · Lagrein · 12.5%', 29),
+        vino(R('Trentino-Alto Adige', 'Trentino-Alto Adige'), 'Pinot Nero Jansen', 'Ritterhof · Pinot Nero · 13,5%', 'Ritterhof · Pinot Nero · 13.5%', 36),
+        vino(R('Trentino-Alto Adige', 'Trentino-Alto Adige'), 'Teroldego Rotaliano 2024', 'Zeni · Teroldego · 13,5%', 'Zeni · Teroldego · 13.5%', 32),
+        vino(R('Trentino-Alto Adige', 'Trentino-Alto Adige'), 'St. Magdalener Classico Isarcus 2022', 'Griesbauerhof · Schiava · 13,5%', 'Griesbauerhof · Schiava · 13.5%', 42),
+        vino(R('Lombardia', 'Lombardy'), 'Valtellina Superiore Grumello Tell 2021', 'Luca Faccinelli · Nebbiolo (Chiavennasca), Rossola, Pignola · 13%', 'Luca Faccinelli · Nebbiolo (Chiavennasca), Rossola, Pignola · 13%', 45),
+        vino(R('Veneto', 'Veneto'), 'Valpolicella Classico Superiore Figari 2022', 'Villa Spinosa · Corvina, Corvinone, Rondinella · 13,5%', 'Villa Spinosa · Corvina, Corvinone, Rondinella · 13.5%', 34),
+        vino(R('Veneto', 'Veneto'), 'Amarone della Valpolicella 2017', 'Masi · Corvina, Molinara, Rondinella · 16%', 'Masi · Corvina, Molinara, Rondinella · 16%', 105),
+        vino(R('Veneto', 'Veneto'), 'Valpolicella Ripasso Campotorbian', 'Provolo · Corvina, Corvinone, Rondinella, Oseleta · 14,5%', 'Provolo · Corvina, Corvinone, Rondinella, Oseleta · 14.5%', 48),
+        vino(R('Friuli-Venezia Giulia', 'Friuli-Venezia Giulia'), 'Cabernet Sauvignon', 'Tiare · Cabernet Sauvignon · 13%', 'Tiare · Cabernet Sauvignon · 13%', 40),
+        vino(R('Friuli-Venezia Giulia', 'Friuli-Venezia Giulia'), 'Pinot Nero', 'Tiare · Pinot Nero · 13,5%', 'Tiare · Pinot Nero · 13.5%', 38),
+        vino(R('Friuli-Venezia Giulia', 'Friuli-Venezia Giulia'), 'Cabernet', 'Tenuta del Morer · Cabernet · 13%', 'Tenuta del Morer · Cabernet · 13%', 25),
+        vino(R('Toscana', 'Tuscany'), 'Nobile di Montepulciano «Signore del Greppo» 2023', 'Vannutelli · Sangiovese (Prugnolo Gentile) · 13,5%', 'Vannutelli · Sangiovese (Prugnolo Gentile) · 13.5%', 55),
+        vino(R('Toscana', 'Tuscany'), 'Nobile di Montepulciano «Signore del Greppo» 2022', 'Vannutelli · Sangiovese (Prugnolo Gentile) · 13,5%', 'Vannutelli · Sangiovese (Prugnolo Gentile) · 13.5%', 65),
+        vino(R('Toscana', 'Tuscany'), 'Nobile di Montepulciano «Signore del Greppo» 2021', 'Vannutelli · Sangiovese (Prugnolo Gentile) · 13,5%', 'Vannutelli · Sangiovese (Prugnolo Gentile) · 13.5%', 75),
+        vino(R('Toscana', 'Tuscany'), 'Chianti Classico Riserva Poggio a\' Frati', 'Rocca di Castagnoli · Sangiovese, Canaiolo · 14%', 'Rocca di Castagnoli · Sangiovese, Canaiolo · 14%', 56),
+        vino(R('Toscana', 'Tuscany'), 'Chianti Classico 2022', 'Le Masse di Lamole · Sangiovese · 13,5%', 'Le Masse di Lamole · Sangiovese · 13.5%', 36),
+        vino(R('Toscana', 'Tuscany'), 'Rosso di Montalcino 2021', 'Terre Nere · Sangiovese · 14%', 'Terre Nere · Sangiovese · 14%', 33),
+        vino(R('Umbria', 'Umbria'), 'Montefalco Rosso Riserva 2018', 'Adanti · Merlot, Sagrantino, Sangiovese · 13%', 'Adanti · Merlot, Sagrantino, Sangiovese · 13%', 35),
+        vino(R('Umbria', 'Umbria'), 'Montefalco Sagrantino Arquata 2016', 'Adanti · Sagrantino · 15%', 'Adanti · Sagrantino · 15%', 40),
+        vino(R('Abruzzo', 'Abruzzo'), 'Montepulciano d’Abruzzo «Notàri»', 'Nicodemi · Montepulciano · 13%', 'Nicodemi · Montepulciano · 13%', 45),
+        vino(R('Campania', 'Campania'), 'Taurasi Vigna Quattro Confini 2021', 'Benito Ferrara · Aglianico · 13,5%', 'Benito Ferrara · Aglianico · 13.5%', 60),
+        vino(R('Puglia', 'Apulia'), 'Cacc\'e Mmitte di Lucera Agramante 2019', 'Paolo Petrilli · Nero di Troia, Montepulciano, Sangiovese, Bombino · 12,5%', 'Paolo Petrilli · Nero di Troia, Montepulciano, Sangiovese, Bombino · 12.5%', 28),
+        vino(R('Puglia', 'Apulia'), 'Negroamaro Salento 125 2023', 'Feudi Salentini · Negroamaro · 12,5%', 'Feudi Salentini · Negroamaro · 12.5%', undefined),  // senza prezzo nel PDF del 09/10: non si pubblica
+        vino(R('Puglia', 'Apulia'), 'Primitivo di Manduria Felline DOP', 'Felline · Primitivo · 14%', 'Felline · Primitivo · 14%', 32),
+        vino(R('Sicilia', 'Sicily'), 'Cerasuolo di Vittoria DOCG', 'Tenute Nicosia · Nero D’Avola, Frappato · 14%', 'Tenute Nicosia · Nero D’Avola, Frappato · 14%', 32),
+        vino(R('Sicilia', 'Sicily'), 'Etna Rosso Terre dei Miti', 'Tenute Nicosia · Nerello Mascalese, Nerello Cappuccio · 13%', 'Tenute Nicosia · Nerello Mascalese, Nerello Cappuccio · 13%', 36),
+        vino(R('Sicilia', 'Sicily'), 'Etna Rosso Riserva Saeculare 2024', 'I Custodi delle vigne dell’Etna · Nerello Mascalese, Nerello Cappuccio, Alicante · 14%', 'I Custodi delle vigne dell’Etna · Nerello Mascalese, Nerello Cappuccio, Alicante · 14%', 120),
+        vino(R('Sardegna', 'Sardinia'), 'Carignano del Sulcis Riserva Rocca Rubra', 'Santadi · Carignano · 15%', 'Santadi · Carignano · 15%', 36),
+        vino(R('Sardegna', 'Sardinia'), 'Carignano del Sulcis Riserva Terre Brune', 'Santadi · Carignano, Bovaleddu · 15%', 'Santadi · Carignano, Bovaleddu · 15%', 95),
+        vino(R('Francia', 'France'), 'Bourgogne Pinot Noir', 'Chanson · Pinot Noir', 'Chanson · Pinot Noir', undefined),  // senza prezzo nel PDF del 09/10: non si pubblica
+      ],
+    },
+  ],
+  note: {
+    it: ['Prezzi a bottiglia. Per un consiglio sull’abbinamento, chiedete al personale di sala.', 'Tutti i vini contengono anidride solforosa e solfiti (allergene 12, Regolamento UE 1169/2011).'],
+    en: ['Prices per bottle. Ask our staff for a pairing suggestion.', 'All wines contain sulphites (allergen 12, EU Regulation 1169/2011).'],
+  },
+} as const satisfies Menu;
+
+/**
  * Business lunch — dal titolare, 24/09/2026 (WhatsApp). I piatti cambiano a
  * periodi, quindi sul sito niente nomi: solo le tre scelte col loro prezzo.
  * Acqua, pane e caffè sono compresi; dolci ed extra restano fuori dal sito

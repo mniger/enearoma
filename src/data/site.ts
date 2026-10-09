@@ -256,12 +256,12 @@ export interface VoceNav {
 export const nav: { readonly it: readonly VoceNav[]; readonly en: readonly VoceNav[] } = {
   it: [
     { href: '/#locale', label: 'Il ristorante' },
-    { href: '/menu/', label: 'Menu', sotto: [{ href: '/menu/', label: 'À la carte' }, { href: '/menu/pranzo/', label: 'Business lunch' }, { href: '/menu/aperitivo/', label: 'Aperitivo' }, { href: '/menu/cocktail/', label: 'Cocktail' }] },
+    { href: '/menu/', label: 'Menu', sotto: [{ href: '/menu/', label: 'À la carte' }, { href: '/menu/pranzo/', label: 'Business lunch' }, { href: '/menu/aperitivo/', label: 'Aperitivo' }, { href: '/menu/cocktail/', label: 'Cocktail' }, { href: '/menu/vini/', label: 'Vini' }] },
     { href: '/#dove', label: 'Dove siamo' },
   ],
   en: [
     { href: '/#locale', label: 'The restaurant' },
-    { href: '/menu/', label: 'Menu', sotto: [{ href: '/menu/', label: 'À la carte' }, { href: '/menu/lunch/', label: 'Business lunch' }, { href: '/menu/aperitivo/', label: 'Aperitivo' }, { href: '/menu/cocktails/', label: 'Cocktails' }] },
+    { href: '/menu/', label: 'Menu', sotto: [{ href: '/menu/', label: 'À la carte' }, { href: '/menu/lunch/', label: 'Business lunch' }, { href: '/menu/aperitivo/', label: 'Aperitivo' }, { href: '/menu/cocktails/', label: 'Cocktails' }, { href: '/menu/wines/', label: 'Wines' }] },
     { href: '/#dove', label: 'Visit us' },
   ],
 };
@@ -275,6 +275,7 @@ export const traduzioni: ReadonlyArray<readonly [it: string, en: string]> = [
   ['/menu/pranzo/', '/en/menu/lunch/'],
   ['/menu/aperitivo/', '/en/menu/aperitivo/'],
   ['/menu/cocktail/', '/en/menu/cocktails/'],
+  ['/menu/vini/', '/en/menu/wines/'],
   ['/note-legali/', '/en/note-legali/'],
 ];
 

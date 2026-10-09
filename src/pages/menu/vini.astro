@@ -1,0 +1,14 @@
+---
+import Base from '../../layouts/Base.astro';
+import MenuContent from '../../components/MenuContent.astro';
+import { menuVini, datiStrutturatiMenu } from '../../data/menu';
+import { brand } from '../../data/site';
+
+const url = new URL(Astro.url.pathname, Astro.site).href;
+---
+<Base title={`Carta dei vini — ${brand.nomeEsteso}`} description="La carta dei vini di ENEA Roma: bollicine, bianchi, rosati e rossi da tutta Italia, con Champagne e qualche etichetta francese e tedesca, con i prezzi. In Via Boncompagni, vicino a Via Veneto.">
+  <Fragment slot="head">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(datiStrutturatiMenu(menuVini, 'it', url))} />
+  </Fragment>
+  <MenuContent menu={menuVini} variante="vini" />
+</Base>
