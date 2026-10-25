@@ -149,7 +149,7 @@ export const tracciamento = { googleAds: 'AW-18503706055' } as const;
 export const legale = {
   ragioneSociale: 'ENEA S.R.L.S.',
   partitaIva: '17292571001',
-  sedeLegale: 'Via Dario Niccodemi 94, 00137 Roma',
+  sedeLegale: 'Via Francesco Marconi 35, 00168 Roma',
 } as const;
 
 /**
