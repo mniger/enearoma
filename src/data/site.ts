@@ -143,6 +143,9 @@ export const dataApertura: string | null = '2026-10-05';
  * Dati legali — CONFERMATI (anagrafica Aruba dell’account aziendale,
  * verificati da Marco col titolare il 06/09/2026).
  */
+/** Google Ads di Enea (codice mandato dal ristorante): si carica solo dopo il consenso dal banner. */
+export const tracciamento = { googleAds: 'AW-18503706055' } as const;
+
 export const legale = {
   ragioneSociale: 'ENEA S.R.L.S.',
   partitaIva: '17292571001',

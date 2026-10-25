@@ -16,7 +16,8 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Reveal from '../components/Reveal.astro';
 import { ClientRouter } from 'astro:transitions';
-import { brand, contatti, dataApertura, legale, nav, orari, piattaforme, prenotazioni, traduzioni, type Locale } from '../data/site';
+import Consenso from '../components/Consenso.astro';
+import { brand, contatti, dataApertura, legale, nav, orari, piattaforme, prenotazioni, tracciamento, traduzioni, type Locale } from '../data/site';
 
 interface Props { title: string; description: string; noindex?: boolean }
 const { title, description, noindex = false } = Astro.props;
@@ -93,6 +94,32 @@ const datiStrutturati = {
         }
       </script>
     )}
+    {/* Google Ads parte solo dopo «Accetta» nel banner (Consenso.astro): prima non si carica
+        niente di Google. Una volta sola anche con le transizioni di pagina. */}
+    <script is:inline define:vars={{ idAds: tracciamento.googleAds }}>
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+      if (!window.eneaCaricaAds) {
+        gtag('consent', 'default', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied' });
+        window.eneaCaricaAds = function () {
+          if (window.eneaAdsAttivo) return;
+          window.eneaAdsAttivo = true;
+          gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted' });
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=' + idAds;
+          document.head.appendChild(s);
+          gtag('js', new Date());
+          gtag('config', idAds);
+        };
+        document.addEventListener('astro:after-swap', function () {
+          if (window.eneaAdsAttivo) gtag('event', 'page_view', { send_to: idAds, page_location: location.href });
+        });
+        var scelta = null;
+        try { scelta = localStorage.getItem('enea-cookie'); } catch (e) {}
+        if (scelta === 'si') window.eneaCaricaAds();
+      }
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -161,5 +188,6 @@ const datiStrutturati = {
       addEventListener('hashchange', alBersaglio);
     </script>
     <Footer />
+    <Consenso />
   </body>
 </html>

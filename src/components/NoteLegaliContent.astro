@@ -1,8 +1,8 @@
 ---
 /**
  * Note legali — una pagina sola per lingua, sobria e vera.
- * Il sito non ha moduli, cookie né tracciamento: la nota dice questo e chi è
- * il titolare. Niente boilerplate GDPR gonfiato per trattamenti che non esistono.
+ * Il sito non ha moduli; l'unico tracciamento è Google Ads, solo dopo il consenso dal banner.
+ * La nota dice questo e chi è il titolare. Niente boilerplate GDPR gonfiato per trattamenti che non esistono.
  */
 import { brand, legale, contatti, type Locale } from '../data/site';
 import Freccia from './Freccia.astro';
@@ -12,7 +12,7 @@ const L = locale === 'en'
   ? {
       titolo: 'Legal notes', titolare: 'Site owner', iva: 'VAT no.', sede: 'Registered office', ristorante: 'Restaurant',
       contatti: 'Contact', cookieT: 'Cookies and tracking',
-      cookie: 'This site sets no cookies and runs no analytics or profiling. Fonts and assets are served from this domain, with no third parties.',
+      cookie: 'Google Ads cookies (Google Ireland Ltd) are set only if you accept them in the banner: they measure visits coming from our ads and let us show ENEA ads to people who have already visited the site. They last up to 13 months. Without your consent nothing from Google is loaded. Your choice is stored only in your browser and you can change it from «Cookie preferences» at the bottom of every page. Fonts and other assets are served from this domain. Google\'s policy: policies.google.com/technologies/ads',
       hostingT: 'Hosting',
       hosting: 'Pages are served by GitHub Pages (GitHub, Inc.). The server may log technical access data (such as IP addresses) solely to deliver and secure the service.',
       contenutiT: 'Content', contenuti: 'Texts, photographs and trademark ©', diritti: 'All rights reserved.',
@@ -21,7 +21,7 @@ const L = locale === 'en'
   : {
       titolo: 'Note legali', titolare: 'Titolare del sito', iva: 'P. IVA', sede: 'Sede legale', ristorante: 'Ristorante',
       contatti: 'Contatti', cookieT: 'Cookie e tracciamento',
-      cookie: 'Questo sito non usa cookie, strumenti di analisi o profilazione. Font e risorse sono serviti direttamente dal dominio, senza terze parti.',
+      cookie: 'I cookie di Google Ads (Google Ireland Ltd) si attivano solo se li accetti dal banner: servono a misurare le visite che arrivano dagli annunci e a mostrare gli annunci di ENEA a chi ha già visitato il sito. Durano fino a 13 mesi. Senza il tuo consenso non si carica nulla di Google. La scelta resta salvata solo nel tuo browser e la puoi cambiare da «Preferenze cookie» in fondo a ogni pagina. Font e altre risorse sono serviti direttamente dal dominio. Informativa di Google: policies.google.com/technologies/ads',
       hostingT: 'Hosting',
       hosting: 'Le pagine sono servite da GitHub Pages (GitHub, Inc.). Il server può registrare dati tecnici di accesso (come gli indirizzi IP) nei log, per la sola erogazione e sicurezza del servizio.',
       contenutiT: 'Contenuti', contenuti: 'Testi, fotografie e marchio ©', diritti: 'Tutti i diritti riservati.',
